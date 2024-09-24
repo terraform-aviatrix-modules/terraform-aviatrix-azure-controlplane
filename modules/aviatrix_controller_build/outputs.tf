@@ -24,7 +24,7 @@ output "aviatrix_controller_nsg" {
 }
 
 data "azurerm_virtual_network" "vnet" {
-  name = var.use_existing_vnet ? var.vnet_name : azurerm_virtual_network.aviatrix_controller_vnet[0].name
+  name                = var.use_existing_vnet ? var.vnet_name : azurerm_virtual_network.aviatrix_controller_vnet[0].name
   resource_group_name = var.use_existing_vnet ? var.resource_group_name : azurerm_resource_group.aviatrix_controller_rg[0].name
 }
 
