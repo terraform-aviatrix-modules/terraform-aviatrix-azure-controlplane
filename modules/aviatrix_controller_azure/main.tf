@@ -6,20 +6,6 @@
  * use this module.
  */
 
-terraform {
-  required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = ">= 2.8.0"
-    }
-    azuread = {
-      source  = "hashicorp/azuread"
-      version = "~> 2.0"
-    }
-  }
-}
-
-
 // accept license of Aviatrix Controller
 resource "azurerm_marketplace_agreement" "aviatrix_mp_agreement" {
   count     = var.use_existing_mp_agreement ? 0 : 1
