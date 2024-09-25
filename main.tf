@@ -1,9 +1,7 @@
-module "aviatrix_controller_azure" {
-  count                     = 0
-  source                    = "./modules/aviatrix_controller_azure"
-  app_name                  = var.app_name
-  create_custom_role        = var.create_custom_role
-  use_existing_mp_agreement = var.use_existing_mp_agreement
+#Accept M<arketplace Agreement
+module "aviatrix_azure_marketplace_agreement" {
+  count  = var.use_existing_mp_agreement ? 0 : 1
+  source = "./modules/aviatrix_azure_marketplace_agreement"
 }
 
 module "aviatrix_controller_build" {
@@ -24,7 +22,7 @@ module "aviatrix_controller_build" {
   subnet_id                                 = var.subnet_id
 
   depends_on = [
-    module.aviatrix_controller_azure
+    module.aviatrix_azure_marketplace_agreement
   ]
 }
 
@@ -37,6 +35,19 @@ module "controller_init" {
   avx_controller_admin_email    = var.avx_controller_admin_email
   avx_controller_admin_password = var.avx_controller_admin_password
   aviatrix_customer_id          = var.aviatrix_customer_id
+
+  depends_on = [
+    module.aviatrix_controller_build
+  ]
+}
+
+#Account onboarding
+#Create app registration
+module "aviatrix_controller_azure" {
+  count              = 0
+  source             = "./modules/aviatrix_controller_azure"
+  app_name           = var.app_name
+  create_custom_role = var.create_custom_role
 
   depends_on = [
     module.aviatrix_controller_build
