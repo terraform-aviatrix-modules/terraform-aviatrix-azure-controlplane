@@ -14,7 +14,7 @@ module "aviatrix_controller_build" {
   controller_virtual_machine_admin_username = var.controller_virtual_machine_admin_username
   controller_virtual_machine_admin_password = var.controller_virtual_machine_admin_password
   controller_virtual_machine_size           = var.controller_virtual_machine_size
-  incoming_ssl_cidr                         = var.incoming_ssl_cidr
+  incoming_ssl_cidr                         = local.controller_allowed_cidrs
   use_existing_vnet                         = var.use_existing_vnet
   resource_group_name                       = var.resource_group_name
   vnet_name                                 = var.vnet_name
@@ -51,5 +51,59 @@ module "aviatrix_controller_azure" {
 
   depends_on = [
     module.aviatrix_controller_build
+  ]
+}
+
+
+#Copilot
+module "copilot_build_azure" {
+  count = var.build_copilot ? 1 : 0
+
+  source = "./modules/copilot_build_azure"
+
+  controller_public_ip           = module.aviatrix_controller_build.aviatrix_controller_public_ip_address
+  controller_private_ip          = module.aviatrix_controller_build.aviatrix_controller_private_ip_address
+  copilot_name                   = local.copilot_name
+  virtual_machine_admin_username = var.controller_virtual_machine_admin_username
+  virtual_machine_admin_password = local.virtual_machine_admin_password
+  default_data_disk_size         = "100"
+
+  allowed_cidrs = {
+    "tcp_cidrs" = {
+      priority = "100"
+      protocol = "Tcp"
+      ports    = ["443"]
+      cidrs    = var.incoming_ssl_cidr
+    }
+    "udp_cidrs" = {
+      priority = "200"
+      protocol = "Udp"
+      ports    = ["5000", "31283"]
+      cidrs    = var.incoming_ssl_cidr
+    }
+  }
+
+  additional_disks = {}
+
+  depends_on = [
+    module.aviatrix_azure_marketplace_agreement
+  ]
+}
+
+module "copilot_init" {
+  count = var.build_copilot ? 1 : 0
+
+  source = "git::https://github.com/terraform-aviatrix-modules/terraform-aviatrix-copilot-init"
+  # source  = "terraform-aviatrix-modules/copilot-init/aviatrix"
+  # version = "v1.0.0"
+
+  avx_controller_public_ip      = module.aviatrix_controller_build.aviatrix_controller_public_ip_address
+  avx_controller_admin_password = var.avx_controller_admin_password
+  avx_copilot_public_ip         = module.copilot_build_azure[0].public_ip
+  account_email                 = var.avx_controller_admin_email
+  copilot_password              = local.virtual_machine_admin_password
+
+  depends_on = [
+    module.controller_init
   ]
 }

@@ -33,6 +33,13 @@ variable "controller_name" {
   type        = string
   description = "Customized Name for Aviatrix Controller"
 }
+
+variable "copilot_name" {
+  type        = string
+  description = "Customized Name for Aviatrix Copilot"
+  default     = ""
+}
+
 variable "controller_subnet_cidr" {
   type        = string
   description = "CIDR for controller subnet."
@@ -120,4 +127,18 @@ variable "use_existing_mp_agreement" {
   type        = bool
   description = "Flag to indicate whether to use an existing marketplace agreement"
   default     = false
+}
+
+variable "build_copilot" {
+  type        = bool
+  description = "Toggle to build copilot or not."
+  default     = true
+}
+
+variable "virtual_machine_admin_username" {
+  default = "avx_admin"
+}
+
+variable "virtual_machine_admin_password" {
+  default = ""
 }
