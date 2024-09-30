@@ -61,6 +61,10 @@ module "copilot_build_azure" {
 
   source = "./modules/copilot_build_azure"
 
+  use_existing_vnet   = true
+  resource_group_name = module.aviatrix_controller_build.aviatrix_controller_rg.name
+  subnet_id           = module.aviatrix_controller_build.aviatrix_controller_subnet.id
+
   controller_public_ip           = module.aviatrix_controller_build.aviatrix_controller_public_ip_address
   controller_private_ip          = module.aviatrix_controller_build.aviatrix_controller_private_ip_address
   copilot_name                   = local.copilot_name
@@ -79,7 +83,7 @@ module "copilot_build_azure" {
       priority = "200"
       protocol = "Udp"
       ports    = ["5000", "31283"]
-      cidrs    = var.incoming_ssl_cidr
+      cidrs    = module.aviatrix_controller_build.aviatrix_controller_public_ip_address
     }
   }
 
@@ -94,7 +98,7 @@ module "copilot_init" {
   count = var.build_copilot ? 1 : 0
 
   source  = "terraform-aviatrix-modules/copilot-init/aviatrix"
-  version = "v1.0.0"
+  version = "v1.0.1"
 
   avx_controller_public_ip         = module.aviatrix_controller_build.aviatrix_controller_public_ip_address
   avx_controller_admin_password    = var.avx_controller_admin_password
