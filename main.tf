@@ -83,7 +83,7 @@ module "copilot_build_azure" {
       priority = "200"
       protocol = "Udp"
       ports    = ["5000", "31283"]
-      cidrs    = module.aviatrix_controller_build.aviatrix_controller_public_ip_address
+      cidrs    = [module.aviatrix_controller_build.aviatrix_controller_public_ip_address]
     }
   }
 
