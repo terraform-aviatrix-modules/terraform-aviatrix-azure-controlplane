@@ -93,14 +93,13 @@ module "copilot_build_azure" {
 module "copilot_init" {
   count = var.build_copilot ? 1 : 0
 
-  source = "git::https://github.com/terraform-aviatrix-modules/terraform-aviatrix-copilot-init"
-  # source  = "terraform-aviatrix-modules/copilot-init/aviatrix"
-  # version = "v1.0.0"
+  source  = "terraform-aviatrix-modules/copilot-init/aviatrix"
+  version = "v1.0.0"
 
   avx_controller_public_ip         = module.aviatrix_controller_build.aviatrix_controller_public_ip_address
   avx_controller_admin_password    = var.avx_controller_admin_password
   avx_copilot_public_ip            = module.copilot_build_azure[0].public_ip
-  account_email                    = var.avx_controller_admin_email
+  service_account_email            = var.avx_controller_admin_email
   copilot_service_account_password = local.virtual_machine_admin_password
 
   depends_on = [
