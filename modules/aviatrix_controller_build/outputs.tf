@@ -39,7 +39,7 @@ data "azurerm_subnet" "subnet" {
 }
 
 output "aviatrix_controller_subnet" {
-  value = azurerm_subnet.aviatrix_controller_subnet
+  value = data.azurerm_subnet.subnet
 }
 
 output "aviatrix_controller_name" {
