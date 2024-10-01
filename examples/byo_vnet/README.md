@@ -1,7 +1,7 @@
 This example shows how to use your own VNET for deployment of the Aviatrix Controlplane.
 
 ```hcl
-provider "azure" {
+provider "azurerm" {
   features {}
 }
 
@@ -53,7 +53,7 @@ module "control_plane" {
   access_account_name           = "Azure"
   aviatrix_customer_id          = "xxxxxxx-abu-xxxxxxxxx"
   location                      = var.region
-  
+
   use_existing_vnet   = true
   resource_group_name = azurerm_resource_group.this.name
   subnet_id           = module.vnet.vnet_subnets[0]
