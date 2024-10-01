@@ -9,8 +9,8 @@ module "aviatrix_controller_build" {
   // please do not use special characters such as `\/"[]:|<>+=;,?*@&~!#$%^()_{}'` in the controller_name
   controller_name                           = var.controller_name
   location                                  = var.location
-  controller_vnet_cidr                      = var.controller_vnet_cidr
-  controller_subnet_cidr                    = var.controller_subnet_cidr
+  controller_vnet_cidr                      = var.controlplane_vnet_cidr
+  controller_subnet_cidr                    = var.controlplane_subnet_cidr
   controller_virtual_machine_admin_username = var.controller_virtual_machine_admin_username
   controller_virtual_machine_admin_password = var.controller_virtual_machine_admin_password
   controller_virtual_machine_size           = var.controller_virtual_machine_size
@@ -71,6 +71,7 @@ module "copilot_build_azure" {
   virtual_machine_admin_username = var.controller_virtual_machine_admin_username
   virtual_machine_admin_password = local.virtual_machine_admin_password
   default_data_disk_size         = "100"
+  location                       = var.location
 
   allowed_cidrs = {
     "tcp_cidrs" = {

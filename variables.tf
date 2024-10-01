@@ -40,9 +40,9 @@ variable "copilot_name" {
   default     = ""
 }
 
-variable "controller_subnet_cidr" {
+variable "controlplane_subnet_cidr" {
   type        = string
-  description = "CIDR for controller subnet."
+  description = "CIDR for controlplane subnet."
   default     = "10.0.0.0/24"
 }
 
@@ -70,7 +70,7 @@ variable "controller_virtual_machine_size" {
   default     = "Standard_A4_v2"
 }
 
-variable "controller_vnet_cidr" {
+variable "controlplane_vnet_cidr" {
   type        = string
   description = "CIDR for controller VNET."
   default     = "10.0.0.0/24"
