@@ -27,7 +27,7 @@ module "control_plane" {
   avx_controller_admin_password = "mysecretpassword"
   account_email                 = "admin@domain.com"
   access_account_name           = "Azure"
-  aviatrix_customer_id          = "xxxxxxx-abu-xxxxxxxxx"
+  customer_id          = "xxxxxxx-abu-xxxxxxxxx"
 }
 
 output "controlplane_data" {
