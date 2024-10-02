@@ -1,15 +1,15 @@
 #Accept Marketplace Agreement
-module "aviatrix_azure_marketplace_agreement" {
-  source = "./modules/aviatrix_azure_marketplace_agreement"
+module "azure_marketplace_agreement" {
+  source = "./modules/azure_marketplace_agreement"
 
   accept_controller_subscription = var.module_config.accept_controller_subscription
   accept_copilot_subscription    = var.module_config.accept_copilot_subscription
 }
 
-module "aviatrix_controller_build" {
+module "controller_build" {
   count = var.module_config.controller_deployment ? 1 : 0
 
-  source = "./modules/aviatrix_controller_build"
+  source = "./modules/controller_build"
   // please do not use special characters such as `\/"[]:|<>+=;,?*@&~!#$%^()_{}'` in the controller_name
   controller_name                           = var.controller_name
   location                                  = var.location
@@ -26,7 +26,7 @@ module "aviatrix_controller_build" {
   subnet_id                                 = var.subnet_id
 
   depends_on = [
-    module.aviatrix_azure_marketplace_agreement
+    module.azure_marketplace_agreement
   ]
 }
 
@@ -36,29 +36,29 @@ module "controller_init" {
   source  = "terraform-aviatrix-modules/controller-init/aviatrix"
   version = "v1.0.2"
 
-  controller_public_ip      = module.aviatrix_controller_build[0].aviatrix_controller_public_ip_address
-  controller_private_ip     = module.aviatrix_controller_build[0].aviatrix_controller_private_ip_address
+  controller_public_ip      = module.controller_build[0].controller_public_ip_address
+  controller_private_ip     = module.controller_build[0].controller_private_ip_address
   controller_admin_email    = var.controller_admin_email
   controller_admin_password = var.controller_admin_password
   customer_id               = var.customer_id
 
   depends_on = [
-    module.aviatrix_controller_build
+    module.controller_build
   ]
 }
 
 #Copilot
-module "copilot_build_azure" {
+module "copilot_build" {
   count = var.module_config.copilot_deployment ? 1 : 0
 
-  source = "./modules/copilot_build_azure"
+  source = "./modules/copilot_build"
 
   use_existing_vnet   = true
-  resource_group_name = module.aviatrix_controller_build[0].aviatrix_controller_rg.name
-  subnet_id           = module.aviatrix_controller_build[0].aviatrix_controller_subnet.id
+  resource_group_name = module.controller_build[0].controller_rg.name
+  subnet_id           = module.controller_build[0].controller_subnet.id
 
-  controller_public_ip           = module.aviatrix_controller_build[0].aviatrix_controller_public_ip_address
-  controller_private_ip          = module.aviatrix_controller_build[0].aviatrix_controller_private_ip_address
+  controller_public_ip           = module.controller_build[0].controller_public_ip_address
+  controller_private_ip          = module.controller_build[0].controller_private_ip_address
   copilot_name                   = var.copilot_name
   virtual_machine_admin_username = var.controller_virtual_machine_admin_username
   virtual_machine_admin_password = local.virtual_machine_admin_password
@@ -76,14 +76,14 @@ module "copilot_build_azure" {
       priority = "200"
       protocol = "Udp"
       ports    = ["5000", "31283"]
-      cidrs    = [module.aviatrix_controller_build[0].aviatrix_controller_public_ip_address]
+      cidrs    = [module.controller_build[0].controller_public_ip_address]
     }
   }
 
   additional_disks = {}
 
   depends_on = [
-    module.aviatrix_azure_marketplace_agreement
+    module.azure_marketplace_agreement
   ]
 }
 
@@ -93,9 +93,9 @@ module "copilot_init" {
   source  = "terraform-aviatrix-modules/copilot-init/aviatrix"
   version = "v1.0.2"
 
-  controller_public_ip             = module.aviatrix_controller_build[0].aviatrix_controller_public_ip_address
+  controller_public_ip             = module.controller_build[0].controller_public_ip_address
   controller_admin_password        = var.controller_admin_password
-  copilot_public_ip                = module.copilot_build_azure[0].public_ip
+  copilot_public_ip                = module.copilot_build[0].public_ip
   service_account_email            = var.controller_admin_email
   copilot_service_account_password = local.virtual_machine_admin_password
 
@@ -105,14 +105,13 @@ module "copilot_init" {
 }
 
 #Account onboarding
+
 #Create app registration
-module "aviatrix_controller_azure" {
-  count              = 0
-  source             = "./modules/aviatrix_controller_azure"
+module "app_registration" {
+  count              = var.module_config.app_registration ? 1 : 0
+  source             = "./modules/app_registration"
   app_name           = var.app_name
   create_custom_role = var.create_custom_role
-
-  depends_on = [
-    module.aviatrix_controller_build
-  ]
 }
+
+#Onboard the account
