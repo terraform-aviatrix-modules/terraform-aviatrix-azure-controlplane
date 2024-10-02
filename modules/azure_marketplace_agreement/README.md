@@ -13,8 +13,8 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [azurerm_marketplace_agreement.aviatrix_controller_mp_agreement](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/marketplace_agreement) | resource |
-| [azurerm_marketplace_agreement.aviatrix_copilot_mp_agreement](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/marketplace_agreement) | resource |
+| [azurerm_marketplace_agreement.controller_mp_agreement](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/marketplace_agreement) | resource |
+| [azurerm_marketplace_agreement.copilot_mp_agreement](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/marketplace_agreement) | resource |
 | [http_http.controller_image_info](https://registry.terraform.io/providers/hashicorp/http/latest/docs/data-sources/http) | data source |
 | [http_http.copilot_image_info](https://registry.terraform.io/providers/hashicorp/http/latest/docs/data-sources/http) | data source |
 
