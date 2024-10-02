@@ -5,6 +5,10 @@
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | n/a |
 | <a name="provider_http"></a> [http](#provider\_http) | n/a |
 
+## Modules
+
+No modules.
+
 ## Resources
 
 | Name | Type |
