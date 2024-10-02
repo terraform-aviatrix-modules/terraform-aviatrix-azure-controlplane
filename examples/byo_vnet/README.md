@@ -45,20 +45,20 @@ module "control_plane" {
   source  = "terraform-aviatrix-modules/azure-controlplane/aviatrix"
   version = "1.0.0"
 
-  controller_name               = "my_controller"
-  incoming_ssl_cidr             = ["1.2.3.4"]
-  avx_controller_admin_email    = "admin@domain.com"
-  avx_controller_admin_password = "mysecretpassword"
-  account_email                 = "admin@domain.com"
-  access_account_name           = "Azure"
-  aviatrix_customer_id          = "xxxxxxx-abu-xxxxxxxxx"
-  location                      = var.region
+  controller_name           = "my_controller"
+  incoming_ssl_cidr         = ["1.2.3.4"]
+  controller_admin_email    = "admin@domain.com"
+  controller_admin_password = "mysecretpassword"
+  account_email             = "admin@domain.com"
+  access_account_name       = "Azure"
+  customer_id               = "xxxxxxx-abu-xxxxxxxxx"
+  location                  = var.region
 
   use_existing_vnet   = true
   resource_group_name = azurerm_resource_group.this.name
   subnet_id           = module.vnet.vnet_subnets[0]
   vnet_name           = var.name
-  subnet_name         = var.name  
+  subnet_name         = var.name
 
   depends_on = [module.vnet]
 }
