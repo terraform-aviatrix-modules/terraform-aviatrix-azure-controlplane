@@ -13,7 +13,7 @@ v1.0.0 | >= 1.3.0
 
 ### Usage Example
 ```hcl
-provider "azure" {
+provider "azurerm" {
   features {}
 }
 
@@ -46,7 +46,16 @@ The following variables are optional:
 
 key | default | value 
 :---|:---|:---
-\<keyname> | \<default value> | \<description of value that should be provided in this variable>
+module_config |  {
+    accept_controller_subscription = true,
+    accept_copilot_subscription    = true,
+    app_registration               = true,
+    account_onboarding             = true,
+    controller_deployment          = true,
+    controller_initialization      = true,
+    copilot_deployment             = true,
+    copilot_initialization         = true,
+  } | Determines which submodules are activated.
 
 ### Outputs
 This module will return the following outputs:

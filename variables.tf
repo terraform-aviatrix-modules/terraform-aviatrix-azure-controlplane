@@ -14,17 +14,17 @@ variable "app_name" {
   default     = "aviatrix_controller_app"
 }
 
-variable "aviatrix_customer_id" {
+variable "customer_id" {
   type        = string
   description = "aviatrix customer license id"
 }
 
-variable "avx_controller_admin_email" {
+variable "controller_admin_email" {
   type        = string
   description = "aviatrix controller admin email address"
 }
 
-variable "avx_controller_admin_password" {
+variable "controller_admin_password" {
   type        = string
   description = "aviatrix controller admin password"
 }
@@ -32,12 +32,13 @@ variable "avx_controller_admin_password" {
 variable "controller_name" {
   type        = string
   description = "Customized Name for Aviatrix Controller"
+  default     = "Aviatrix-Controller"
 }
 
 variable "copilot_name" {
   type        = string
   description = "Customized Name for Aviatrix Copilot"
-  default     = ""
+  default     = "Aviatrix-Copilot"
 }
 
 variable "controlplane_subnet_cidr" {
@@ -123,22 +124,23 @@ variable "subnet_id" {
   default     = ""
 }
 
-variable "use_existing_mp_agreement" {
-  type        = bool
-  description = "Flag to indicate whether to use an existing marketplace agreement"
-  default     = false
-}
-
-variable "build_copilot" {
-  type        = bool
-  description = "Toggle to build copilot or not."
-  default     = true
-}
-
 variable "virtual_machine_admin_username" {
   default = "avx_admin"
 }
 
 variable "virtual_machine_admin_password" {
   default = ""
+}
+
+variable "module_config" {
+  default = {
+    accept_controller_subscription = true,
+    accept_copilot_subscription    = true,
+    controller_deployment          = true,
+    controller_initialization      = true,
+    copilot_deployment             = true,
+    copilot_initialization         = true,
+    app_registration               = true,
+    account_onboarding             = true,
+  }
 }
