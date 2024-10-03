@@ -11,8 +11,8 @@ module "control_plane" {
 
   controller_name               = "my_controller"
   incoming_ssl_cidr             = ["1.2.3.4"]
-  avx_controller_admin_email    = "admin@domain.com"
-  avx_controller_admin_password = "mysecretpassword"
+  controller_admin_email    = "admin@domain.com"
+  controller_admin_password = "mysecretpassword"
   account_email                 = "admin@domain.com"
   access_account_name           = "Azure"
   customer_id          = "xxxxxxx-abu-xxxxxxxxx"
