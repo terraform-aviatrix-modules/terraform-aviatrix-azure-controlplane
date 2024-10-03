@@ -115,3 +115,22 @@ module "app_registration" {
 }
 
 #Onboard the account
+module "account_onboarding" {
+  count  = var.module_config.account_onboarding ? 1 : 0
+  source = "./modules/account_onboarding"
+
+  controller_public_ip      = module.controller_build[0].controller_public_ip_address
+  controller_admin_password = var.controller_admin_password
+
+  access_account_name = var.access_account_name
+  account_email       = var.account_email
+  arm_subscription_id = module.app_registration[0].subscription_id
+  arm_directory_id    = module.app_registration[0].directory_id
+  arm_client_id       = module.app_registration[0].client_id
+  arm_application_key = module.app_registration[0].application_key
+
+  depends_on = [
+    module.controller_init,
+    module.app_registration
+  ]
+}
