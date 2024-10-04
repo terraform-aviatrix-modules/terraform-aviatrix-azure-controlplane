@@ -53,7 +53,7 @@ resource "azurerm_network_security_rule" "controller_nsg_rule_https" {
   protocol                    = "Tcp"
   source_port_range           = "*"
   destination_port_range      = "443"
-  source_address_prefixes     = var.incoming_ssl_cidr
+  source_address_prefixes     = var.incoming_ssl_cidrs
   destination_address_prefix  = "*"
   description                 = "https-for-vm-management"
   resource_group_name         = var.use_existing_vnet == false ? azurerm_resource_group.controller_rg[0].name : var.resource_group_name

@@ -18,7 +18,7 @@ module "controller_build" {
   controller_virtual_machine_admin_username = var.controller_virtual_machine_admin_username
   controller_virtual_machine_admin_password = var.controller_virtual_machine_admin_password
   controller_virtual_machine_size           = var.controller_virtual_machine_size
-  incoming_ssl_cidr                         = local.controller_allowed_cidrs
+  incoming_ssl_cidrs                        = local.controller_allowed_cidrs
   use_existing_vnet                         = var.use_existing_vnet
   resource_group_name                       = var.resource_group_name
   vnet_name                                 = var.vnet_name

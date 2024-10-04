@@ -83,9 +83,9 @@ variable "create_custom_role" {
   default     = false
 }
 
-variable "incoming_ssl_cidr" {
+variable "incoming_ssl_cidrs" {
   type        = list(string)
-  description = "Incoming cidr for security group used by controller"
+  description = "Incoming cidrs for security group used by controller"
 }
 
 variable "location" {
