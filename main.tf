@@ -70,7 +70,7 @@ module "copilot_build" {
       priority = "100"
       protocol = "Tcp"
       ports    = ["443"]
-      cidrs    = var.incoming_ssl_cidr
+      cidrs    = var.incoming_ssl_cidrs
     }
     "udp_cidrs" = {
       priority = "200"
