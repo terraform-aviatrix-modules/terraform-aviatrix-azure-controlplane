@@ -15,8 +15,16 @@ variable "region" {
   default = "West Europe"
 }
 
-variable "name" {
-  default = "Aviatrix-Controlplane"
+variable "rg_name" {
+  default = "Aviatrix-Controlplane-RG"
+}
+
+variable "vnet_name" {
+  default = "Aviatrix-Controlplane-VNET"
+}
+
+variable "subnet_name" {
+  default = "Aviatrix-Controlplane-Subnet"
 }
 
 variable "vnet_cidr" {
@@ -24,13 +32,13 @@ variable "vnet_cidr" {
 }
 
 resource "azurerm_resource_group" "this" {
-  name     = var.name
+  name     = var.rg_name
   location = var.region
 }
 
 module "vnet" {
   source              = "Azure/vnet/azurerm"
-  vnet_name           = var.name
+  vnet_name           = var.vnet_name
   vnet_location       = var.region
   use_for_each        = true
   resource_group_name = azurerm_resource_group.this.name
@@ -39,7 +47,7 @@ module "vnet" {
     cidrsubnet(var.vnet_cidr, 3, 0),
   ]
   subnet_names = [
-    "AviatrixControlPlane",
+    var.subnet_name,
   ]
 
   depends_on = [
@@ -63,8 +71,8 @@ module "control_plane" {
   use_existing_vnet   = true
   resource_group_name = azurerm_resource_group.this.name
   subnet_id           = module.vnet.vnet_subnets[0]
-  vnet_name           = var.name
-  subnet_name         = var.name
+  vnet_name           = var.vnet_name
+  subnet_name         = var.subnet_name
 
   depends_on = [module.vnet]
 }
