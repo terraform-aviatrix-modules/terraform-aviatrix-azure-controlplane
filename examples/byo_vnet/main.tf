@@ -1,5 +1,6 @@
 provider "azurerm" {
   features {}
+  skip_provider_registration = true
 }
 
 variable "region" {
@@ -51,7 +52,7 @@ module "control_plane" {
   version = "1.0.0"
 
   controller_name           = "my_controller"
-  incoming_ssl_cidr         = ["1.2.3.4"]
+  incoming_ssl_cidrs        = ["1.2.3.4"]
   controller_admin_email    = "admin@domain.com"
   controller_admin_password = "mysecretpassword"
   account_email             = "admin@domain.com"
