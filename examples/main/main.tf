@@ -14,6 +14,7 @@ module "control_plane" {
   account_email             = "admin@domain.com"
   access_account_name       = "Azure"
   customer_id               = "xxxxxxx-abu-xxxxxxxxx"
+  location                  = "East US"
 }
 
 output "controlplane_data" {
