@@ -54,8 +54,8 @@ module "copilot_build" {
   source = "./modules/copilot_build"
 
   use_existing_vnet   = true
-  resource_group_name = module.controller_build[0].controller_rg.name
-  subnet_id           = module.controller_build[0].controller_subnet.id
+  resource_group_name = module.controller_build[0].controller_rg_name
+  subnet_id           = module.controller_build[0].controller_subnet_id
 
   controller_public_ip           = module.controller_build[0].controller_public_ip_address
   controller_private_ip          = module.controller_build[0].controller_private_ip_address

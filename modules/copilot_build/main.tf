@@ -164,15 +164,11 @@ resource "time_sleep" "sleep_10min_ssh" {
   depends_on = [azurerm_linux_virtual_machine.copilot_vm_ssh]
 }
 
-data "azurerm_resource_group" "rg" {
-  name = var.use_existing_vnet ? var.resource_group_name : azurerm_resource_group.copilot_rg[0].name
-}
-
 resource "azurerm_managed_disk" "default" {
   count                = var.default_data_disk_size == 0 ? 0 : 1
   name                 = var.default_data_disk_name
-  location             = data.azurerm_resource_group.rg.location
-  resource_group_name  = data.azurerm_resource_group.rg.name
+  location             = var.location
+  resource_group_name  = var.use_existing_vnet ? var.resource_group_name : azurerm_resource_group.copilot_rg[0].name
   storage_account_type = "Standard_LRS"
   create_option        = "Empty"
   disk_size_gb         = var.default_data_disk_size
