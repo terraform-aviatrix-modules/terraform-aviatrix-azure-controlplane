@@ -28,6 +28,8 @@ resource "azurerm_subnet" "controller_subnet" {
   resource_group_name  = azurerm_resource_group.controller_rg[0].name
   virtual_network_name = azurerm_virtual_network.controller_vnet[0].name
   address_prefixes     = [var.controller_subnet_cidr]
+
+  depends_on = [azurerm_resource_group.controller_rg]
 }
 
 // 3. Create Public IP Address
