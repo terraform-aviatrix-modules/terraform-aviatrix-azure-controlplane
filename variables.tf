@@ -33,6 +33,11 @@ variable "controller_name" {
   type        = string
   description = "Customized Name for Aviatrix Controller"
   default     = "Aviatrix-Controller"
+
+  validation {
+    condition     = can(regex("^[^\\\\/\"\\[\\]:|<>+=;,?*@&~!#$%^()_{}']*$", var.controller_name))
+    error_message = "Input string cannot contain the following special characters: `\\` `/` `\"` `[` `]` `:` `|` `<` `>` `+` `=` `;` `,` `?` `*` `@` `&` `~` `!` `#` `$` `%` `^` `(` `)` `_` `{` `}` `'`"
+  }
 }
 
 variable "copilot_name" {
