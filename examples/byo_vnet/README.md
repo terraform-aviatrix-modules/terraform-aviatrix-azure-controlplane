@@ -4,6 +4,8 @@ Prepare the environment by making sure you're logged in to with Azure CLI:
 ```bash
 az login
 ```
+Customize the variables below for your deployment needs. You will need to gather information about the target VNET and the Resource Group it's in first, then update the variables with **CHANGEME** based on your environment.
+
 
 Execute the following Terraform code:
 ```hcl
@@ -13,23 +15,28 @@ provider "azurerm" {
 }
 
 variable "region" {
-  default = "West Europe"
+  default = "CHANGEME" 
+  description = "This is the region containing the existing Resource Group that your VNET is in."
 }
 
 variable "rg_name" {
-  default = "Aviatrix-Controlplane-RG"
+  default = "CHANGEME"
+  description = "This the existing Resource Group that your VNET is in."
 }
 
 variable "vnet_name" {
-  default = "Aviatrix-Controlplane-VNET"
+  default = "CHANGEME"
+  description = "This the existing VNET you will deploy Aviatrix into. You can identify details for the VNET and Resource Group by looking at https://portal.azure.com/#browse/Microsoft.Network%2FvirtualNetworks"
 }
 
 variable "subnet_name" {
-  default = "Aviatrix-Controlplane-Subnet"
+  default = "Aviatrix-Controlplane-Subnet" # Can be customized
+  description = "This is the name of the subnet that will be created to deploy Aviatrix into."
 }
 
 variable "vnet_cidr" {
-  default = "10.0.0.0/22"
+  default = "CHANGEME"
+  description = "This is the Address Space of the target VNET, you can get this information from the VNET in the Azure portal by clicking on the VNET name."
 }
 
 resource "azurerm_resource_group" "this" {
@@ -60,7 +67,7 @@ module "control_plane" {
   source  = "terraform-aviatrix-modules/azure-controlplane/aviatrix"
   version = "1.0.0"
 
-  controller_name           = "my_controller"
+  controller_name           = "AviatrixControlPlane"
   incoming_ssl_cidrs        = ["1.2.3.4"]
   controller_admin_email    = "admin@domain.com"
   controller_admin_password = "mysecretpassword"

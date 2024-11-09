@@ -4,23 +4,28 @@ provider "azurerm" {
 }
 
 variable "region" {
-  default = "West Europe"
+  default = "East US"
+  description = "This is the region containing the existing Resource Group that your VNET is in."
 }
 
 variable "rg_name" {
-  default = "Aviatrix-Controlplane-RG"
+  default = "CHANGEME"
+  description = "This the existing Resource Group that your VNET is in."
 }
 
 variable "vnet_name" {
-  default = "Aviatrix-Controlplane-VNET"
+  default = "CHANGEME"
+  description = "This the existing VNET you will deploy Aviatrix into. You can identify details for the VNET and Resource Group by looking at https://portal.azure.com/#browse/Microsoft.Network%2FvirtualNetworks"
 }
 
 variable "subnet_name" {
-  default = "Aviatrix-Controlplane-Subnet"
+  default = "Aviatrix-Controlplane-Subnet" # Can be customized
+  description = "This is the name of the subnet that will be created to deploy Aviatrix into."
 }
 
 variable "vnet_cidr" {
-  default = "10.0.0.0/22"
+  default = "CHANGEME"
+  description = "This is the Address Space of the target VNET, you can get this information from the VNET in the Azure portal by clicking on the VNET name."
 }
 
 resource "azurerm_resource_group" "this" {
@@ -51,14 +56,14 @@ module "control_plane" {
   source  = "terraform-aviatrix-modules/azure-controlplane/aviatrix"
   version = "1.0.0"
 
-  controller_name           = "my_controller"
-  incoming_ssl_cidrs        = ["1.2.3.4"]
-  controller_admin_email    = "admin@domain.com"
-  controller_admin_password = "mysecretpassword"
-  account_email             = "admin@domain.com"
+  controller_name           = "AviatrixControlplane" # Can be customized
+  incoming_ssl_cidrs        = ["1.2.3.4"] # FROM UI
+  controller_admin_email    = "admin@domain.com" # FROM UI
+  controller_admin_password = "mysecretpassword" # FROM UI
+  account_email             = "admin@domain.com" # FROM UI
   access_account_name       = "Azure"
-  customer_id               = "xxxxxxx-abu-xxxxxxxxx"
-  location                  = var.region
+  customer_id               = "xxxxxxx-abu-xxxxxxxxx" # FROM UI
+  location                  = var.region # FROM UI
 
   use_existing_vnet   = true
   resource_group_name = azurerm_resource_group.this.name
