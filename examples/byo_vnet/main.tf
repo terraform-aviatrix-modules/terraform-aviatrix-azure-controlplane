@@ -17,10 +17,10 @@ module "control_plane" {
   location                  = var.region
 
   use_existing_vnet   = true
-  resource_group_name = <Put your resource group name>
-  vnet_name           = <Put your VNET name>
-  subnet_name         = <Put your Subnet name>
-  subnet_id           = <Put your subnet ID>
+  resource_group_name = "my-rg"     #Put your resource group name
+  vnet_name           = "my_vnet"   #Put your VNET name
+  subnet_name         = "my_subnet" #Put your Subnet name
+  subnet_id           = "xyz"       #Put your subnet ID
 }
 
 output "controlplane_data" {
