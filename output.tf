@@ -1,15 +1,11 @@
-output "controller_public_ip" {
-  value = var.module_config.controller_deployment ? module.controller_build[0].controller_public_ip_address : null
+output "Copilot_management_login" {
+  value = var.module_config.copilot_deployment ? format("https://%s/", module.copilot_build[0].public_ip) : null
 }
 
-output "controller_private_ip" {
-  value = var.module_config.controller_deployment ? module.controller_build[0].controller_private_ip_address : null
+output "username" {
+  value = "admin"
 }
 
-output "copilot_public_ip" {
-  value = var.module_config.copilot_deployment ? module.copilot_build[0].public_ip : null
-}
-
-output "copilot_private_ip" {
-  value = var.module_config.copilot_deployment ? module.copilot_build[0].private_ip : null
+output "password" {
+  value = var.controller_admin_password
 }

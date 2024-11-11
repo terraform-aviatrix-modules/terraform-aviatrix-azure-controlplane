@@ -1,6 +1,8 @@
 <!-- BEGIN_TF_DOCS -->
 # terraform-aviatrix-azure-controlplane
 
+# Version 0.9.x is specifically for usage in conjunction with launch.aviatrix.com.
+
 ### Description
 This module deploys the Aviatrix control plane, or individual parts thereof.
 
@@ -10,7 +12,7 @@ This module assumes you have Azure CLI installed and are authenticated with suff
 ### Compatibility
 Module version | Terraform version
 :--- | :---
-v1.0.1 | >= 1.3.0
+v0.9.0 | >= 1.3.0
 
 ### Usage Example
 ```hcl
@@ -21,7 +23,7 @@ provider "azurerm" {
 
 module "control_plane" {
   source  = "terraform-aviatrix-modules/azure-controlplane/aviatrix"
-  version = "1.0.1"
+  version = "0.9.0"
 
   controller_name           = "my_controller"
   incoming_ssl_cidrs        = ["1.2.3.4"]
