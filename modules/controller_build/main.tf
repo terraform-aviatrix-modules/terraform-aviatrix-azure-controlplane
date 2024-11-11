@@ -6,7 +6,7 @@
 
 # 1. Create an Azure resource group
 resource "azurerm_resource_group" "controller_rg" {
-  count    = var.use_existing_vnet == false ? 1 : 0
+  count    = var.use_existing_vnet ? 0 : 1
   location = var.location
   name     = "${var.controller_name}-rg"
 }
@@ -14,7 +14,7 @@ resource "azurerm_resource_group" "controller_rg" {
 # 2. Create the Virtual Network and Subnet
 //  Create the Virtual Network
 resource "azurerm_virtual_network" "controller_vnet" {
-  count               = var.use_existing_vnet == false ? 1 : 0
+  count               = var.use_existing_vnet ? 0 : 1
   address_space       = [var.controller_vnet_cidr]
   location            = var.location
   name                = "${var.controller_name}-vnet"
@@ -23,7 +23,7 @@ resource "azurerm_virtual_network" "controller_vnet" {
 
 //  Create the Subnet
 resource "azurerm_subnet" "controller_subnet" {
-  count                = var.use_existing_vnet == false ? 1 : 0
+  count                = var.use_existing_vnet ? 0 : 1
   name                 = "${var.controller_name}-subnet"
   resource_group_name  = azurerm_resource_group.controller_rg[0].name
   virtual_network_name = azurerm_virtual_network.controller_vnet[0].name

@@ -1,11 +1,11 @@
 resource "azurerm_resource_group" "copilot_rg" {
-  count    = var.use_existing_vnet == false ? 1 : 0
+  count    = var.use_existing_vnet ? 0 : 1
   location = var.location
   name     = "${var.copilot_name}-rg"
 }
 
 resource "azurerm_virtual_network" "copilot_vnet" {
-  count               = var.use_existing_vnet == false ? 1 : 0
+  count               = var.use_existing_vnet ? 0 : 1
   address_space       = [var.vnet_cidr]
   location            = var.location
   name                = "${var.copilot_name}-vnet"
@@ -13,7 +13,7 @@ resource "azurerm_virtual_network" "copilot_vnet" {
 }
 
 resource "azurerm_subnet" "copilot_subnet" {
-  count                = var.use_existing_vnet == false ? 1 : 0
+  count                = var.use_existing_vnet ? 0 : 1
   name                 = "${var.copilot_name}-subnet"
   resource_group_name  = azurerm_resource_group.copilot_rg[0].name
   virtual_network_name = azurerm_virtual_network.copilot_vnet[0].name
@@ -25,13 +25,13 @@ resource "azurerm_public_ip" "copilot_public_ip" {
   allocation_method   = "Static"
   location            = var.location
   name                = "${var.copilot_name}-public-ip"
-  resource_group_name = var.use_existing_vnet == false ? azurerm_resource_group.copilot_rg[0].name : var.resource_group_name
+  resource_group_name = var.use_existing_vnet ? var.resource_group_name : azurerm_resource_group.copilot_rg[0].name
 }
 
 resource "azurerm_network_security_group" "copilot_nsg" {
   location            = var.location
   name                = "${var.copilot_name}-security-group"
-  resource_group_name = var.use_existing_vnet == false ? azurerm_resource_group.copilot_rg[0].name : var.resource_group_name
+  resource_group_name = var.use_existing_vnet ? var.resource_group_name : azurerm_resource_group.copilot_rg[0].name
 
   dynamic "security_rule" {
     for_each = var.allowed_cidrs
@@ -52,12 +52,12 @@ resource "azurerm_network_security_group" "copilot_nsg" {
 resource "azurerm_network_interface" "copilot_nic" {
   location            = var.location
   name                = "${var.copilot_name}-network-interface-card"
-  resource_group_name = var.use_existing_vnet == false ? azurerm_resource_group.copilot_rg[0].name : var.resource_group_name
+  resource_group_name = var.use_existing_vnet ? var.resource_group_name : azurerm_resource_group.copilot_rg[0].name
 
   ip_configuration {
     name                          = "${var.copilot_name}-nic"
     private_ip_address_allocation = "Dynamic"
-    subnet_id                     = var.use_existing_vnet == false ? azurerm_subnet.copilot_subnet[0].id : var.subnet_id
+    subnet_id                     = var.use_existing_vnet ? var.subnet_id : azurerm_subnet.copilot_subnet[0].id
     public_ip_address_id          = var.private_mode ? "" : azurerm_public_ip.copilot_public_ip[0].id
   }
 }
@@ -127,7 +127,7 @@ resource "azurerm_linux_virtual_machine" "copilot_vm_ssh" {
   name                  = "${var.copilot_name}-vm"
   location              = var.location
   network_interface_ids = [azurerm_network_interface.copilot_nic.id]
-  resource_group_name   = var.use_existing_vnet == false ? azurerm_resource_group.copilot_rg[0].name : var.resource_group_name
+  resource_group_name   = var.use_existing_vnet ? var.resource_group_name : azurerm_resource_group.copilot_rg[0].name
   size                  = var.virtual_machine_size
   custom_data           = base64encode(local.custom_data)
 
