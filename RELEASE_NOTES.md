@@ -1,5 +1,8 @@
 # module name - release notes
 
+## v1.0.2
+- Enabled Controller security group management
+  
 ## v1.0.1
 - Remove unnecessary data sources
 - Update copilot init module version
