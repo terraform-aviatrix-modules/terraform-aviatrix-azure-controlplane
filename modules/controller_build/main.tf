@@ -103,17 +103,30 @@ resource "azurerm_linux_virtual_machine" "controller_vm" {
     storage_account_type = "Standard_LRS"
   }
 
+  # source_image_reference {
+  #   offer     = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["offer"]
+  #   publisher = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["publisher"]
+  #   sku       = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["sku"]
+  #   version   = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["version"]
+  # }
+
+  # plan {
+  #   name      = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["sku"]
+  #   product   = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["offer"]
+  #   publisher = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["publisher"]
+  # }
+
   source_image_reference {
-    offer     = jsondecode(data.http.image_info.response_body)["g3"]["amd64"]["Azure ARM"]["offer"]
-    publisher = jsondecode(data.http.image_info.response_body)["g3"]["amd64"]["Azure ARM"]["publisher"]
-    sku       = jsondecode(data.http.image_info.response_body)["g3"]["amd64"]["Azure ARM"]["sku"]
-    version   = jsondecode(data.http.image_info.response_body)["g3"]["amd64"]["Azure ARM"]["version"]
+    offer     = jsondecode(local.temp_image_mapping)["g4"]["amd64"]["Azure ARM"]["offer"]
+    publisher = jsondecode(local.temp_image_mapping)["g4"]["amd64"]["Azure ARM"]["publisher"]
+    sku       = jsondecode(local.temp_image_mapping)["g4"]["amd64"]["Azure ARM"]["sku"]
+    version   = jsondecode(local.temp_image_mapping)["g4"]["amd64"]["Azure ARM"]["version"]
   }
 
   plan {
-    name      = jsondecode(data.http.image_info.response_body)["g3"]["amd64"]["Azure ARM"]["sku"]
-    product   = jsondecode(data.http.image_info.response_body)["g3"]["amd64"]["Azure ARM"]["offer"]
-    publisher = jsondecode(data.http.image_info.response_body)["g3"]["amd64"]["Azure ARM"]["publisher"]
+    name      = jsondecode(local.temp_image_mapping)["g4"]["amd64"]["Azure ARM"]["sku"]
+    product   = jsondecode(local.temp_image_mapping)["g4"]["amd64"]["Azure ARM"]["offer"]
+    publisher = jsondecode(local.temp_image_mapping)["g4"]["amd64"]["Azure ARM"]["publisher"]
   }
 }
 
@@ -123,4 +136,42 @@ data "http" "image_info" {
   request_headers = {
     "Accept" = "application/json"
   }
+}
+
+
+locals {
+
+  #This fakes the Image JSON file, until it is published.
+  temp_image_mapping = <<EOF
+{
+    "BYOL": {
+        "Azure ARM": {
+            "publisher": "aviatrix-systems",
+            "offer": "aviatrix-bundle-payg",
+            "sku": "aviatrix-enterprise-bundle-byol",
+            "version": "latest"
+        }
+    },
+    "g3": {
+        "amd64": {
+            "Azure ARM": {
+                "publisher": "aviatrix-systems",
+                "offer": "aviatrix-controller",
+                "sku": "aviatrix-controller-g3",
+                "version": "20240923.1605.0"
+            }
+        }
+    },
+    "g4": {
+        "amd64": {
+            "Azure ARM": {
+                "publisher": "aviatrix-systems",
+                "offer": "aviatrix-controller",
+                "sku": "aviatrix-controller-g4",
+                "version": "latest"
+            }
+        }
+    }    
+}
+EOF
 }
