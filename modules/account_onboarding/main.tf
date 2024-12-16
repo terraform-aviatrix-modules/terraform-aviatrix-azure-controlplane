@@ -89,7 +89,7 @@ resource "terracurl_request" "enable_controller_security_group_management" {
   lifecycle {
     postcondition {
       condition     = jsondecode(self.response)["return"]
-      error_message = "Failed to set customer id: ${jsondecode(self.response)["reason"]}"
+      error_message = "Failed to enable security group management: ${jsondecode(self.response)["reason"]}"
     }
 
     ignore_changes = all
