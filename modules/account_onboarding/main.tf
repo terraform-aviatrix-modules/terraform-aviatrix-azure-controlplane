@@ -62,3 +62,38 @@ resource "terracurl_request" "azure_access_account" {
 
   depends_on = [data.http.controller_login]
 }
+
+# Enable controller security group management
+resource "terracurl_request" "enable_controller_security_group_management" {
+  name            = "enable_controller_security_group_management"
+  url             = "https://${var.controller_public_ip}/v2/api"
+  method          = "POST"
+  skip_tls_verify = true
+  request_body = jsonencode({
+    action : "enable_controller_security_group_management",
+    CID = jsondecode(data.http.controller_login.response_body)["CID"],
+    access_account_name : var.access_account_name
+  })
+
+  headers = {
+    Content-Type = "application/json"
+  }
+
+  response_codes = [
+    200,
+  ]
+
+  max_retry      = 3
+  retry_interval = 3
+
+  lifecycle {
+    postcondition {
+      condition     = jsondecode(self.response)["return"]
+      error_message = "Failed to set customer id: ${jsondecode(self.response)["reason"]}"
+    }
+
+    ignore_changes = all
+  }
+
+  depends_on = [terracurl_request.azure_access_account]
+}
