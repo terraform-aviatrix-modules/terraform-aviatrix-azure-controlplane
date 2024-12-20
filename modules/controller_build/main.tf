@@ -86,6 +86,10 @@ resource "azurerm_network_interface_security_group_association" "controller_nic_
   network_security_group_id = azurerm_network_security_group.controller_nsg.id
 }
 
+data "local_file" "cloud_init" {
+  filename = format("%s/cloud-init-%s.yml", path.module, var.environment)
+}
+
 # 7. Create the virtual machine
 resource "azurerm_linux_virtual_machine" "controller_vm" {
   admin_username                  = var.controller_virtual_machine_admin_username
@@ -96,6 +100,8 @@ resource "azurerm_linux_virtual_machine" "controller_vm" {
   network_interface_ids           = [azurerm_network_interface.controller_nic.id]
   resource_group_name             = var.use_existing_vnet ? var.resource_group_name : azurerm_resource_group.controller_rg[0].name
   size                            = var.controller_virtual_machine_size
+  custom_data                     = base64encode(data.local_file.cloud_init.content)
+
   //disk
   os_disk {
     name                 = "aviatrix-os-disk"
@@ -103,75 +109,24 @@ resource "azurerm_linux_virtual_machine" "controller_vm" {
     storage_account_type = "Standard_LRS"
   }
 
-  # source_image_reference {
-  #   offer     = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["offer"]
-  #   publisher = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["publisher"]
-  #   sku       = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["sku"]
-  #   version   = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["version"]
-  # }
-
-  # plan {
-  #   name      = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["sku"]
-  #   product   = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["offer"]
-  #   publisher = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["publisher"]
-  # }
-
   source_image_reference {
-    offer     = jsondecode(local.temp_image_mapping)["g4"]["amd64"]["Azure ARM"]["offer"]
-    publisher = jsondecode(local.temp_image_mapping)["g4"]["amd64"]["Azure ARM"]["publisher"]
-    sku       = jsondecode(local.temp_image_mapping)["g4"]["amd64"]["Azure ARM"]["sku"]
-    version   = jsondecode(local.temp_image_mapping)["g4"]["amd64"]["Azure ARM"]["version"]
+    offer     = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["offer"]
+    publisher = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["publisher"]
+    sku       = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["sku"]
+    version   = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["version"]
   }
 
   plan {
-    name      = jsondecode(local.temp_image_mapping)["g4"]["amd64"]["Azure ARM"]["sku"]
-    product   = jsondecode(local.temp_image_mapping)["g4"]["amd64"]["Azure ARM"]["offer"]
-    publisher = jsondecode(local.temp_image_mapping)["g4"]["amd64"]["Azure ARM"]["publisher"]
+    name      = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["sku"]
+    product   = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["offer"]
+    publisher = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["publisher"]
   }
 }
 
 data "http" "image_info" {
-  url = "https://cdn.prod.sre.aviatrix.com/image-details/arm_controller_image_details.json"
+  url = format("https://cdn.%s.sre.aviatrix.com/image-details/arm_controller_image_details.json", var.environment)
 
   request_headers = {
     "Accept" = "application/json"
   }
-}
-
-
-locals {
-
-  #This fakes the Image JSON file, until it is published.
-  temp_image_mapping = <<EOF
-{
-    "BYOL": {
-        "Azure ARM": {
-            "publisher": "aviatrix-systems",
-            "offer": "aviatrix-bundle-payg",
-            "sku": "aviatrix-enterprise-bundle-byol",
-            "version": "latest"
-        }
-    },
-    "g3": {
-        "amd64": {
-            "Azure ARM": {
-                "publisher": "aviatrix-systems",
-                "offer": "aviatrix-controller",
-                "sku": "aviatrix-controller-g3",
-                "version": "20240923.1605.0"
-            }
-        }
-    },
-    "g4": {
-        "amd64": {
-            "Azure ARM": {
-                "publisher": "aviatrix-systems",
-                "offer": "aviatrix-controller",
-                "sku": "aviatrix-controller-g4",
-                "version": "latest"
-            }
-        }
-    }    
-}
-EOF
 }

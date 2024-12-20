@@ -4,6 +4,7 @@ module "azure_marketplace_agreement" {
 
   accept_controller_subscription = var.module_config.accept_controller_subscription
   accept_copilot_subscription    = var.module_config.accept_copilot_subscription
+  environment                    = var.environment #For internal use only
 }
 
 module "controller_build" {
@@ -24,6 +25,7 @@ module "controller_build" {
   vnet_name                                 = var.vnet_name
   subnet_name                               = var.subnet_name
   subnet_id                                 = var.subnet_id
+  environment                               = var.environment #For internal use only
 
   depends_on = [
     module.azure_marketplace_agreement
@@ -34,13 +36,14 @@ module "controller_init" {
   count = var.module_config.controller_initialization ? 1 : 0
 
   source  = "terraform-aviatrix-modules/controller-init/aviatrix"
-  version = "v1.0.2"
+  version = "v1.0.3"
 
   controller_public_ip      = module.controller_build[0].controller_public_ip_address
   controller_private_ip     = module.controller_build[0].controller_private_ip_address
   controller_admin_email    = var.controller_admin_email
   controller_admin_password = var.controller_admin_password
   customer_id               = var.customer_id
+  wait_for_setup_duration   = "0s"
 
   depends_on = [
     module.controller_build
@@ -64,6 +67,7 @@ module "copilot_build" {
   virtual_machine_admin_password = local.virtual_machine_admin_password
   default_data_disk_size         = "100"
   location                       = var.location
+  environment                    = var.environment #For internal use only
 
   allowed_cidrs = {
     "tcp_cidrs" = {
