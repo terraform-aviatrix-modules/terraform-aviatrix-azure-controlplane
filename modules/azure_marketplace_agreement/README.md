@@ -1,23 +1,18 @@
-## Providers
+<!-- BEGIN_TF_DOCS -->
+# terraform-aviatrix-azure-controlplane - marketplace-agreement
 
-| Name | Version |
-|------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | n/a |
-| <a name="provider_http"></a> [http](#provider\_http) | n/a |
+### Description
+This submodule helps with subscribing to the Aviatrix marketplace offerings.
 
-## Modules
+### Usage Example
+```hcl
+module "azure_marketplace_agreement" {
+  source = "./modules/azure_marketplace_agreement"
 
-No modules.
-
-## Resources
-
-| Name | Type |
-|------|------|
-| [azurerm_marketplace_agreement.controller_mp_agreement](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/marketplace_agreement) | resource |
-| [azurerm_marketplace_agreement.copilot_mp_agreement](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/marketplace_agreement) | resource |
-| [http_http.controller_image_info](https://registry.terraform.io/providers/hashicorp/http/latest/docs/data-sources/http) | data source |
-| [http_http.copilot_image_info](https://registry.terraform.io/providers/hashicorp/http/latest/docs/data-sources/http) | data source |
-
+  accept_controller_subscription = true #Default
+  accept_copilot_subscription    = true #Default
+}
+```
 ## Inputs
 
 | Name | Description | Type | Default | Required |
@@ -28,3 +23,4 @@ No modules.
 ## Outputs
 
 No outputs.
+<!-- END_TF_DOCS -->
