@@ -1,4 +1,4 @@
-# module name - release notes
+# terraform-aviatrix-azure-controlplane - release notes
 
 ## v1.1.0
 - Now supports g4 images (v8.0.0)
