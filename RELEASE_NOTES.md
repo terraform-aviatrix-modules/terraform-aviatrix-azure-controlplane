@@ -3,6 +3,7 @@
 ## v1.0.2
 - Enabled Controller security group management
 - Fix issue where NSG throws an error getting a null in stead of a string, when disabling deployment of copilot.
+- Bump copilot init to version 1.0.4.
 
 ## v1.0.1
 - Remove unnecessary data sources
