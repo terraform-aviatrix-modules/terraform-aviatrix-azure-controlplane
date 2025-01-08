@@ -65,6 +65,7 @@ module "copilot_build" {
   copilot_name                   = var.copilot_name
   virtual_machine_admin_username = var.controller_virtual_machine_admin_username
   virtual_machine_admin_password = local.virtual_machine_admin_password
+  virtual_machine_size           = var.copilot_virtual_machine_size
   default_data_disk_size         = "100"
   location                       = var.location
   environment                    = var.environment #For internal use only
