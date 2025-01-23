@@ -168,3 +168,12 @@ variable "environment" {
     error_message = "The environment must be either 'prod' or 'staging'."
   }
 }
+
+# terraform-docs-ignore
+variable "registry_auth_token" {
+  description = "The token used to authenticate to the controller artifact registry. For internal use only."
+  type        = string
+  default     = ""
+  nullable    = false
+}
+

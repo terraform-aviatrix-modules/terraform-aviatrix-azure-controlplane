@@ -84,10 +84,12 @@ resource "azurerm_network_interface" "controller_nic" {
 resource "azurerm_network_interface_security_group_association" "controller_nic_sg" {
   network_interface_id      = azurerm_network_interface.controller_nic.id
   network_security_group_id = azurerm_network_security_group.controller_nsg.id
-}
 
-data "local_file" "cloud_init" {
-  filename = format("%s/cloud-init-%s.yml", path.module, var.environment)
+  // https://github.com/hashicorp/terraform/issues/24663
+  depends_on = [
+    azurerm_network_interface.controller_nic,
+    azurerm_network_security_group.controller_nsg
+  ]
 }
 
 # 7. Create the virtual machine
@@ -100,7 +102,11 @@ resource "azurerm_linux_virtual_machine" "controller_vm" {
   network_interface_ids           = [azurerm_network_interface.controller_nic.id]
   resource_group_name             = var.use_existing_vnet ? var.resource_group_name : azurerm_resource_group.controller_rg[0].name
   size                            = var.controller_virtual_machine_size
-  custom_data                     = base64encode(data.local_file.cloud_init.content)
+  custom_data = base64encode(templatefile("${path.module}/cloud-init.tftpl", {
+    controller_version  = var.controller_version
+    environment         = var.environment
+    registry_auth_token = var.registry_auth_token
+  }))
 
   //disk
   os_disk {
@@ -121,6 +127,9 @@ resource "azurerm_linux_virtual_machine" "controller_vm" {
     product   = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["offer"]
     publisher = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["publisher"]
   }
+
+  // https://github.com/hashicorp/terraform/issues/24663
+  depends_on = [azurerm_network_interface.controller_nic]
 }
 
 data "http" "image_info" {

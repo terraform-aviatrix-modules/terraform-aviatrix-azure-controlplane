@@ -13,6 +13,7 @@ module "controller_build" {
   source = "./modules/controller_build"
   // please do not use special characters such as `\/"[]:|<>+=;,?*@&~!#$%^()_{}'` in the controller_name
   controller_name                           = var.controller_name
+  controller_version                        = var.controller_version
   location                                  = var.location
   controller_vnet_cidr                      = var.controlplane_vnet_cidr
   controller_subnet_cidr                    = var.controlplane_subnet_cidr
@@ -25,7 +26,8 @@ module "controller_build" {
   vnet_name                                 = var.vnet_name
   subnet_name                               = var.subnet_name
   subnet_id                                 = var.subnet_id
-  environment                               = var.environment #For internal use only
+  environment                               = var.environment         #For internal use only
+  registry_auth_token                       = var.registry_auth_token #For internal use only
 
   depends_on = [
     module.azure_marketplace_agreement
@@ -36,7 +38,7 @@ module "controller_init" {
   count = var.module_config.controller_initialization ? 1 : 0
 
   source  = "terraform-aviatrix-modules/controller-init/aviatrix"
-  version = "v1.0.3"
+  version = "v1.0.4"
 
   controller_public_ip      = module.controller_build[0].controller_public_ip_address
   controller_private_ip     = module.controller_build[0].controller_private_ip_address
