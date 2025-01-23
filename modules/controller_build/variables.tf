@@ -9,6 +9,12 @@ variable "controller_name" {
   description = "Customized Name for Aviatrix Controller"
 }
 
+variable "controller_version" {
+  type        = string
+  description = "Aviatrix Controller version"
+  default     = "latest"
+}
+
 variable "controller_vnet_cidr" {
   type        = string
   description = "CIDR for controller VNET."
@@ -86,3 +92,12 @@ variable "environment" {
     error_message = "The environment must be either 'prod' or 'staging'."
   }
 }
+
+# terraform-docs-ignore
+variable "registry_auth_token" {
+  description = "The token used to authenticate to the controller artifact registry. For internal use only."
+  type        = string
+  default     = ""
+  nullable    = false
+}
+
