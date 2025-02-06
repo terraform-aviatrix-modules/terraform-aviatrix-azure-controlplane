@@ -46,3 +46,10 @@ variable "arm_application_key" {
   sensitive   = true
   description = "Azure application key"
 }
+
+# terraform-docs-ignore
+variable "destroy_url" {
+  type        = string
+  description = "Dummy URL used by terracurl during destroy operations."
+  default     = "https://checkip.amazonaws.com"
+}

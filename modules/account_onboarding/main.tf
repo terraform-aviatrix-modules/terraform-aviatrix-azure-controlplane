@@ -51,6 +51,9 @@ resource "terracurl_request" "azure_access_account" {
   max_retry      = 5
   retry_interval = 1
 
+  destroy_url    = var.destroy_url
+  destroy_method = "GET"
+
   lifecycle {
     postcondition {
       condition     = jsondecode(self.response)["return"]
@@ -85,6 +88,9 @@ resource "terracurl_request" "enable_controller_security_group_management" {
 
   max_retry      = 3
   retry_interval = 3
+
+  destroy_url    = var.destroy_url
+  destroy_method = "GET"
 
   lifecycle {
     postcondition {
