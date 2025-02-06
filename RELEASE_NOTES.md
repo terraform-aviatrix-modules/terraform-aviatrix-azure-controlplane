@@ -1,5 +1,8 @@
 # module name - release notes
 
+## v1.0.4
+- Found and resolved another issue with terracurl on destroy, in the onboarding submodule.
+
 ## v1.0.3
 - Bump init module versions, to solve issue with terracurl on destroy.
 

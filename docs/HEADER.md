@@ -9,4 +9,4 @@ This module assumes you have Azure CLI installed and are authenticated with suff
 ### Compatibility
 Module version | Terraform version
 :--- | :---
-v1.0.2 | >= 1.3.0
+v1.0.4 | >= 1.3.0

@@ -10,7 +10,7 @@ This module assumes you have Azure CLI installed and are authenticated with suff
 ### Compatibility
 Module version | Terraform version
 :--- | :---
-v1.0.3 | >= 1.3.0
+v1.0.4 | >= 1.3.0
 
 ### Usage Example
 ```hcl
@@ -21,7 +21,7 @@ provider "azurerm" {
 
 module "control_plane" {
   source  = "terraform-aviatrix-modules/azure-controlplane/aviatrix"
-  version = "1.0.3"
+  version = "1.0.4"
 
   controller_name           = "my_controller"
   incoming_ssl_cidrs        = ["1.2.3.4"]
