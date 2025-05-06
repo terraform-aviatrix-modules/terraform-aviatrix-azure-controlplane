@@ -96,7 +96,7 @@ resource "azurerm_role_definition" "aviatrix_backup" {
 # Service role add-on allowing Aviatrix controller to manage Azure ER connections
 resource "azurerm_role_definition" "aviatrix_transits" {
   count = var.create_custom_role ? 1 : 0
-  
+
   name        = var.aviatrix_role_names.transit_gw_name
   scope       = local.controller_rg
   description = local.transit_role.Description
@@ -117,7 +117,7 @@ resource "azurerm_role_assignment" "aviatrix_read_only" {
 
   scope                = each.value
   role_definition_name = azurerm_role_definition.aviatrix_read_only[0].name
-  principal_id = azuread_service_principal.aviatrix_sp.object_id
+  principal_id         = azuread_service_principal.aviatrix_sp.object_id
 }
 
 resource "azurerm_role_assignment" "aviatrix_service_subscription_level" {
@@ -125,7 +125,7 @@ resource "azurerm_role_assignment" "aviatrix_service_subscription_level" {
 
   scope                = each.value
   role_definition_name = var.create_custom_role ? azurerm_role_definition.aviatrix_service[0].name : "Contributor"
-  principal_id = azuread_service_principal.aviatrix_sp.object_id
+  principal_id         = azuread_service_principal.aviatrix_sp.object_id
 }
 
 resource "azurerm_role_assignment" "aviatrix_service_rg_level" {
@@ -133,22 +133,22 @@ resource "azurerm_role_assignment" "aviatrix_service_rg_level" {
 
   scope                = each.value
   role_definition_name = azurerm_role_definition.aviatrix_service[0].name
-  principal_id = azuread_service_principal.aviatrix_sp.object_id
+  principal_id         = azuread_service_principal.aviatrix_sp.object_id
 }
 
 resource "azurerm_role_assignment" "aviatrix_transit_gw" {
-  count = var.create_custom_role ? 1 :0
-  
+  count = var.create_custom_role ? 1 : 0
+
   scope                = local.controller_rg
   role_definition_name = azurerm_role_definition.aviatrix_transits[0].name
-  principal_id = azuread_service_principal.aviatrix_sp.object_id
+  principal_id         = azuread_service_principal.aviatrix_sp.object_id
 }
 
 resource "azurerm_role_assignment" "aviatrix_backup" {
-  count = var.create_custom_role ? 1 :0
+  count = var.create_custom_role ? 1 : 0
 
   scope                = local.controller_rg
   role_definition_name = azurerm_role_definition.aviatrix_backup[0].name
-  principal_id = azuread_service_principal.aviatrix_sp.object_id
+  principal_id         = azuread_service_principal.aviatrix_sp.object_id
 }
 
