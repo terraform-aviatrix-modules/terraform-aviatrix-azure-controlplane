@@ -1,0 +1,32 @@
+{
+    "Name": "aviatrix-service",
+    "IsCustom": true,
+    "Description": "Role used by the Aviatrix controller to modify resources in specified resource groups or subscriptions",
+    "Actions": [
+        "Microsoft.Compute/availabilitySets/*",
+        "Microsoft.Compute/virtualMachines/*",
+        "Microsoft.Network/publicIPAddresses/*",
+        "Microsoft.Network/networkInterfaces/*",
+        "Microsoft.Network/networkSecurityGroups/*",
+        "Microsoft.Network/loadBalancers/*",
+        "Microsoft.Network/routeTables/*",
+        "Microsoft.Network/virtualNetworks/*",
+        "Microsoft.Resourcehealth/healthevent/*",
+        "Microsoft.Resources/deployments/*",
+        "Microsoft.Resources/tags/*",
+        "Microsoft.Resources/marketplace/purchase/action",  
+        "Microsoft.MarketplaceOrdering/offertypes/publishers/offers/plans/agreements/read", 
+        "Microsoft.MarketplaceOrdering/offertypes/publishers/offers/plans/agreements/write"
+    ],
+    "NotActions": [],
+    "DataActions": [],
+    "NotDataActions": [],
+    "AssignableScopes": [
+        "Format:",
+        "/subscriptions/id-1/resourceGroups/rg-A",
+        "/subscriptions/..../resourceGroups/rg-....",
+        "/subscriptions/id-x/resourceGroups/rg-B",
+        "",
+        "Defined in the tfvars file - aviatrix_rgs"
+    ]
+}

@@ -17,7 +17,11 @@ resource "azuread_application" "aviatrix_ad_app" {
 # 2. Create the password for the created APP
 resource "azuread_application_password" "aviatrix_app_password" {
   application_id = azuread_application.aviatrix_ad_app.id
-  end_date       = "2120-12-30T23:00:00Z"
+  end_date       = timeadd(timestamp(), var.app_password_validity_length)
+
+  lifecycle {
+    ignore_changes = [end_date]
+  }
 }
 
 # 3. Create SP associated with the APP
@@ -34,47 +38,117 @@ resource "azuread_service_principal_password" "aviatrix_sp_password" {
 # 5. Create a role assignment for the created SP
 data "azurerm_subscription" "main" {}
 
-# 6. Create a custom role if var.create_custom_role = true
-# The permissions in this role are based on https://docs.aviatrix.com/HowTos/azure_custom_role.html
-resource "azurerm_role_definition" "custom_role" {
-  count       = var.create_custom_role ? 1 : 0
-  name        = "Aviatrix Controller Custom Role"
-  scope       = data.azurerm_subscription.main.id
-  description = "Custom role for Aviatrix Controller. Created via Terraform"
+# 6. Create a custom roles if var.create_custom_role = true
+# Read only role assigned to all subscribtions with Aviatrix managed resources
+resource "azurerm_role_definition" "aviatrix_read_only" {
+  count = var.create_custom_role ? 1 : 0
+
+  name        = var.aviatrix_role_names.read_only_name
+  scope       = local.subscription_ids_full[0]
+  description = local.read_only_role.Description
 
   permissions {
-    actions = [
-      "Microsoft.MarketplaceOrdering/offerTypes/publishers/offers/plans/agreements/*",
-      "Microsoft.Compute/*/read",
-      "Microsoft.Compute/availabilitySets/*",
-      "Microsoft.Compute/virtualMachines/*",
-      "Microsoft.Compute/disks/*",
-      "Microsoft.Network/*/read",
-      "Microsoft.Network/publicIPAddresses/*",
-      "Microsoft.Network/networkInterfaces/*",
-      "Microsoft.Network/networkSecurityGroups/*",
-      "Microsoft.Network/loadBalancers/*",
-      "Microsoft.Network/routeTables/*",
-      "Microsoft.Network/virtualNetworks/*",
-      "Microsoft.Storage/storageAccounts/*",
-      "Microsoft.Resources/*/read",
-      "Microsoft.Resourcehealth/healthevent/*",
-      "Microsoft.Resources/deployments/*",
-      "Microsoft.Resources/tags/*",
-      "Microsoft.Resources/marketplace/purchase/*",
-      "Microsoft.Resources/subscriptions/resourceGroups/*"
-    ]
-    not_actions = []
+    actions          = local.read_only_role.Actions
+    not_actions      = local.read_only_role.NotActions
+    data_actions     = local.read_only_role.DataActions
+    not_data_actions = local.read_only_role.NotDataActions
   }
 
-  assignable_scopes = [
-    data.azurerm_subscription.main.id,
-  ]
+  assignable_scopes = local.subscription_ids_full
 }
 
-resource "azurerm_role_assignment" "aviatrix_sp_role" {
-  scope                = data.azurerm_subscription.main.id
-  role_definition_name = var.create_custom_role ? null : "Contributor"
-  role_definition_id   = var.create_custom_role ? azurerm_role_definition.custom_role[0].role_definition_resource_id : null
-  principal_id         = azuread_service_principal.aviatrix_sp.id
+# Service role allowing Aviatrix controller to modify resources
+resource "azurerm_role_definition" "aviatrix_service" {
+  count = var.create_custom_role ? 1 : 0
+
+  name        = var.aviatrix_role_names.service_name
+  scope       = length(var.aviatrix_rgs) == 0 ? local.subscription_ids_full[0] : local.controller_rg
+  description = local.service_role.Description
+
+  permissions {
+    actions          = local.service_role.Actions
+    not_actions      = local.service_role.NotActions
+    data_actions     = local.service_role.DataActions
+    not_data_actions = local.service_role.NotDataActions
+  }
+
+  assignable_scopes = length(var.aviatrix_rgs) == 0 ? local.subscription_ids_full : concat([local.controller_rg], local.aviatrix_rgs_full)
 }
+
+# Service role add-on allowing Aviatrix controller to backup its configuration into a storage account
+resource "azurerm_role_definition" "aviatrix_backup" {
+  count = var.create_custom_role ? 1 : 0
+
+  name        = var.aviatrix_role_names.backup_name
+  scope       = local.controller_rg
+  description = local.backup_role.Description
+
+  permissions {
+    actions          = local.backup_role.Actions
+    not_actions      = local.backup_role.NotActions
+    data_actions     = local.backup_role.DataActions
+    not_data_actions = local.backup_role.NotDataActions
+  }
+
+  assignable_scopes = [local.controller_rg]
+}
+
+# Service role add-on allowing Aviatrix controller to manage Azure ER connections
+resource "azurerm_role_definition" "aviatrix_transits" {
+  count = var.create_custom_role ? 1 : 0
+  
+  name        = var.aviatrix_role_names.transit_gw_name
+  scope       = local.controller_rg
+  description = local.transit_role.Description
+
+  permissions {
+    actions          = local.transit_role.Actions
+    not_actions      = local.transit_role.NotActions
+    data_actions     = local.transit_role.DataActions
+    not_data_actions = local.transit_role.NotDataActions
+  }
+
+  assignable_scopes = [local.controller_rg]
+}
+
+#7. Assign roles to subscriptions or resource groups. 
+resource "azurerm_role_assignment" "aviatrix_read_only" {
+  for_each = var.create_custom_role ? toset(local.subscription_ids_full) : toset([])
+
+  scope                = each.value
+  role_definition_name = azurerm_role_definition.aviatrix_read_only[0].name
+  principal_id = azuread_service_principal.aviatrix_sp.object_id
+}
+
+resource "azurerm_role_assignment" "aviatrix_service_subscription_level" {
+  for_each = length(var.aviatrix_rgs) == 0 ? toset(local.subscription_ids_full) : toset([])
+
+  scope                = each.value
+  role_definition_name = var.create_custom_role ? azurerm_role_definition.aviatrix_service[0].name : "Contributor"
+  principal_id = azuread_service_principal.aviatrix_sp.object_id
+}
+
+resource "azurerm_role_assignment" "aviatrix_service_rg_level" {
+  for_each = var.create_custom_role && length(var.aviatrix_rgs) > 0 ? toset(concat([local.controller_rg], local.aviatrix_rgs_full)) : toset([])
+
+  scope                = each.value
+  role_definition_name = azurerm_role_definition.aviatrix_service[0].name
+  principal_id = azuread_service_principal.aviatrix_sp.object_id
+}
+
+resource "azurerm_role_assignment" "aviatrix_transit_gw" {
+  count = var.create_custom_role ? 1 :0
+  
+  scope                = local.controller_rg
+  role_definition_name = azurerm_role_definition.aviatrix_transits[0].name
+  principal_id = azuread_service_principal.aviatrix_sp.object_id
+}
+
+resource "azurerm_role_assignment" "aviatrix_backup" {
+  count = var.create_custom_role ? 1 :0
+
+  scope                = local.controller_rg
+  role_definition_name = azurerm_role_definition.aviatrix_backup[0].name
+  principal_id = azuread_service_principal.aviatrix_sp.object_id
+}
+

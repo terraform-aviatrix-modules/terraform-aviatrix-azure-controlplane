@@ -108,10 +108,15 @@ module "copilot_init" {
 
 #Create app registration
 module "app_registration" {
-  count              = var.module_config.app_registration ? 1 : 0
-  source             = "./modules/app_registration"
-  app_name           = var.app_name
-  create_custom_role = var.create_custom_role
+  count                        = var.module_config.app_registration ? 1 : 0
+  source                       = "./modules/app_registration"
+  app_name                     = var.app_name
+  app_password_validity_length = var.app_password_validity_length
+  create_custom_role           = var.create_custom_role
+  subscription_ids             = var.subscription_ids
+  aviatrix_rgs                 = var.aviatrix_rgs
+  controller_rg                = var.resource_group_name != "" ? var.resource_group_name : module.controller_build.controller_rg_name
+  aviatrix_role_names          = var.aviatrix_role_names
 }
 
 #Onboard the account

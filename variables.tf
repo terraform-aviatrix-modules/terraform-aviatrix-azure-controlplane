@@ -14,6 +14,12 @@ variable "app_name" {
   default     = "aviatrix_controller_app"
 }
 
+variable "app_password_validity_length" {
+  type        = string
+  description = "Number of hours the app secret will be valid from the apply time."
+  default     = "730h"
+}
+
 variable "customer_id" {
   type        = string
   description = "aviatrix customer license id"
@@ -88,6 +94,17 @@ variable "create_custom_role" {
   default     = false
 }
 
+variable "aviatrix_role_names" {
+  type        = map(string)
+  description = "Aviatrix role names for use by the controller"
+  default = {
+    "read_only_name"  = "aviatrix-read-only"
+    "service_name"    = "aviatrix-service"
+    "transit_gw_name" = "aviatrix-transit-gateways"
+    "backup_name"     = "aviatrix-backup"
+  }
+}
+
 variable "incoming_ssl_cidrs" {
   type        = list(string)
   description = "Incoming cidrs for security group used by controller"
@@ -148,4 +165,16 @@ variable "module_config" {
     app_registration               = true,
     account_onboarding             = true,
   }
+}
+
+variable "subscription_ids" {
+  type        = list(string)
+  description = "Subscriptions with the Aviatrix gateways. Aviatrix role will be created in the first one. Controller will have read-only access"
+  default     = []
+}
+
+variable "aviatrix_rgs" {
+  description = "Resorce groups with the Aviatrix managed entities. Controller permissions to modify resources in these RGs"
+  type        = map(list(string))
+  default     = {}
 }

@@ -1,0 +1,21 @@
+{
+    "Name": "aviatrix-transit-gateways",
+    "IsCustom": true,
+    "Description": "Add-on role used by the Aviatrix controller to deploy and modify resources dedicated for the avaiatrix transit gateways. Should be used together with aviatrix-service role.",
+    "Actions": [
+        "Microsoft.Network/expressRouteCircuits/*",
+        "Microsoft.Network/virtualnetworkgateways/*",
+        "Microsoft.Network/connections/*"
+    ],
+    "NotActions": [],
+    "DataActions": [],
+    "NotDataActions": [],
+    "AssignableScopes": [
+        "Format:",
+        "/subscriptions/aviatrix-sub-id/resourceGroups/rg-A",
+        "/subscriptions/aviatrix-sub-id/resourceGroups/rg-....",
+        "/subscriptions/aviatrix-sub-id/resourceGroups/rg-X",
+        "",
+        "Defined in the tfvars file - aviatrix_transit_rgs"
+    ]
+}

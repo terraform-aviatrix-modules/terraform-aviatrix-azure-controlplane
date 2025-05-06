@@ -1,0 +1,24 @@
+{
+    "Name": "aviatrix-read-only",
+    "IsCustom": true,
+    "Description": "Read only role used by the Aviatrix controller in all subscriptions with Aviatrix gateways",
+    "Actions": [
+        "Microsoft.Compute/*/read",
+        "Microsoft.Network/*/read",
+        "Microsoft.Resources/*/read",
+        "Microsoft.Resourcehealth/availabilityStatuses/read"
+    ],
+    "NotActions": [],
+    "DataActions": [],
+    "NotDataActions": [],
+    "AssignableScopes": [
+        "Format:",
+        "/subscriptions/id-1",
+        "/subscriptions/.....",
+        "/subscriptions/id-x",
+        "or",
+        "/providers/Microsoft.Management/managementGroups/all-aviatrix-subs",
+        "",
+        "Defined in the tfvars file - subscription_ids"
+    ]
+}
