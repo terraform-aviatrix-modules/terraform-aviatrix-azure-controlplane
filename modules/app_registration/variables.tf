@@ -55,7 +55,7 @@ locals {
   service_role   = jsondecode(file("${path.module}/service_role.json"))
   transit_role   = jsondecode(file("${path.module}/transit_gw_addon.json"))
   backup_role    = jsondecode(file("${path.module}/backup_addon.json"))
-  controller_rg  = "/subscriptions/${var.subscription_ids[0]}/resourceGroups/${var.controller_rg}"
+  controller_rg  = "/subscriptions/${split("/",local.subscription_ids_full[0])[2]}/resourceGroups/${var.controller_rg}"
   subscription_ids_full = (
     length(var.subscription_ids) > 0 ?
     [for v in var.subscription_ids : "/subscriptions/${v}"] :
