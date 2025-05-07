@@ -114,7 +114,7 @@ resource "azurerm_linux_virtual_machine" "copilot_vm" {
   }
 
   lifecycle {
-    ignore_changes = [ source_image_reference, plan ]
+    ignore_changes = [source_image_reference, plan]
   }
 }
 

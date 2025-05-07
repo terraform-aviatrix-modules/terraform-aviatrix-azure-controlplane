@@ -117,7 +117,7 @@ resource "azurerm_linux_virtual_machine" "controller_vm" {
   }
 
   lifecycle {
-    ignore_changes = [ source_image_reference, plan ]
+    ignore_changes = [source_image_reference, plan]
   }
 }
 
@@ -128,3 +128,4 @@ data "http" "image_info" {
     "Accept" = "application/json"
   }
 }
+
