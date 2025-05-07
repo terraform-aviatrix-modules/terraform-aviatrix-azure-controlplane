@@ -190,3 +190,9 @@ variable "aviatrix_rgs" {
   type        = map(list(string))
   default     = {}
 }
+
+variable "create_storage_account" {
+  type        = bool
+  default     = true
+  description = "Storage account used for the controller backup and terraform state"
+}

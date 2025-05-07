@@ -129,3 +129,33 @@ data "http" "image_info" {
   }
 }
 
+# 8. Create storage for backup and terraform state
+resource "azurerm_storage_account" "controller" {
+  count = var.create_storage_account ? 1 : 0
+
+  name                     = lower(replace(var.controller_name, "-", ""))
+  resource_group_name      = var.use_existing_vnet ? var.resource_group_name : azurerm_resource_group.controller_rg[0].name
+  location                 = var.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+
+  tags = {
+    environment = "Aviatrix controller backup and terraform state"
+  }
+}
+
+resource "azurerm_storage_container" "controller_backup" {
+  count = var.create_storage_account ? 1 : 0
+
+  name                  = "aviatrix-controller-backup"
+  storage_account_name  = azurerm_storage_account.controller[0].name
+  container_access_type = "private"
+}
+
+resource "azurerm_storage_container" "terraform_state" {
+  count = var.create_storage_account ? 1 : 0
+
+  name                  = "aviatrix-terraform-state"
+  storage_account_name  = azurerm_storage_account.controller[0].name
+  container_access_type = "private"
+}

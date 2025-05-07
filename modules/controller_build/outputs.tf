@@ -33,3 +33,15 @@ output "controller_name" {
 output "location" {
   value = var.location
 }
+
+output "storage_account_name" {
+  value = var.create_storage_account ? azurerm_storage_account.controller[0].name : null
+}
+
+output "backup_container_name" {
+  value = var.create_storage_account ? azurerm_storage_container.controller_backup[0].name : null
+}
+
+output "terraform_container_name" {
+  value = var.create_storage_account ? azurerm_storage_container.terraform_state[0].name : null
+}

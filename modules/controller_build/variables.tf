@@ -73,3 +73,9 @@ variable "incoming_ssl_cidrs" {
   type        = list(string)
   description = "Incoming cidrs for security group used by controller"
 }
+
+variable "create_storage_account" {
+  type        = bool
+  default     = true
+  description = "Storage account used for the controller backup and terraform state"
+}

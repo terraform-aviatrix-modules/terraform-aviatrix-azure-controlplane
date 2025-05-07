@@ -24,6 +24,7 @@ module "controller_build" {
   vnet_name                                 = var.vnet_name
   subnet_name                               = var.subnet_name
   subnet_id                                 = var.subnet_id
+  create_storage_account                    = var.create_storage_account
 
   depends_on = [
     module.azure_marketplace_agreement
