@@ -62,7 +62,8 @@ module "copilot_build" {
   copilot_name                   = var.copilot_name
   virtual_machine_admin_username = var.controller_virtual_machine_admin_username
   virtual_machine_admin_password = local.virtual_machine_admin_password
-  default_data_disk_size         = "100"
+  virtual_machine_size           = var.copilot_virtual_machine_size
+  default_data_disk_size         = var.copilot_data_disk_size
   location                       = var.location
 
   allowed_cidrs = {
@@ -76,7 +77,10 @@ module "copilot_build" {
       priority = "200"
       protocol = "Udp"
       ports    = ["5000", "31283"]
-      cidrs    = [module.controller_build[0].controller_public_ip_address]
+      cidrs = [
+        module.controller_build[0].controller_public_ip_address,
+        module.controller_build[0].controller_private_ip_address
+      ]
     }
   }
 
@@ -108,9 +112,9 @@ module "copilot_init" {
 
 #Create app registration
 module "app_registration" {
-  count                        = var.module_config.app_registration ? 1 : 0
-  source                       = "./modules/app_registration"
-  
+  count  = var.module_config.app_registration ? 1 : 0
+  source = "./modules/app_registration"
+
   app_name                     = var.app_name
   app_password_validity_length = var.app_password_validity_length
   create_custom_role           = var.create_custom_role

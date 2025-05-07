@@ -52,6 +52,18 @@ variable "copilot_name" {
   default     = "Aviatrix-Copilot"
 }
 
+variable "copilot_data_disk_size" {
+  type        = string
+  description = "Aviatrix-Copilot data disk size - use 1TB for production"
+  default     = "100"
+}
+
+variable "copilot_virtual_machine_size" {
+  type        = string
+  description = "Virtual Machine size for the copilot"
+  default     = "Standard_B4ms"
+}
+
 variable "controlplane_subnet_cidr" {
   type        = string
   description = "CIDR for controlplane subnet."
