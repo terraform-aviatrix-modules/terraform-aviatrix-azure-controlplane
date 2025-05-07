@@ -16,7 +16,7 @@ variable "app_name" {
 
 variable "app_password_validity_length" {
   type        = string
-  description = "Number of hours the app secret will be valid from the apply time."
+  description = "Number of hours the app secret will be valid from the apply time. Default is a month"
   default     = "730h"
 }
 
@@ -169,12 +169,12 @@ variable "module_config" {
 
 variable "subscription_ids" {
   type        = list(string)
-  description = "Subscriptions with the Aviatrix gateways. Aviatrix role will be created in the first one. Controller will have read-only access"
+  description = "Subscriptions with the Aviatrix gateways. Aviatrix role will be created in the first one. Controller will have read-only access if aviatrix_rgs is not empty. "
   default     = []
 }
 
 variable "aviatrix_rgs" {
-  description = "Resorce groups with the Aviatrix managed entities. Controller permissions to modify resources in these RGs"
+  description = "Only used when create_custom_role = true. Defines resorce groups with the Aviatrix managed entities. Controller will have permissions to modify resources in these RGs"
   type        = map(list(string))
   default     = {}
 }
