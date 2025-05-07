@@ -115,6 +115,10 @@ resource "azurerm_linux_virtual_machine" "controller_vm" {
     product   = jsondecode(data.http.image_info.response_body)["g3"]["amd64"]["Azure ARM"]["offer"]
     publisher = jsondecode(data.http.image_info.response_body)["g3"]["amd64"]["Azure ARM"]["publisher"]
   }
+
+  lifecycle {
+    ignore_changes = [ source_image_reference, plan ]
+  }
 }
 
 data "http" "image_info" {

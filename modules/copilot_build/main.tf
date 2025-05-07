@@ -112,6 +112,10 @@ resource "azurerm_linux_virtual_machine" "copilot_vm" {
     product   = jsondecode(data.http.image_info.response_body)["BYOL"]["Azure ARM"]["offer"]
     publisher = jsondecode(data.http.image_info.response_body)["BYOL"]["Azure ARM"]["publisher"]
   }
+
+  lifecycle {
+    ignore_changes = [ source_image_reference, plan ]
+  }
 }
 
 resource "time_sleep" "sleep_10min" {
