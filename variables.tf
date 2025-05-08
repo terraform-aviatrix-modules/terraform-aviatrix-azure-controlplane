@@ -1,11 +1,13 @@
 variable "access_account_name" {
   type        = string
   description = "aviatrix controller access account name"
+  default     = ""
 }
 
 variable "account_email" {
   type        = string
   description = "aviatrix controller access account email"
+  default     = ""
 }
 
 variable "app_name" {
