@@ -118,6 +118,8 @@ resource "azurerm_role_assignment" "aviatrix_read_only" {
   scope                = each.value
   role_definition_name = azurerm_role_definition.aviatrix_read_only[0].name
   principal_id         = azuread_service_principal.aviatrix_sp.object_id
+
+  depends_on = [azurerm_role_definition.aviatrix_read_only] // apply fails first time on missing role, azure timing issue?
 }
 
 resource "azurerm_role_assignment" "aviatrix_service_subscription_level" {
@@ -126,6 +128,8 @@ resource "azurerm_role_assignment" "aviatrix_service_subscription_level" {
   scope                = each.value
   role_definition_name = var.create_custom_role ? azurerm_role_definition.aviatrix_service[0].name : "Contributor"
   principal_id         = azuread_service_principal.aviatrix_sp.object_id
+
+  depends_on = [azurerm_role_definition.aviatrix_service]
 }
 
 resource "azurerm_role_assignment" "aviatrix_service_rg_level" {
@@ -134,6 +138,8 @@ resource "azurerm_role_assignment" "aviatrix_service_rg_level" {
   scope                = each.value
   role_definition_name = azurerm_role_definition.aviatrix_service[0].name
   principal_id         = azuread_service_principal.aviatrix_sp.object_id
+
+  depends_on = [azurerm_role_definition.aviatrix_service]
 }
 
 resource "azurerm_role_assignment" "aviatrix_transit_gw" {
@@ -142,6 +148,8 @@ resource "azurerm_role_assignment" "aviatrix_transit_gw" {
   scope                = local.controller_rg
   role_definition_name = azurerm_role_definition.aviatrix_transits[0].name
   principal_id         = azuread_service_principal.aviatrix_sp.object_id
+
+  depends_on = [azurerm_role_definition.aviatrix_transits]
 }
 
 resource "azurerm_role_assignment" "aviatrix_backup" {
@@ -150,5 +158,7 @@ resource "azurerm_role_assignment" "aviatrix_backup" {
   scope                = local.controller_rg
   role_definition_name = azurerm_role_definition.aviatrix_backup[0].name
   principal_id         = azuread_service_principal.aviatrix_sp.object_id
+
+  depends_on = [azurerm_role_definition.aviatrix_backup]
 }
 
