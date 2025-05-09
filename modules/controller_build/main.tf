@@ -6,7 +6,7 @@
 
 # 1. Create an Azure resource group
 resource "azurerm_resource_group" "controller_rg" {
-  count    = var.use_existing_vnet ? 0 : 1
+  count    = var.use_existing_resource_group ? 0 : 1
   location = var.location
   name     = "${var.controller_name}-rg"
 }
@@ -18,14 +18,14 @@ resource "azurerm_virtual_network" "controller_vnet" {
   address_space       = [var.controller_vnet_cidr]
   location            = var.location
   name                = "${var.controller_name}-vnet"
-  resource_group_name = azurerm_resource_group.controller_rg[0].name
+  resource_group_name = var.use_existing_resource_group ? var.resource_group_name : azurerm_resource_group.controller_rg[0].name
 }
 
 //  Create the Subnet
 resource "azurerm_subnet" "controller_subnet" {
   count                = var.use_existing_vnet ? 0 : 1
   name                 = "${var.controller_name}-subnet"
-  resource_group_name  = azurerm_resource_group.controller_rg[0].name
+  resource_group_name  = var.use_existing_resource_group ? var.resource_group_name : azurerm_resource_group.controller_rg[0].name
   virtual_network_name = azurerm_virtual_network.controller_vnet[0].name
   address_prefixes     = [var.controller_subnet_cidr]
 
@@ -37,7 +37,7 @@ resource "azurerm_public_ip" "controller_public_ip" {
   allocation_method   = "Static"
   location            = var.location
   name                = "${var.controller_name}-public-ip"
-  resource_group_name = var.use_existing_vnet ? var.resource_group_name : azurerm_resource_group.controller_rg[0].name
+  resource_group_name = var.use_existing_resource_group ? var.resource_group_name : azurerm_resource_group.controller_rg[0].name
 
   depends_on = [azurerm_resource_group.controller_rg]
 }
@@ -46,7 +46,7 @@ resource "azurerm_public_ip" "controller_public_ip" {
 resource "azurerm_network_security_group" "controller_nsg" {
   location            = var.location
   name                = "${var.controller_name}-security-group"
-  resource_group_name = var.use_existing_vnet ? var.resource_group_name : azurerm_resource_group.controller_rg[0].name
+  resource_group_name = var.use_existing_resource_group ? var.resource_group_name : azurerm_resource_group.controller_rg[0].name
 
   depends_on = [azurerm_resource_group.controller_rg]
 }
@@ -62,7 +62,7 @@ resource "azurerm_network_security_rule" "controller_nsg_rule_https" {
   source_address_prefixes     = var.incoming_ssl_cidrs
   destination_address_prefix  = "*"
   description                 = "https-for-vm-management"
-  resource_group_name         = var.use_existing_vnet ? var.resource_group_name : azurerm_resource_group.controller_rg[0].name
+  resource_group_name         = var.use_existing_resource_group ? var.resource_group_name : azurerm_resource_group.controller_rg[0].name
   network_security_group_name = azurerm_network_security_group.controller_nsg.name
 }
 
@@ -71,7 +71,7 @@ resource "azurerm_network_security_rule" "controller_nsg_rule_https" {
 resource "azurerm_network_interface" "controller_nic" {
   location            = var.location
   name                = "${var.controller_name}-network-interface-card"
-  resource_group_name = var.use_existing_vnet ? var.resource_group_name : azurerm_resource_group.controller_rg[0].name
+  resource_group_name = var.use_existing_resource_group ? var.resource_group_name : azurerm_resource_group.controller_rg[0].name
   ip_configuration {
     name                          = "${var.controller_name}-nic"
     private_ip_address_allocation = "Dynamic"
@@ -94,7 +94,7 @@ resource "azurerm_linux_virtual_machine" "controller_vm" {
   disable_password_authentication = false
   location                        = var.location
   network_interface_ids           = [azurerm_network_interface.controller_nic.id]
-  resource_group_name             = var.use_existing_vnet ? var.resource_group_name : azurerm_resource_group.controller_rg[0].name
+  resource_group_name             = var.use_existing_resource_group ? var.resource_group_name : azurerm_resource_group.controller_rg[0].name
   size                            = var.controller_virtual_machine_size
   //disk
   os_disk {
@@ -134,7 +134,7 @@ resource "azurerm_storage_account" "controller" {
   count = var.create_storage_account ? 1 : 0
 
   name                     = lower(replace(var.controller_name, "-", ""))
-  resource_group_name      = var.use_existing_vnet ? var.resource_group_name : azurerm_resource_group.controller_rg[0].name
+  resource_group_name      = var.use_existing_resource_group ? var.resource_group_name : azurerm_resource_group.controller_rg[0].name
   location                 = var.location
   account_tier             = "Standard"
   account_replication_type = "LRS"

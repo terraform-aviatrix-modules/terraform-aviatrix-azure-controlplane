@@ -7,7 +7,7 @@ output "controller_private_ip_address" {
 }
 
 output "controller_rg_name" {
-  value = var.use_existing_vnet ? var.resource_group_name : azurerm_resource_group.controller_rg[0].name
+  value = var.use_existing_resource_group ? var.resource_group_name : azurerm_resource_group.controller_rg[0].name
 }
 
 output "controller_nsg" {

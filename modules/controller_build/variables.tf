@@ -27,9 +27,15 @@ variable "use_existing_vnet" {
   default     = false
 }
 
+variable "use_existing_resource_group" {
+  type        = bool
+  description = "Flag to indicate whether to use an existing resource group"
+  default     = false
+}
+
 variable "resource_group_name" {
   type        = string
-  description = "Resource group name, only required when use_existing_vnet is true"
+  description = "Resource group name, only required when use_existing_resource_group is true"
   default     = ""
 }
 

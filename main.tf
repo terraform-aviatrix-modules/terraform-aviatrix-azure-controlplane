@@ -20,6 +20,7 @@ module "controller_build" {
   controller_virtual_machine_size           = var.controller_virtual_machine_size
   incoming_ssl_cidrs                        = local.controller_allowed_cidrs
   use_existing_vnet                         = var.use_existing_vnet
+  use_existing_resource_group               = var.use_existing_resource_group
   resource_group_name                       = var.resource_group_name
   vnet_name                                 = var.vnet_name
   subnet_name                               = var.subnet_name
@@ -122,10 +123,7 @@ module "app_registration" {
   subscription_ids             = var.subscription_ids
   aviatrix_rgs                 = var.aviatrix_rgs
   aviatrix_role_names          = var.aviatrix_role_names
-  controller_rg = var.resource_group_name != "" ? var.resource_group_name : (
-    var.create_custom_role ? module.controller_build[0].controller_rg_name : ""
-  )
-
+  controller_rg                = var.create_custom_role ? module.controller_build[0].controller_rg_name : ""
 }
 
 #Onboard the account
