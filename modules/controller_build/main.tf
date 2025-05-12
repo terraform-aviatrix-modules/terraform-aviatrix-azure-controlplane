@@ -37,6 +37,7 @@ resource "azurerm_public_ip" "controller_public_ip" {
   allocation_method   = "Static"
   location            = var.location
   name                = "${var.controller_name}-public-ip"
+  sku                 = "Standard"
   resource_group_name = var.use_existing_resource_group ? var.resource_group_name : azurerm_resource_group.controller_rg[0].name
 
   depends_on = [azurerm_resource_group.controller_rg]

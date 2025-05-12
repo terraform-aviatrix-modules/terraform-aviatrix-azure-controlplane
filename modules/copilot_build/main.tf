@@ -25,6 +25,7 @@ resource "azurerm_public_ip" "copilot_public_ip" {
   allocation_method   = "Static"
   location            = var.location
   name                = "${var.copilot_name}-public-ip"
+  sku                 = "Standard"
   resource_group_name = var.use_existing_vnet ? var.resource_group_name : azurerm_resource_group.copilot_rg[0].name
 }
 
