@@ -47,13 +47,13 @@ output "controller_vnet_id" {
 }
 
 output "controller_rg_name" {
-  value = var.module_config.controller_deployment && !var.use_existing_vnet ? module.controller_build[0].controller_rg_name : null
+  value = var.module_config.controller_deployment ? module.controller_build[0].controller_rg_name : null
 }
 
 output "controller_name" {
-  value = var.module_config.controller_deployment && !var.use_existing_vnet ? module.controller_build[0].controller_name : null
+  value = var.module_config.controller_deployment ? module.controller_build[0].controller_name : null
 }
 
 output "controller_vm_id" {
-  value = var.module_config.controller_deployment && !var.use_existing_vnet ? module.controller_build[0].controller_vm_id : null
+  value = var.module_config.controller_deployment ? module.controller_build[0].controller_vm_id : null
 }
