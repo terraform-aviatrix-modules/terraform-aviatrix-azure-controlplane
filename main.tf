@@ -23,7 +23,6 @@ module "controller_build" {
   use_existing_resource_group               = var.use_existing_resource_group
   resource_group_name                       = var.resource_group_name
   vnet_name                                 = var.vnet_name
-  subnet_name                               = var.subnet_name
   subnet_id                                 = var.subnet_id
   create_storage_account                    = var.create_storage_account
 
