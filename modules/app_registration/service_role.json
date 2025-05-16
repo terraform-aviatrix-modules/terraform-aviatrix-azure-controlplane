@@ -23,11 +23,7 @@
     "DataActions": [],
     "NotDataActions": [],
     "AssignableScopes": [
-        "Format:",
-        "/subscriptions/id-1/resourceGroups/rg-A",
-        "/subscriptions/..../resourceGroups/rg-....",
-        "/subscriptions/id-x/resourceGroups/rg-B",
-        "",
-        "Defined in the tfvars file - aviatrix_rgs"
+        "Not read from this file",
+        "Provided to the module as a list of subscriptions or a subscription/resource groups map in var.subscription_ids or var.aviatrix_rgs"
     ]
 }

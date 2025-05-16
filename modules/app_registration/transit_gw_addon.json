@@ -11,11 +11,7 @@
     "DataActions": [],
     "NotDataActions": [],
     "AssignableScopes": [
-        "Format:",
-        "/subscriptions/aviatrix-sub-id/resourceGroups/rg-A",
-        "/subscriptions/aviatrix-sub-id/resourceGroups/rg-....",
-        "/subscriptions/aviatrix-sub-id/resourceGroups/rg-X",
-        "",
-        "Defined in the tfvars file - aviatrix_transit_rgs"
+        "Not read from this file. Assumption: transits are in the same RG as the controller",
+        "Assigned to the controller RG provided in var.controller_rg."
     ]
 }

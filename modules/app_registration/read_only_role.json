@@ -12,13 +12,7 @@
     "DataActions": [],
     "NotDataActions": [],
     "AssignableScopes": [
-        "Format:",
-        "/subscriptions/id-1",
-        "/subscriptions/.....",
-        "/subscriptions/id-x",
-        "or",
-        "/providers/Microsoft.Management/managementGroups/all-aviatrix-subs",
-        "",
-        "Defined in the tfvars file - subscription_ids"
+        "Not read from this file",
+        "Provided to the module as a list of subscriptions in var.subscription_ids"
     ]
 }

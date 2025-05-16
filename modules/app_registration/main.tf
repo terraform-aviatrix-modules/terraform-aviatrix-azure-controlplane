@@ -142,7 +142,7 @@ resource "azurerm_role_assignment" "aviatrix_service_rg_level" {
   depends_on = [azurerm_role_definition.aviatrix_service]
 }
 
-resource "azurerm_role_assignment" "aviatrix_transit_gw" {
+resource "azurerm_role_assignment" "aviatrix_transit_gw" { //Assumption: transits are in the same RG as the controller
   count = var.create_custom_role ? 1 : 0
 
   scope                = local.controller_rg

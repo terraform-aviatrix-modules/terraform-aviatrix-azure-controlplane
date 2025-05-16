@@ -14,11 +14,7 @@
     ],
     "NotDataActions": [],
     "AssignableScopes": [
-        "Format:",
-        "/subscriptions/id-1/resourceGroups/rg-A",
-        "/subscriptions/..../resourceGroups/rg-....",
-        "/subscriptions/id-x/resourceGroups/rg-B",
-        "",
-        "Defined in the tfvars file - aviatrix_rgs"
+        "Not read from this file",
+        "Assigned to the controller RG provided in var.controller_rg"
     ]
 }
