@@ -5,6 +5,7 @@
     "Actions": [
         "Microsoft.Compute/availabilitySets/*",
         "Microsoft.Compute/virtualMachines/*",
+        "Microsoft.Compute/disks/*",
         "Microsoft.Network/publicIPAddresses/*",
         "Microsoft.Network/networkInterfaces/*",
         "Microsoft.Network/networkSecurityGroups/*",
