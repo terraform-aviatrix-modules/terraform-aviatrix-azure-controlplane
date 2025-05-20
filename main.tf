@@ -4,7 +4,6 @@ module "azure_marketplace_agreement" {
 
   accept_controller_subscription = var.module_config.accept_controller_subscription
   accept_copilot_subscription    = var.module_config.accept_copilot_subscription
-  environment                    = var.environment #For internal use only
 }
 
 module "controller_build" {

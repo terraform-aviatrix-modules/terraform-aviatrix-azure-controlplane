@@ -1,33 +1,38 @@
 // accept license of Aviatrix Controller
 data "http" "controller_image_info" {
-  url = format("https://cdn.%s.sre.aviatrix.com/image-details/arm_controller_image_details.json", var.environment)
+  url = "https://cdn.prod.sre.aviatrix.com/image-details/arm_controller_image_details.json"
 
   request_headers = {
     "Accept" = "application/json"
   }
 }
 
-resource "azurerm_marketplace_agreement" "controller_mp_agreement" {
-  count = var.accept_controller_subscription ? 1 : 0
-
-  publisher = jsondecode(data.http.controller_image_info.response_body)["g4"]["amd64"]["Azure ARM"]["publisher"]
-  offer     = jsondecode(data.http.controller_image_info.response_body)["g4"]["amd64"]["Azure ARM"]["offer"]
-  plan      = jsondecode(data.http.controller_image_info.response_body)["g4"]["amd64"]["Azure ARM"]["sku"]
-}
-
-// accept license of Aviatrix Copilot
 data "http" "copilot_image_info" {
-  url = format("https://cdn.%s.sre.aviatrix.com/image-details/arm_copilot_image_details.json", var.environment)
+  url = "https://cdn.prod.sre.aviatrix.com/image-details/arm_copilot_image_details.json"
 
   request_headers = {
     "Accept" = "application/json"
   }
 }
 
-resource "azurerm_marketplace_agreement" "copilot_mp_agreement" {
-  count = var.accept_copilot_subscription ? 1 : 0
+locals {
+  controller_urn = format("%s:%s:%s:%s",
+    jsondecode(data.http.controller_image_info.response_body)["g4"]["amd64"]["Azure ARM"]["publisher"],
+    jsondecode(data.http.controller_image_info.response_body)["g4"]["amd64"]["Azure ARM"]["offer"],
+    jsondecode(data.http.controller_image_info.response_body)["g4"]["amd64"]["Azure ARM"]["sku"],
+    jsondecode(data.http.controller_image_info.response_body)["g4"]["amd64"]["Azure ARM"]["version"]
+  )
+  copilot_urn = format("%s:%s:%s:%s",
+    jsondecode(data.http.copilot_image_info.response_body)["BYOL"]["Azure ARM"]["publisher"],
+    jsondecode(data.http.copilot_image_info.response_body)["BYOL"]["Azure ARM"]["offer"],
+    jsondecode(data.http.copilot_image_info.response_body)["BYOL"]["Azure ARM"]["sku"],
+    jsondecode(data.http.copilot_image_info.response_body)["BYOL"]["Azure ARM"]["version"]
+  )
+}
 
-  publisher = jsondecode(data.http.copilot_image_info.response_body)["BYOL"]["Azure ARM"]["publisher"]
-  offer     = jsondecode(data.http.copilot_image_info.response_body)["BYOL"]["Azure ARM"]["offer"]
-  plan      = jsondecode(data.http.copilot_image_info.response_body)["BYOL"]["Azure ARM"]["sku"]
+resource "null_resource" "run_python_script" {
+  # This provisioner will execute when the resource is created or updated.
+  provisioner "local-exec" {
+    command = "python3 ${path.module}/accept_license.py '${local.controller_urn}' '${local.copilot_urn}'"
+  }
 }
