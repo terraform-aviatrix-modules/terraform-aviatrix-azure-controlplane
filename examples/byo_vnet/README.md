@@ -58,7 +58,7 @@ module "vnet" {
 
 module "control_plane" {
   source  = "terraform-aviatrix-modules/azure-controlplane/aviatrix"
-  version = "1.0.1"
+  version = "1.0.4"
 
   controller_name           = "my_controller"
   incoming_ssl_cidrs        = ["1.2.3.4"]
