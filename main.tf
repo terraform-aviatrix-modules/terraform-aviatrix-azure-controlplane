@@ -20,10 +20,11 @@ module "controller_build" {
   controller_virtual_machine_size           = var.controller_virtual_machine_size
   incoming_ssl_cidrs                        = local.controller_allowed_cidrs
   use_existing_vnet                         = var.use_existing_vnet
+  use_existing_resource_group               = var.use_existing_resource_group
   resource_group_name                       = var.resource_group_name
   vnet_name                                 = var.vnet_name
-  subnet_name                               = var.subnet_name
   subnet_id                                 = var.subnet_id
+  create_storage_account                    = var.create_storage_account
 
   depends_on = [
     module.azure_marketplace_agreement
@@ -62,7 +63,8 @@ module "copilot_build" {
   copilot_name                   = var.copilot_name
   virtual_machine_admin_username = var.controller_virtual_machine_admin_username
   virtual_machine_admin_password = local.virtual_machine_admin_password
-  default_data_disk_size         = "100"
+  virtual_machine_size           = var.copilot_virtual_machine_size
+  default_data_disk_size         = var.copilot_data_disk_size
   location                       = var.location
 
   allowed_cidrs = {
@@ -76,7 +78,10 @@ module "copilot_build" {
       priority = "200"
       protocol = "Udp"
       ports    = ["5000", "31283"]
-      cidrs    = [module.controller_build[0].controller_public_ip_address]
+      cidrs = [
+        module.controller_build[0].controller_public_ip_address,
+        module.controller_build[0].controller_private_ip_address
+      ]
     }
   }
 
@@ -108,10 +113,16 @@ module "copilot_init" {
 
 #Create app registration
 module "app_registration" {
-  count              = var.module_config.app_registration ? 1 : 0
-  source             = "./modules/app_registration"
-  app_name           = var.app_name
-  create_custom_role = var.create_custom_role
+  count  = var.module_config.app_registration ? 1 : 0
+  source = "./modules/app_registration"
+
+  app_name                     = var.app_name
+  app_password_validity_length = var.app_password_validity_length
+  create_custom_role           = var.create_custom_role
+  subscription_ids             = var.subscription_ids
+  aviatrix_rgs                 = var.aviatrix_rgs
+  aviatrix_role_names          = var.aviatrix_role_names
+  controller_rg                = var.create_custom_role ? module.controller_build[0].controller_rg_name : ""
 }
 
 #Onboard the account

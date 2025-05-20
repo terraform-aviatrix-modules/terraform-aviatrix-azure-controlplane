@@ -1,0 +1,20 @@
+{
+    "Name": "aviatrix-backup",
+    "IsCustom": true,
+    "Description": "Add-on role used to backup Aviatrix controller configuration. Should be used together with aviatrix-service role.",
+    "Actions": [
+        "Microsoft.Storage/storageAccounts/read",
+        "Microsoft.Storage/StorageAccounts/listkeys/action"
+    ],
+    "NotActions": [],
+    "DataActions": [
+        "Microsoft.Storage/storageAccounts/fileServices/fileshares/files/*",
+        "Microsoft.Storage/storageAccounts/fileServices/readFileBackupSemantics/action",
+        "Microsoft.Storage/storageAccounts/fileServices/writeFileBackupSemantics/action"
+    ],
+    "NotDataActions": [],
+    "AssignableScopes": [
+        "Not read from this file",
+        "Assigned to the controller RG provided in var.controller_rg"
+    ]
+}
