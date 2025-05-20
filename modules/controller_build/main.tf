@@ -84,6 +84,12 @@ resource "azurerm_network_interface" "controller_nic" {
 resource "azurerm_network_interface_security_group_association" "controller_nic_sg" {
   network_interface_id      = azurerm_network_interface.controller_nic.id
   network_security_group_id = azurerm_network_security_group.controller_nsg.id
+
+  // https://github.com/hashicorp/terraform/issues/24663
+  depends_on = [
+    azurerm_network_interface.controller_nic,
+    azurerm_network_security_group.controller_nsg
+  ]
 }
 
 # 7. Create the virtual machine
@@ -96,6 +102,12 @@ resource "azurerm_linux_virtual_machine" "controller_vm" {
   network_interface_ids           = [azurerm_network_interface.controller_nic.id]
   resource_group_name             = var.use_existing_vnet ? var.resource_group_name : azurerm_resource_group.controller_rg[0].name
   size                            = var.controller_virtual_machine_size
+  custom_data = base64encode(templatefile("${path.module}/cloud-init.tftpl", {
+    controller_version  = var.controller_version
+    environment         = var.environment
+    registry_auth_token = var.registry_auth_token
+  }))
+
   //disk
   os_disk {
     name                 = "aviatrix-os-disk"
@@ -104,21 +116,24 @@ resource "azurerm_linux_virtual_machine" "controller_vm" {
   }
 
   source_image_reference {
-    offer     = jsondecode(data.http.image_info.response_body)["g3"]["amd64"]["Azure ARM"]["offer"]
-    publisher = jsondecode(data.http.image_info.response_body)["g3"]["amd64"]["Azure ARM"]["publisher"]
-    sku       = jsondecode(data.http.image_info.response_body)["g3"]["amd64"]["Azure ARM"]["sku"]
-    version   = jsondecode(data.http.image_info.response_body)["g3"]["amd64"]["Azure ARM"]["version"]
+    offer     = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["offer"]
+    publisher = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["publisher"]
+    sku       = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["sku"]
+    version   = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["version"]
   }
 
   plan {
-    name      = jsondecode(data.http.image_info.response_body)["g3"]["amd64"]["Azure ARM"]["sku"]
-    product   = jsondecode(data.http.image_info.response_body)["g3"]["amd64"]["Azure ARM"]["offer"]
-    publisher = jsondecode(data.http.image_info.response_body)["g3"]["amd64"]["Azure ARM"]["publisher"]
+    name      = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["sku"]
+    product   = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["offer"]
+    publisher = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["publisher"]
   }
+
+  // https://github.com/hashicorp/terraform/issues/24663
+  depends_on = [azurerm_network_interface.controller_nic]
 }
 
 data "http" "image_info" {
-  url = "https://cdn.prod.sre.aviatrix.com/image-details/arm_controller_image_details.json"
+  url = format("https://cdn.%s.sre.aviatrix.com/image-details/arm_controller_image_details.json", var.environment)
 
   request_headers = {
     "Accept" = "application/json"

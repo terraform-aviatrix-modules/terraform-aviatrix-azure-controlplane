@@ -1,33 +1,16 @@
-# Aviatrix Controller Azure
+<!-- BEGIN_TF_DOCS -->
+# terraform-aviatrix-azure-controlplane - app-registration
 
-This module builds the Azure Active Directory (AAD) Application and Service Principal.
-If you already have an AAD Application you would like to use then you do not need to
-use this module.
+### Description
+This submodule creates an app registration in Azure.
 
-## Providers
-
-| Name | Version |
-|------|---------|
-| <a name="provider_azuread"></a> [azuread](#provider\_azuread) | ~> 2.0 |
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 2.8.0 |
-
-## Modules
-
-No modules.
-
-## Resources
-
-| Name | Type |
-|------|------|
-| [azuread_application.aviatrix_ad_app](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/application) | resource |
-| [azuread_application_password.aviatrix_app_password](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/application_password) | resource |
-| [azuread_service_principal.aviatrix_sp](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/service_principal) | resource |
-| [azuread_service_principal_password.aviatrix_sp_password](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/resources/service_principal_password) | resource |
-| [azurerm_role_assignment.aviatrix_sp_role](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) | resource |
-| [azurerm_role_definition.custom_role](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_definition) | resource |
-| [azuread_client_config.current](https://registry.terraform.io/providers/hashicorp/azuread/latest/docs/data-sources/client_config) | data source |
-| [azurerm_subscription.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subscription) | data source |
-
+### Usage Example
+```hcl
+module "app_registration" {
+  source   = "./modules/app_registration"
+  app_name = "my_controller"
+}
+```
 ## Inputs
 
 | Name | Description | Type | Default | Required |
@@ -44,3 +27,4 @@ No modules.
 | <a name="output_client_id"></a> [client\_id](#output\_client\_id) | n/a |
 | <a name="output_directory_id"></a> [directory\_id](#output\_directory\_id) | n/a |
 | <a name="output_subscription_id"></a> [subscription\_id](#output\_subscription\_id) | n/a |
+<!-- END_TF_DOCS -->
