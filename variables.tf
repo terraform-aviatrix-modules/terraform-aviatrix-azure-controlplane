@@ -96,6 +96,12 @@ variable "controller_virtual_machine_size" {
   default     = "Standard_A4_v2"
 }
 
+variable "copilot_virtual_machine_size" {
+  type        = string
+  description = "Virtual Machine size for the copilot."
+  default     = "Standard_B4ms"
+}
+
 variable "controlplane_vnet_cidr" {
   type        = string
   description = "CIDR for controller VNET."
@@ -186,6 +192,28 @@ variable "module_config" {
     account_onboarding             = true,
   }
 }
+
+# terraform-docs-ignore
+variable "environment" {
+  description = "Determines the deployment environment. For internal use only."
+  type        = string
+  default     = "prod"
+  nullable    = false
+
+  validation {
+    condition     = contains(["prod", "staging"], var.environment)
+    error_message = "The environment must be either 'prod' or 'staging'."
+  }
+}
+
+# terraform-docs-ignore
+variable "registry_auth_token" {
+  description = "The token used to authenticate to the controller artifact registry. For internal use only."
+  type        = string
+  default     = ""
+  nullable    = false
+}
+
 
 variable "subscription_ids" {
   type        = list(string)

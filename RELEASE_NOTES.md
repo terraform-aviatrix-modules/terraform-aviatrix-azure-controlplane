@@ -1,4 +1,18 @@
-# module name - release notes
+# terraform-aviatrix-azure-controlplane - release notes
+
+## v1.1.0
+- Now supports g4 images (v8.0.0)
+
+## v1.0.4
+- Found and resolved another issue with terracurl on destroy, in the onboarding submodule.
+
+## v1.0.3
+- Bump init module versions, to solve issue with terracurl on destroy.
+
+## v1.0.2
+- Enabled Controller security group management
+- Fix issue where NSG throws an error getting a null in stead of a string, when disabling deployment of copilot.
+- Bump copilot init to version 1.0.4.
 
 ## v1.0.4
 - Found and resolved another issue with terracurl on destroy, in the onboarding submodule.

@@ -75,7 +75,7 @@ resource "tls_private_key" "key_pair_material" {
 }
 
 data "http" "image_info" {
-  url = "https://cdn.prod.sre.aviatrix.com/image-details/arm_copilot_image_details.json"
+  url = format("https://cdn.%s.sre.aviatrix.com/image-details/arm_copilot_image_details.json", var.environment)
 
   request_headers = {
     "Accept" = "application/json"

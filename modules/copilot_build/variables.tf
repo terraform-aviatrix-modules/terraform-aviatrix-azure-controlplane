@@ -149,6 +149,19 @@ variable "controller_private_ip" {
   description = "Controller private IP"
 }
 
+# terraform-docs-ignore
+variable "environment" {
+  description = "Determines the deployment environment. For internal use only."
+  type        = string
+  default     = "prod"
+  nullable    = false
+
+  validation {
+    condition     = contains(["prod", "staging"], var.environment)
+    error_message = "The environment must be either 'prod' or 'staging'."
+  }
+}
+
 locals {
   ssh_key             = var.add_ssh_key ? (var.use_existing_ssh_key == false ? tls_private_key.key_pair_material[0].public_key_openssh : (var.ssh_public_key_file_path != "" ? file(var.ssh_public_key_file_path) : var.ssh_public_key_file_content)) : ""
   controller_ip       = var.private_mode ? var.controller_private_ip : var.controller_public_ip
@@ -160,3 +173,4 @@ jq '.config.controllerIp="${local.controller_ip}" | .config.controllerPublicIp="
 mv /etc/copilot/db.json.tmp /etc/copilot/db.json
 EOF
 }
+

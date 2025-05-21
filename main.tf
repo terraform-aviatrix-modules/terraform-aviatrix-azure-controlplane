@@ -4,6 +4,7 @@ module "azure_marketplace_agreement" {
 
   accept_controller_subscription = var.module_config.accept_controller_subscription
   accept_copilot_subscription    = var.module_config.accept_copilot_subscription
+  environment                    = var.environment #For internal use only
 }
 
 module "controller_build" {
@@ -12,6 +13,7 @@ module "controller_build" {
   source = "./modules/controller_build"
   // please do not use special characters such as `\/"[]:|<>+=;,?*@&~!#$%^()_{}'` in the controller_name
   controller_name                           = var.controller_name
+  controller_version                        = var.controller_version
   location                                  = var.location
   controller_vnet_cidr                      = var.controlplane_vnet_cidr
   controller_subnet_cidr                    = var.controlplane_subnet_cidr
@@ -24,6 +26,8 @@ module "controller_build" {
   resource_group_name                       = var.resource_group_name
   vnet_name                                 = var.vnet_name
   subnet_id                                 = var.subnet_id
+  environment                               = var.environment         #For internal use only
+  registry_auth_token                       = var.registry_auth_token #For internal use only
   create_storage_account                    = var.create_storage_account
 
   depends_on = [
@@ -42,6 +46,7 @@ module "controller_init" {
   controller_admin_email    = var.controller_admin_email
   controller_admin_password = var.controller_admin_password
   customer_id               = var.customer_id
+  wait_for_setup_duration   = "0s"
 
   depends_on = [
     module.controller_build
@@ -66,6 +71,7 @@ module "copilot_build" {
   virtual_machine_size           = var.copilot_virtual_machine_size
   default_data_disk_size         = var.copilot_data_disk_size
   location                       = var.location
+  environment                    = var.environment #For internal use only
 
   allowed_cidrs = {
     "tcp_cidrs" = {
@@ -96,7 +102,7 @@ module "copilot_init" {
   count = var.module_config.copilot_initialization ? 1 : 0
 
   source  = "terraform-aviatrix-modules/copilot-init/aviatrix"
-  version = "v1.0.5"
+  version = "v1.0.6"
 
   controller_public_ip             = module.controller_build[0].controller_public_ip_address
   controller_admin_password        = var.controller_admin_password

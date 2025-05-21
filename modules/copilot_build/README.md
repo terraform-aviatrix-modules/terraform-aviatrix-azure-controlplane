@@ -1,38 +1,40 @@
-## Providers
+<!-- BEGIN_TF_DOCS -->
+# terraform-aviatrix-azure-controlplane - copilot-build
 
-| Name | Version |
-|------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | n/a |
-| <a name="provider_http"></a> [http](#provider\_http) | n/a |
-| <a name="provider_time"></a> [time](#provider\_time) | n/a |
-| <a name="provider_tls"></a> [tls](#provider\_tls) | n/a |
+### Description
+This submodule creates the Copilot virtual machine and related components.
 
-## Modules
+### Usage Example
+```hcl
+module "copilot_build" {
+  source = "./modules/copilot_build"
 
-No modules.
+  vnet_cidr                      = "10.0.0.0/24"
+  subnet_cidr                    = "10.0.0.0/24"
+  controller_public_ip           = "123.2.3.4"
+  controller_private_ip          = "10.2.3.4"
+  copilot_name                   = "my_copilot"
+  virtual_machine_admin_username = "avxadmin"
+  virtual_machine_admin_password = "my_password"
+  default_data_disk_size         = "100"
+  location                       = "East US"
 
-## Resources
-
-| Name | Type |
-|------|------|
-| [azurerm_linux_virtual_machine.copilot_vm](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/linux_virtual_machine) | resource |
-| [azurerm_linux_virtual_machine.copilot_vm_ssh](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/linux_virtual_machine) | resource |
-| [azurerm_managed_disk.default](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/managed_disk) | resource |
-| [azurerm_network_interface.copilot_nic](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface) | resource |
-| [azurerm_network_interface_security_group_association.example](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface_security_group_association) | resource |
-| [azurerm_network_security_group.copilot_nsg](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_group) | resource |
-| [azurerm_public_ip.copilot_public_ip](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/public_ip) | resource |
-| [azurerm_resource_group.copilot_rg](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
-| [azurerm_subnet.copilot_subnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet) | resource |
-| [azurerm_virtual_machine_data_disk_attachment.default](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_machine_data_disk_attachment) | resource |
-| [azurerm_virtual_machine_data_disk_attachment.disk_att](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_machine_data_disk_attachment) | resource |
-| [azurerm_virtual_network.copilot_vnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network) | resource |
-| [time_sleep.sleep_10min](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) | resource |
-| [time_sleep.sleep_10min_ssh](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) | resource |
-| [tls_private_key.key_pair_material](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key) | resource |
-| [azurerm_resource_group.rg](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/resource_group) | data source |
-| [http_http.image_info](https://registry.terraform.io/providers/hashicorp/http/latest/docs/data-sources/http) | data source |
-
+  allowed_cidrs = {
+    "tcp_cidrs" = {
+      priority = "100"
+      protocol = "Tcp"
+      ports    = ["443"]
+      cidrs    = ["1.2.3.4/32"]
+    }
+    "udp_cidrs" = {
+      priority = "200"
+      protocol = "Udp"
+      ports    = ["5000", "31283"]
+      cidrs    = ["123.2.3.4"]
+    }
+  }
+}
+```
 ## Inputs
 
 | Name | Description | Type | Default | Required |
@@ -71,3 +73,4 @@ No modules.
 | <a name="output_public_ip"></a> [public\_ip](#output\_public\_ip) | n/a |
 | <a name="output_resource_group_name"></a> [resource\_group\_name](#output\_resource\_group\_name) | n/a |
 | <a name="output_ssh_public_key"></a> [ssh\_public\_key](#output\_ssh\_public\_key) | n/a |
+<!-- END_TF_DOCS -->
