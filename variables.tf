@@ -95,13 +95,6 @@ variable "controller_virtual_machine_size" {
   description = "Virtual Machine size for the controller."
   default     = "Standard_A4_v2"
 }
-
-variable "copilot_virtual_machine_size" {
-  type        = string
-  description = "Virtual Machine size for the copilot."
-  default     = "Standard_B4ms"
-}
-
 variable "controlplane_vnet_cidr" {
   type        = string
   description = "CIDR for controller VNET."
