@@ -1,0 +1,29 @@
+{
+    "Name": "aviatrix-service",
+    "IsCustom": true,
+    "Description": "Role used by the Aviatrix controller to modify resources in specified resource groups or subscriptions",
+    "Actions": [
+        "Microsoft.Compute/availabilitySets/*",
+        "Microsoft.Compute/virtualMachines/*",
+        "Microsoft.Compute/disks/*",
+        "Microsoft.Network/publicIPAddresses/*",
+        "Microsoft.Network/networkInterfaces/*",
+        "Microsoft.Network/networkSecurityGroups/*",
+        "Microsoft.Network/loadBalancers/*",
+        "Microsoft.Network/routeTables/*",
+        "Microsoft.Network/virtualNetworks/*",
+        "Microsoft.Resourcehealth/healthevent/*",
+        "Microsoft.Resources/deployments/*",
+        "Microsoft.Resources/tags/*",
+        "Microsoft.Resources/marketplace/purchase/action",  
+        "Microsoft.MarketplaceOrdering/offertypes/publishers/offers/plans/agreements/read", 
+        "Microsoft.MarketplaceOrdering/offertypes/publishers/offers/plans/agreements/write"
+    ],
+    "NotActions": [],
+    "DataActions": [],
+    "NotDataActions": [],
+    "AssignableScopes": [
+        "Not read from this file",
+        "Provided to the module as a list of subscriptions or a subscription/resource groups map in var.subscription_ids or var.aviatrix_rgs"
+    ]
+}

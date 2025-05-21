@@ -1,17 +1,25 @@
 variable "access_account_name" {
   type        = string
   description = "aviatrix controller access account name"
+  default     = ""
 }
 
 variable "account_email" {
   type        = string
   description = "aviatrix controller access account email"
+  default     = ""
 }
 
 variable "app_name" {
   type        = string
   description = "Azure AD App Name for Aviatrix Controller Build Up"
   default     = "aviatrix_controller_app"
+}
+
+variable "app_password_validity_length" {
+  type        = string
+  description = "Number of hours the app secret will be valid from the apply time. Default is a month"
+  default     = "730h"
 }
 
 variable "customer_id" {
@@ -46,6 +54,18 @@ variable "copilot_name" {
   default     = "Aviatrix-Copilot"
 }
 
+variable "copilot_data_disk_size" {
+  type        = string
+  description = "Aviatrix-Copilot data disk size - use 1TB for production"
+  default     = "100"
+}
+
+variable "copilot_virtual_machine_size" {
+  type        = string
+  description = "Virtual Machine size for the copilot"
+  default     = "Standard_B4ms"
+}
+
 variable "controlplane_subnet_cidr" {
   type        = string
   description = "CIDR for controlplane subnet."
@@ -75,13 +95,6 @@ variable "controller_virtual_machine_size" {
   description = "Virtual Machine size for the controller."
   default     = "Standard_A4_v2"
 }
-
-variable "copilot_virtual_machine_size" {
-  type        = string
-  description = "Virtual Machine size for the copilot."
-  default     = "Standard_B4ms"
-}
-
 variable "controlplane_vnet_cidr" {
   type        = string
   description = "CIDR for controller VNET."
@@ -92,6 +105,17 @@ variable "create_custom_role" {
   type        = bool
   description = "Enable creation of custom role in stead of using contributor permissions"
   default     = false
+}
+
+variable "aviatrix_role_names" {
+  type        = map(string)
+  description = "Aviatrix role names for use by the controller"
+  default = {
+    "read_only_name"  = "aviatrix-read-only"
+    "service_name"    = "aviatrix-service"
+    "transit_gw_name" = "aviatrix-transit-gateways"
+    "backup_name"     = "aviatrix-backup"
+  }
 }
 
 variable "incoming_ssl_cidrs" {
@@ -111,9 +135,15 @@ variable "use_existing_vnet" {
   default     = false
 }
 
+variable "use_existing_resource_group" {
+  type        = bool
+  description = "Flag to indicate whether to use an existing resource group"
+  default     = false
+}
+
 variable "resource_group_name" {
   type        = string
-  description = "Resource group name, only required when use_existing_vnet is true"
+  description = "Resource group name, only required when use_existing_recource_group is true"
   default     = ""
 }
 
@@ -177,3 +207,21 @@ variable "registry_auth_token" {
   nullable    = false
 }
 
+
+variable "subscription_ids" {
+  type        = list(string)
+  description = "Subscriptions with the Aviatrix gateways. Aviatrix role will be created in the first one. Controller will have read-only access if aviatrix_rgs is not empty. "
+  default     = []
+}
+
+variable "aviatrix_rgs" {
+  description = "Only used when create_custom_role = true. Defines resorce groups with the Aviatrix managed entities. Controller will have permissions to modify resources in these RGs"
+  type        = map(list(string))
+  default     = {}
+}
+
+variable "create_storage_account" {
+  type        = bool
+  default     = true
+  description = "Storage account used for the controller backup and terraform state"
+}

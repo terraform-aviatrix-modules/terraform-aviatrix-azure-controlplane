@@ -1,0 +1,18 @@
+{
+    "Name": "aviatrix-read-only",
+    "IsCustom": true,
+    "Description": "Read only role used by the Aviatrix controller in all subscriptions with Aviatrix gateways",
+    "Actions": [
+        "Microsoft.Compute/*/read",
+        "Microsoft.Network/*/read",
+        "Microsoft.Resources/*/read",
+        "Microsoft.Resourcehealth/availabilityStatuses/read"
+    ],
+    "NotActions": [],
+    "DataActions": [],
+    "NotDataActions": [],
+    "AssignableScopes": [
+        "Not read from this file",
+        "Provided to the module as a list of subscriptions in var.subscription_ids"
+    ]
+}
