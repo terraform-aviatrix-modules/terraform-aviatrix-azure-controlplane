@@ -33,21 +33,21 @@ variable "use_existing_vnet" {
   default     = false
 }
 
+variable "use_existing_resource_group" {
+  type        = bool
+  description = "Flag to indicate whether to use an existing resource group"
+  default     = false
+}
+
 variable "resource_group_name" {
   type        = string
-  description = "Resource group name, only required when use_existing_vnet is true"
+  description = "Resource group name, only required when use_existing_resource_group is true"
   default     = ""
 }
 
 variable "vnet_name" {
   type        = string
   description = "VNET name, only required when use_existing_vnet is true"
-  default     = ""
-}
-
-variable "subnet_name" {
-  type        = string
-  description = "subnet name, only required when use_existing_vnet is true"
   default     = ""
 }
 
@@ -78,6 +78,12 @@ variable "controller_virtual_machine_size" {
 variable "incoming_ssl_cidrs" {
   type        = list(string)
   description = "Incoming cidrs for security group used by controller"
+}
+
+variable "create_storage_account" {
+  type        = bool
+  default     = true
+  description = "Storage account used for the controller backup and terraform state"
 }
 
 # terraform-docs-ignore
