@@ -1,5 +1,5 @@
 output "controller_public_ip_address" {
-  value = azurerm_public_ip.controller_public_ip.ip_address
+  value = var.use_existing_public_ip ? data.azurerm_public_ip.controller_public_ip[0].ip_address : azurerm_public_ip.controller_public_ip[0].ip_address
 }
 
 output "controller_private_ip_address" {

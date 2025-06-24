@@ -1,5 +1,5 @@
 output "public_ip" {
-  value = concat(azurerm_public_ip.copilot_public_ip.*.ip_address, [null])[0]
+  value = var.use_existing_public_ip  ? data.azurerm_public_ip.copilot_public_ip[0].ip_address : concat(azurerm_public_ip.copilot_public_ip.*.ip_address, [null])[0]
 }
 
 output "private_ip" {

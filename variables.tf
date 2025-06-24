@@ -129,6 +129,24 @@ variable "location" {
   default     = "West US"
 }
 
+variable "use_existing_public_ip" {
+  type        = bool
+  description = "Flag to indicate whether to use an existing public ip"
+  default     = false
+}
+
+variable "controller_public_ip_name" {
+  type        = string
+  description = "Public IP name, only required when use_existing_public_ip is true"
+  default     = ""
+}
+
+variable "copilot_public_ip_name" {
+  type        = string
+  description = "Public IP name, only required when use_existing_public_ip is true"
+  default     = ""
+}
+
 variable "use_existing_vnet" {
   type        = bool
   description = "Flag to indicate whether to use an existing VNET"

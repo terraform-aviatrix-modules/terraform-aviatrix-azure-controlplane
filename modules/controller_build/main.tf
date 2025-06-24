@@ -32,8 +32,9 @@ resource "azurerm_subnet" "controller_subnet" {
   depends_on = [azurerm_resource_group.controller_rg]
 }
 
-// 3. Create Public IP Address
+// 3. Create or Read Public IP Address
 resource "azurerm_public_ip" "controller_public_ip" {
+  count               = var.use_existing_public_ip ? 0 : 1
   allocation_method   = "Static"
   location            = var.location
   name                = "${var.controller_name}-public-ip"
@@ -41,6 +42,12 @@ resource "azurerm_public_ip" "controller_public_ip" {
   resource_group_name = var.use_existing_resource_group ? var.resource_group_name : azurerm_resource_group.controller_rg[0].name
 
   depends_on = [azurerm_resource_group.controller_rg]
+}
+
+data "azurerm_public_ip" "controller_public_ip" {
+  count               = var.use_existing_public_ip ? 1 : 0
+  name                = var.public_ip_name
+  resource_group_name = var.resource_group_name
 }
 
 // 4. Create the Security Group
@@ -77,7 +84,7 @@ resource "azurerm_network_interface" "controller_nic" {
     name                          = "${var.controller_name}-nic"
     private_ip_address_allocation = "Dynamic"
     subnet_id                     = var.use_existing_vnet == false ? azurerm_subnet.controller_subnet[0].id : var.subnet_id
-    public_ip_address_id          = azurerm_public_ip.controller_public_ip.id
+    public_ip_address_id          = var.use_existing_public_ip ? data.azurerm_public_ip.controller_public_ip[0].id : azurerm_public_ip.controller_public_ip[0].id
   }
 }
 
