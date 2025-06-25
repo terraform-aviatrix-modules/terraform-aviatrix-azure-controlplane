@@ -22,7 +22,7 @@ module "controller_build" {
   controller_virtual_machine_size           = var.controller_virtual_machine_size
   incoming_ssl_cidrs                        = local.controller_allowed_cidrs
   use_existing_public_ip                    = var.use_existing_public_ip
-  public_ip_name                              = var.controller_public_ip_name
+  public_ip_name                            = var.controller_public_ip_name
   use_existing_vnet                         = var.use_existing_vnet
   use_existing_resource_group               = var.use_existing_resource_group
   resource_group_name                       = var.resource_group_name
@@ -62,10 +62,10 @@ module "copilot_build" {
   source = "./modules/copilot_build"
 
   use_existing_public_ip = var.use_existing_public_ip
-  public_ip_name           = var.copilot_public_ip_name
-  use_existing_vnet   = true
-  resource_group_name = module.controller_build[0].controller_rg_name
-  subnet_id           = module.controller_build[0].controller_subnet_id
+  public_ip_name         = var.copilot_public_ip_name
+  use_existing_vnet      = true
+  resource_group_name    = module.controller_build[0].controller_rg_name
+  subnet_id              = module.controller_build[0].controller_subnet_id
 
   controller_public_ip           = module.controller_build[0].controller_public_ip_address
   controller_private_ip          = module.controller_build[0].controller_private_ip_address
