@@ -50,7 +50,7 @@ output "controlplane_data" {
 | <a name="input_controller_admin_email"></a> [controller\_admin\_email](#input\_controller\_admin\_email) | aviatrix controller admin email address | `string` | n/a | yes |
 | <a name="input_controller_admin_password"></a> [controller\_admin\_password](#input\_controller\_admin\_password) | aviatrix controller admin password | `string` | n/a | yes |
 | <a name="input_controller_name"></a> [controller\_name](#input\_controller\_name) | Customized Name for Aviatrix Controller | `string` | `"Aviatrix-Controller"` | no |
-| <a name="input_controller_public_ip_name"></a> [controller\_public\_ip\_name](#input\_controller\_public\_ip\_name) | Public IP name, only required when use\_existing\_public\_ip is true | `string` | `""` | no |
+| <a name="input_controller_public_ip_name"></a> [controller\_public\_ip\_name](#input\_controller\_public\_ip\_name) | Public IP name, only required when use\_existing\_controller\_public\_ip is true | `string` | `""` | no |
 | <a name="input_controller_version"></a> [controller\_version](#input\_controller\_version) | Aviatrix Controller version | `string` | `"latest"` | no |
 | <a name="input_controller_virtual_machine_admin_password"></a> [controller\_virtual\_machine\_admin\_password](#input\_controller\_virtual\_machine\_admin\_password) | Admin Password for the controller virtual machine. | `string` | `"aviatrix1234!"` | no |
 | <a name="input_controller_virtual_machine_admin_username"></a> [controller\_virtual\_machine\_admin\_username](#input\_controller\_virtual\_machine\_admin\_username) | Admin Username for the controller virtual machine. | `string` | `"aviatrix"` | no |
@@ -59,7 +59,7 @@ output "controlplane_data" {
 | <a name="input_controlplane_vnet_cidr"></a> [controlplane\_vnet\_cidr](#input\_controlplane\_vnet\_cidr) | CIDR for controller VNET. | `string` | `"10.0.0.0/24"` | no |
 | <a name="input_copilot_data_disk_size"></a> [copilot\_data\_disk\_size](#input\_copilot\_data\_disk\_size) | Aviatrix-Copilot data disk size - use 1TB for production | `string` | `"100"` | no |
 | <a name="input_copilot_name"></a> [copilot\_name](#input\_copilot\_name) | Customized Name for Aviatrix Copilot | `string` | `"Aviatrix-Copilot"` | no |
-| <a name="input_copilot_public_ip_name"></a> [copilot\_public\_ip\_name](#input\_copilot\_public\_ip\_name) | Public IP name, only required when use\_existing\_public\_ip is true | `string` | `""` | no |
+| <a name="input_copilot_public_ip_name"></a> [copilot\_public\_ip\_name](#input\_copilot\_public\_ip\_name) | Public IP name, only required when use\_existing\_copilot\_public\_ip is true | `string` | `""` | no |
 | <a name="input_copilot_virtual_machine_size"></a> [copilot\_virtual\_machine\_size](#input\_copilot\_virtual\_machine\_size) | Virtual Machine size for the copilot | `string` | `"Standard_B4ms"` | no |
 | <a name="input_create_custom_role"></a> [create\_custom\_role](#input\_create\_custom\_role) | Enable creation of custom role in stead of using contributor permissions | `bool` | `false` | no |
 | <a name="input_create_storage_account"></a> [create\_storage\_account](#input\_create\_storage\_account) | Storage account used for the controller backup and terraform state | `bool` | `true` | no |

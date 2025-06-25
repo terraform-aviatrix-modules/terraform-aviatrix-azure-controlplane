@@ -137,7 +137,7 @@ variable "use_existing_controller_public_ip" {
 
 variable "controller_public_ip_name" {
   type        = string
-  description = "Public IP name, only required when use_existing_public_ip is true"
+  description = "Public IP name, only required when use_existing_controller_public_ip is true"
   default     = ""
 }
 
@@ -149,7 +149,7 @@ variable "use_existing_copilot_public_ip" {
 
 variable "copilot_public_ip_name" {
   type        = string
-  description = "Public IP name, only required when use_existing_public_ip is true"
+  description = "Public IP name, only required when use_existing_copilot_public_ip is true"
   default     = ""
 }
 
