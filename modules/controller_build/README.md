@@ -29,11 +29,14 @@ module "controller_build" {
 | <a name="input_controller_virtual_machine_admin_username"></a> [controller\_virtual\_machine\_admin\_username](#input\_controller\_virtual\_machine\_admin\_username) | Admin Username for the controller virtual machine. | `string` | `"aviatrix"` | no |
 | <a name="input_controller_virtual_machine_size"></a> [controller\_virtual\_machine\_size](#input\_controller\_virtual\_machine\_size) | Virtual Machine size for the controller. | `string` | `"Standard_A4_v2"` | no |
 | <a name="input_controller_vnet_cidr"></a> [controller\_vnet\_cidr](#input\_controller\_vnet\_cidr) | CIDR for controller VNET. | `string` | `"10.0.0.0/24"` | no |
+| <a name="input_create_storage_account"></a> [create\_storage\_account](#input\_create\_storage\_account) | Storage account used for the controller backup and terraform state | `bool` | `true` | no |
 | <a name="input_incoming_ssl_cidrs"></a> [incoming\_ssl\_cidrs](#input\_incoming\_ssl\_cidrs) | Incoming cidrs for security group used by controller | `list(string)` | n/a | yes |
 | <a name="input_location"></a> [location](#input\_location) | Resource Group Location for Aviatrix Controller | `string` | `"West US"` | no |
-| <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | Resource group name, only required when use\_existing\_vnet is true | `string` | `""` | no |
+| <a name="input_public_ip_name"></a> [public\_ip\_name](#input\_public\_ip\_name) | Public IP name, only required when use\_existing\_public\_ip is true | `string` | `""` | no |
+| <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | Resource group name. Required when use\_existing\_resource\_group is true or when using existing public IP or vnet. | `string` | `""` | no |
 | <a name="input_subnet_id"></a> [subnet\_id](#input\_subnet\_id) | Subnet ID, only required when use\_existing\_vnet is true | `string` | `""` | no |
-| <a name="input_subnet_name"></a> [subnet\_name](#input\_subnet\_name) | subnet name, only required when use\_existing\_vnet is true | `string` | `""` | no |
+| <a name="input_use_existing_public_ip"></a> [use\_existing\_public\_ip](#input\_use\_existing\_public\_ip) | Flag to indicate whether to use an existing public ip | `bool` | `false` | no |
+| <a name="input_use_existing_resource_group"></a> [use\_existing\_resource\_group](#input\_use\_existing\_resource\_group) | Flag to indicate whether to use an existing resource group | `bool` | `false` | no |
 | <a name="input_use_existing_vnet"></a> [use\_existing\_vnet](#input\_use\_existing\_vnet) | Flag to indicate whether to use an existing VNET | `bool` | `false` | no |
 | <a name="input_vnet_name"></a> [vnet\_name](#input\_vnet\_name) | VNET name, only required when use\_existing\_vnet is true | `string` | `""` | no |
 
@@ -41,6 +44,7 @@ module "controller_build" {
 
 | Name | Description |
 |------|-------------|
+| <a name="output_backup_container_name"></a> [backup\_container\_name](#output\_backup\_container\_name) | n/a |
 | <a name="output_controller_name"></a> [controller\_name](#output\_controller\_name) | n/a |
 | <a name="output_controller_nsg"></a> [controller\_nsg](#output\_controller\_nsg) | n/a |
 | <a name="output_controller_private_ip_address"></a> [controller\_private\_ip\_address](#output\_controller\_private\_ip\_address) | n/a |
@@ -48,6 +52,10 @@ module "controller_build" {
 | <a name="output_controller_rg_name"></a> [controller\_rg\_name](#output\_controller\_rg\_name) | n/a |
 | <a name="output_controller_subnet_id"></a> [controller\_subnet\_id](#output\_controller\_subnet\_id) | n/a |
 | <a name="output_controller_subnet_name"></a> [controller\_subnet\_name](#output\_controller\_subnet\_name) | n/a |
+| <a name="output_controller_vm_id"></a> [controller\_vm\_id](#output\_controller\_vm\_id) | n/a |
+| <a name="output_controller_vnet_id"></a> [controller\_vnet\_id](#output\_controller\_vnet\_id) | n/a |
 | <a name="output_controller_vnet_name"></a> [controller\_vnet\_name](#output\_controller\_vnet\_name) | n/a |
 | <a name="output_location"></a> [location](#output\_location) | n/a |
+| <a name="output_storage_account_name"></a> [storage\_account\_name](#output\_storage\_account\_name) | n/a |
+| <a name="output_terraform_container_name"></a> [terraform\_container\_name](#output\_terraform\_container\_name) | n/a |
 <!-- END_TF_DOCS -->
