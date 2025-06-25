@@ -27,6 +27,18 @@ variable "controller_subnet_cidr" {
   default     = "10.0.0.0/24"
 }
 
+variable "use_existing_public_ip" {
+  type        = bool
+  description = "Flag to indicate whether to use an existing public ip"
+  default     = false
+}
+
+variable "public_ip_name" {
+  type        = string
+  description = "Public IP name, only required when use_existing_public_ip is true"
+  default     = ""
+}
+
 variable "use_existing_vnet" {
   type        = bool
   description = "Flag to indicate whether to use an existing VNET"
@@ -41,7 +53,7 @@ variable "use_existing_resource_group" {
 
 variable "resource_group_name" {
   type        = string
-  description = "Resource group name, only required when use_existing_resource_group is true"
+  description = "Resource group name. Required when use_existing_resource_group is true or when using existing public IP or vnet."
   default     = ""
 }
 

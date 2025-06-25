@@ -21,12 +21,18 @@ resource "azurerm_subnet" "copilot_subnet" {
 }
 
 resource "azurerm_public_ip" "copilot_public_ip" {
-  count               = var.private_mode ? 0 : 1
+  count               = var.use_existing_public_ip || var.private_mode ? 0 : 1
   allocation_method   = "Static"
   location            = var.location
   name                = "${var.copilot_name}-public-ip"
   sku                 = "Standard"
   resource_group_name = var.use_existing_vnet ? var.resource_group_name : azurerm_resource_group.copilot_rg[0].name
+}
+
+data "azurerm_public_ip" "copilot_public_ip" {
+  count               = var.use_existing_public_ip ? 1 : 0
+  name                = var.public_ip_name
+  resource_group_name = var.resource_group_name
 }
 
 resource "azurerm_network_security_group" "copilot_nsg" {
@@ -59,7 +65,7 @@ resource "azurerm_network_interface" "copilot_nic" {
     name                          = "${var.copilot_name}-nic"
     private_ip_address_allocation = "Dynamic"
     subnet_id                     = var.use_existing_vnet ? var.subnet_id : azurerm_subnet.copilot_subnet[0].id
-    public_ip_address_id          = var.private_mode ? "" : azurerm_public_ip.copilot_public_ip[0].id
+    public_ip_address_id          = var.private_mode ? "" : var.use_existing_public_ip ? data.azurerm_public_ip.copilot_public_ip[0].id : azurerm_public_ip.copilot_public_ip[0].id
   }
 }
 

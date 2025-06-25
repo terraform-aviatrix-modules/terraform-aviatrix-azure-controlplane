@@ -52,11 +52,13 @@ module "copilot_build" {
 | <a name="input_os_disk_name"></a> [os\_disk\_name](#input\_os\_disk\_name) | OS disk name of the copilot virtual machine | `string` | `""` | no |
 | <a name="input_os_disk_size"></a> [os\_disk\_size](#input\_os\_disk\_size) | OS disk size for copilot | `number` | `30` | no |
 | <a name="input_private_mode"></a> [private\_mode](#input\_private\_mode) | Flag to indicate whether the copilot is for private mode | `bool` | `false` | no |
-| <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | Resource group name, only required when use\_existing\_vnet is true | `string` | `""` | no |
+| <a name="input_public_ip_name"></a> [public\_ip\_name](#input\_public\_ip\_name) | Public IP name, only required when use\_existing\_public\_ip is true | `string` | `""` | no |
+| <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | Resource group name. Required when use\_existing\_resource\_group is true or when using existing public IP or vnet. | `string` | `""` | no |
 | <a name="input_ssh_public_key_file_content"></a> [ssh\_public\_key\_file\_content](#input\_ssh\_public\_key\_file\_content) | File content of the SSH public key | `string` | `""` | no |
 | <a name="input_ssh_public_key_file_path"></a> [ssh\_public\_key\_file\_path](#input\_ssh\_public\_key\_file\_path) | File path to the SSH public key | `string` | `""` | no |
 | <a name="input_subnet_cidr"></a> [subnet\_cidr](#input\_subnet\_cidr) | CIDR for copilot subnet | `string` | `"10.0.1.0/24"` | no |
 | <a name="input_subnet_id"></a> [subnet\_id](#input\_subnet\_id) | Subnet ID, only required when use\_existing\_vnet is true | `string` | `""` | no |
+| <a name="input_use_existing_public_ip"></a> [use\_existing\_public\_ip](#input\_use\_existing\_public\_ip) | Flag to indicate whether to use an existing public ip | `bool` | `false` | no |
 | <a name="input_use_existing_ssh_key"></a> [use\_existing\_ssh\_key](#input\_use\_existing\_ssh\_key) | Flag to indicate whether to use an existing SSH key | `bool` | `false` | no |
 | <a name="input_use_existing_vnet"></a> [use\_existing\_vnet](#input\_use\_existing\_vnet) | Flag to indicate whether to use an existing VNET | `bool` | `false` | no |
 | <a name="input_virtual_machine_admin_password"></a> [virtual\_machine\_admin\_password](#input\_virtual\_machine\_admin\_password) | Admin Password for the copilot virtual machine | `string` | `""` | no |
