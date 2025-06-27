@@ -1,7 +1,7 @@
 # terraform-aviatrix-azure-controlplane - release notes
 
 ## v1.1.1
-- Allow for configuring copilot and controller existing public ip
+- Allow for configuring copilot and controller existing public ip (Thanks @dspinhirne)
 - Added a number of configuration options (Thanks @PiotrAviatrix)
 
 ## v1.1.0
