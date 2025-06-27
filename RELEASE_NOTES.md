@@ -2,12 +2,10 @@
 
 ## v1.1.1
 - Allow for configuring copilot and controller existing public ip
+- Added a number of configuration options (Thanks @PiotrAviatrix)
 
 ## v1.1.0
 - Now supports g4 images (v8.0.0)
-
-## v1.0.4
-- Found and resolved another issue with terracurl on destroy, in the onboarding submodule.
 
 ## v1.0.4
 - Found and resolved another issue with terracurl on destroy, in the onboarding submodule.
