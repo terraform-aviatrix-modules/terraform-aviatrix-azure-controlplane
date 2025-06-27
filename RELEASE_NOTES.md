@@ -1,5 +1,8 @@
 # terraform-aviatrix-azure-controlplane - release notes
 
+## v1.1.1
+- Allow for configuring copilot and controller existing public ip
+
 ## v1.1.0
 - Now supports g4 images (v8.0.0)
 
