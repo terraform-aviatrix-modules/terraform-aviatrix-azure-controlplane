@@ -35,6 +35,7 @@ module "controller_build" {
 | <a name="input_location"></a> [location](#input\_location) | Resource Group Location for Aviatrix Controller | `string` | `"West US"` | no |
 | <a name="input_public_ip_name"></a> [public\_ip\_name](#input\_public\_ip\_name) | Public IP name, only required when use\_existing\_public\_ip is true | `string` | `""` | no |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | Resource group name. Required when use\_existing\_resource\_group is true or when using existing public IP or vnet. | `string` | `""` | no |
+| <a name="input_storage_account_name"></a> [storage\_account\_name](#input\_storage\_account\_name) | Azure storage account name. | `string` | `""` | no |
 | <a name="input_subnet_id"></a> [subnet\_id](#input\_subnet\_id) | Subnet ID, only required when use\_existing\_vnet is true | `string` | `""` | no |
 | <a name="input_use_existing_public_ip"></a> [use\_existing\_public\_ip](#input\_use\_existing\_public\_ip) | Flag to indicate whether to use an existing public ip | `bool` | `false` | no |
 | <a name="input_use_existing_resource_group"></a> [use\_existing\_resource\_group](#input\_use\_existing\_resource\_group) | Flag to indicate whether to use an existing resource group | `bool` | `false` | no |
