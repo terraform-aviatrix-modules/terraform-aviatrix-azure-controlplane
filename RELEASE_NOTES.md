@@ -1,5 +1,8 @@
 # terraform-aviatrix-azure-controlplane - release notes
 
+## v1.1.3
+- Fix an issue with NSG's
+
 ## v1.1.2
 - Update security group entries for controller to allow copilot to connect on tcp ports 50441-50443.
 - Use random storage account name, to meet global uniqueness requirement.

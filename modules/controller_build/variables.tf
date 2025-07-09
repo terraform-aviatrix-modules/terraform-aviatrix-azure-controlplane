@@ -119,13 +119,6 @@ variable "registry_auth_token" {
   nullable    = false
 }
 
-variable "copilot_ips" {
-  description = "The list of Copilot IP's, for security group management."
-  type        = list(string)
-  default     = []
-  nullable    = false
-}
-
 variable "storage_account_name" {
   description = "Azure storage account name."
   type        = string
