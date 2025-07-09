@@ -1,5 +1,8 @@
 # terraform-aviatrix-azure-controlplane - release notes
 
+## v1.1.2
+- Update security group entries for controller to allow copilot to connect on tcp ports 50441-50443.
+
 ## v1.1.1
 - Allow for configuring copilot and controller existing public ip (Thanks @dspinhirne)
 - Added a number of configuration options (Thanks @PiotrAviatrix)

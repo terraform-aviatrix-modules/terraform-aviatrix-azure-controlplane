@@ -31,6 +31,7 @@ module "controller_build" {
   environment                               = var.environment         #For internal use only
   registry_auth_token                       = var.registry_auth_token #For internal use only
   create_storage_account                    = var.create_storage_account
+  copilot_ips                               = local.copilot_ips
 
   depends_on = [
     module.azure_marketplace_agreement
