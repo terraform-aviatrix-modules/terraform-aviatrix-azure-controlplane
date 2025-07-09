@@ -2,6 +2,7 @@
 
 ## v1.1.2
 - Update security group entries for controller to allow copilot to connect on tcp ports 50441-50443.
+- Use random storage account name, to meet global uniqueness requirement.
 
 ## v1.1.1
 - Allow for configuring copilot and controller existing public ip (Thanks @dspinhirne)

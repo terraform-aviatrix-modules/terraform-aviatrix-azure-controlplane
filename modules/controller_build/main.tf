@@ -77,8 +77,8 @@ resource "azurerm_network_security_rule" "controller_nsg_rule_https" {
 resource "azurerm_network_security_rule" "controller_nsg_rule_50441-50443" {
   access                      = "Allow"
   direction                   = "Inbound"
-  name                        = "https"
-  priority                    = "200"
+  name                        = "tcp50441-50443"
+  priority                    = "201"
   protocol                    = "Tcp"
   source_port_range           = "*"
   destination_port_range      = "50441-50443"
@@ -87,6 +87,8 @@ resource "azurerm_network_security_rule" "controller_nsg_rule_50441-50443" {
   description                 = "Copilot access 50441-50443"
   resource_group_name         = var.use_existing_resource_group ? var.resource_group_name : azurerm_resource_group.controller_rg[0].name
   network_security_group_name = azurerm_network_security_group.controller_nsg.name
+
+  depends_on = [azurerm_network_security_rule.controller_nsg_rule_https]
 }
 
 
@@ -172,7 +174,7 @@ data "http" "image_info" {
 resource "azurerm_storage_account" "controller" {
   count = var.create_storage_account ? 1 : 0
 
-  name                     = lower(replace(var.controller_name, "-", ""))
+  name                     = local.storage_account_name
   resource_group_name      = var.use_existing_resource_group ? var.resource_group_name : azurerm_resource_group.controller_rg[0].name
   location                 = var.location
   account_tier             = "Standard"

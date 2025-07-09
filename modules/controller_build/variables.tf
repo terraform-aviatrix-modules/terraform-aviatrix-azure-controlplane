@@ -125,3 +125,22 @@ variable "copilot_ips" {
   default     = []
   nullable    = false
 }
+
+variable "storage_account_name" {
+  description = "Azure storage account name."
+  type        = string
+  default     = ""
+  nullable    = false
+}
+
+resource "random_string" "storage_account_name_padding" {
+  length  = 16
+  upper   = false
+  lower   = true
+  special = false
+}
+
+locals {
+  default_storage_account_name = substr(format("%s%s", lower(replace(var.controller_name, "-", "")), random_string.storage_account_name_padding.result), 0, 24) #Storage accounts require global unique names.
+  storage_account_name         = var.storage_account_name == "" ? local.default_storage_account_name : var.storage_account_name
+}
