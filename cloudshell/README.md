@@ -1,96 +1,112 @@
 # Aviatrix Control Plane CloudShell Launcher
 
-A PowerShell script that provides a user-friendly wrapper around the [terraform-aviatrix-azure-controlplane](../terraform-aviatrix-azure-controlplane-main/) Terraform module for deploying Aviatrix control plane infrastructure in Azure.
+This directory contains a PowerShell script that provides a user-friendly wrapper around the [terraform-aviatrix-azure-controlplane](../terraform-aviatrix-azure-controlplane-main/) Terraform module. It's designed to guide users through deploying a complete Aviatrix control plane in Azure without requiring deep Terraform knowledge.
 
-## 🚀 Quick Start - Two-Line Deployment
+## Who should (not) use it?
+
+### ✅ **You SHOULD use this if:**
+- You want to quickly deploy Aviatrix with minimal setup complexity
+- You prefer a simple, guided installation process without Terraform expertise
+- You don't need to manage infrastructure changes after initial deployment
+- You're comfortable with a "deploy and forget" approach
+- You want to get started quickly without learning Terraform specifics
+- You need a one-time deployment (for any environment: production, staging, demos, or testing)
+
+### ❌ **You should NOT use this if:**
+- You need to manage ongoing infrastructure changes and updates through IaC
+- You want to maintain Terraform state for future modifications
+- You need to integrate with existing Terraform workflows or CI/CD pipelines
+- You require repeatable, automated deployments across multiple environments
+- You want to track infrastructure changes over time
+- You plan to make frequent configuration changes to the deployment
+- You need infrastructure-as-code practices with version control
+
+### 🔧 **Alternative: Use the Terraform Module Directly**
+If this script doesn't meet your needs, use the underlying [terraform-aviatrix-azure-controlplane](../terraform-aviatrix-azure-controlplane-main/) Terraform module directly:
+- Full control over Terraform state management
+- Integration with existing Terraform workflows
+- Version control and infrastructure-as-code practices
+- Customizable configuration beyond script parameters
+- Suitable for CI/CD pipelines and automated deployments
+
+## What Gets Deployed
+
+The script deploys and configures:
+
+- **Aviatrix Controller Azure VM** - The main control plane virtual machine
+- **Controller initialization** - Automatic setup and configuration
+- **Azure AD App Registration** - Service principal with required permissions
+- **Azure subscription onboarding** - Connects your Azure subscription to the controller
+- **Optional CoPilot deployment** - Analytics and monitoring platform
+- **Network Security Groups** - Properly configured network access controls
+- **Azure Marketplace agreement** - Accepts terms for Aviatrix products
+
+## Prerequisites
+
+- **Azure Cloud Shell access** (recommended) or local Azure CLI setup
+- **Azure CLI authentication** with sufficient permissions
+- **Azure RBAC permissions** to create resources and service principals
+- **Valid Aviatrix customer license ID**
+- **Azure subscription** with appropriate quotas for VM deployment
+
+### Required Azure Permissions
+
+Your Azure user/role needs the following permissions:
+- Virtual Machine Contributor (for creating VMs and related resources)
+- Network Contributor (for VNet, subnet, and NSG management)
+- Application Administrator or Global Administrator (for App Registration)
+- User Access Administrator (for role assignments)
+- Marketplace Administrator (for accepting marketplace terms)
+
+## Quick Start
+
+### Option 1: Interactive Mode (Recommended)
+1. Open the Azure Portal
+2. Launch an Azure Cloud Shell in Powershell mode
+3. Execute the commands below, replacing with your configuration details
+
+```powershell
+iex (irm https://raw.githubusercontent.com/terraform-aviatrix-modules/terraform-aviatrix-azure-controlplane/refs/heads/main/ps-cloudshell-launcher/deploy-aviatrix-controlplane.ps1)
+```
+
+### Option 2: Automated Mode
+1. Open the Azure Portal
+2. Launch an Azure Cloud Shell in Powershell mode
+3. Execute the commands below, replacing with your configuration details
+
+```powershell
+# Download the deployment script
+irm https://raw.githubusercontent.com/terraform-aviatrix-modules/terraform-aviatrix-azure-controlplane/refs/heads/main/ps-cloudshell-launcher/deploy-aviatrix-controlplane.ps1 -OutFile deploy-aviatrix-controlplane.ps1
+
+# Execute the deployment with your configuration
+./deploy-aviatrix-controlplane.ps1 `
+    -DeploymentName "my-avx-ctrl" `
+    -Location "East US" `
+    -AdminEmail "admin@company.com" `
+    -AdminPassword "MySecure123!" `
+    -CustomerID "aviatrix-abc-123456"
+```
+
+### Option 3: launch.aviatrix.com
+When cloudshell commands are assembled from launch.aviatrix.com the following command is used for deployment.
 
 1. Open the Azure Portal
 2. Launch an Azure Cloud Shell in Powershell mode
 3. Execute the commands below, replacing with your configuration details
 
 ```powershell
+# Download the deployment script
 irm https://raw.githubusercontent.com/terraform-aviatrix-modules/terraform-aviatrix-azure-controlplane/refs/heads/main/ps-cloudshell-launcher/deploy-aviatrix-controlplane.ps1 -OutFile deploy-aviatrix-controlplane.ps1
-./deploy-aviatrix-controlplane.ps1 -DeploymentName "my-avx-ctrl" -Location "East US" -AdminEmail "admin@company.com" -AdminPassword "MySecure123!" -CustomerID "aviatrix-abc-123456"
-```
 
-### One-Line Interactive Mode
-For interactive prompts, you can still use the one-line approach:
-
-```powershell
-iex (irm https://raw.githubusercontent.com/terraform-aviatrix-modules/terraform-aviatrix-azure-controlplane/refs/heads/main/ps-cloudshell-launcher/deploy-aviatrix-controlplane.ps1)
-```
-
-## 📋 Prerequisites
-
-- **Azure Cloud Shell** (PowerShell mode required)
-- **Azure CLI** authenticated (automatic in Cloud Shell)
-- **Valid Aviatrix license** (customer ID)
-- **Appropriate Azure permissions** (Contributor role or equivalent)
-- **Azure AD app registration permissions** (Global Administrator, Application Administrator, or equivalent role)
-- **Azure Marketplace access** (script will automatically check and accept marketplace agreements as needed)
-
-## 🎯 What This Script Deploys
-
-### Core Components (Always Deployed)
-- ✅ **Aviatrix Controller VM** - The main control plane
-- ✅ **Controller Initialization** - Automated setup and configuration  
-- ✅ **Azure AD App Registration** - For API access permissions
-- ✅ **Azure Account Onboarding** - Connects your subscription to the controller
-- ✅ **Network Security Groups** - Secure access from your IP only
-- ✅ **Azure Marketplace Agreements** - Automatic checking and acceptance of terms as needed
-
-### Optional Components
-- 🔹 **Aviatrix CoPilot** - Advanced analytics and monitoring platform
-
-## 📖 Usage Examples
-
-### Interactive Mode (Recommended for First-Time Users)
-```powershell
-./deploy-aviatrix-controlplane.ps1
-```
-The script will prompt you for all required information with helpful guidance.
-
-### Automated Mode (For Experienced Users)
-```powershell
+# Execute the deployment with your configuration
 ./deploy-aviatrix-controlplane.ps1 `
-  -DeploymentName "my-avx-ctrl" `
-  -Location "East US" `
-  -AdminEmail "admin@company.com" `
-  -AdminPassword "MySecure123!" `
-  -CustomerID "aviatrix-abc-123456"
-```
-
-### With Additional Management Access
-```powershell
-./deploy-aviatrix-controlplane.ps1 `
-  -DeploymentName "my-avx-ctrl" `
-  -Location "East US" `
-  -AdminEmail "admin@company.com" `
-  -AdminPassword "MySecure123!" `
-  -CustomerID "aviatrix-abc-123456" `
-  -AdditionalManagementIPs "192.168.1.100,10.0.0.0/24,203.0.113.50"
-```
-
-### Deploy with CoPilot
-```powershell
-./deploy-aviatrix-controlplane.ps1 `
-  -DeploymentName "my-avx-ctrl" `
-  -IncludeCopilot $true `
-  -SkipConfirmation
-```
-
-### Planning Mode (Review Before Deploy)
-```powershell
-./deploy-aviatrix-controlplane.ps1 `
-  -TerraformAction "plan" `
-  -DeploymentName "my-avx-ctrl"
-```
-
-### Destroy Deployment
-```powershell
-./deploy-aviatrix-controlplane.ps1 `
-  -TerraformAction "destroy" `
-  -DeploymentName "my-avx-ctrl"
+    -DeploymentName "<name>" `
+    -Location "<location>" `
+    -AdminEmail "<admin_email>" `
+    -AdminPassword "<admin_password>" `
+    -CustomerID "<customer_id>" `
+    -AdditionalManagementIPs "<user_public_ip>/32" `
+    -IncludeCopilot $true
 ```
 
 ## 🔧 Parameters Reference
