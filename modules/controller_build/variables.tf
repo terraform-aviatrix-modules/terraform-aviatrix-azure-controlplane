@@ -98,6 +98,16 @@ variable "create_storage_account" {
   description = "Storage account used for the controller backup and terraform state"
 }
 
+variable "cloud_type" {
+  description = "Determines which cloud should we subscribe offer"
+  type        = string
+  default     = "commercial"
+  validation {
+    condition     = contains(["commercial", "china"], var.cloud_type)
+    error_message = "The Azure cloud type must be either 'commercial' or 'china'."
+  }
+}
+
 # terraform-docs-ignore
 variable "environment" {
   description = "Determines the deployment environment. For internal use only."

@@ -101,6 +101,10 @@ resource "azurerm_network_interface_security_group_association" "controller_nic_
 }
 
 # 7. Create the virtual machine
+locals {
+  azure_key  = var.cloud_type == "china" ? "ARM CHINA" : "Azure ARM"
+  image_data = jsondecode(data.http.image_info.response_body)["g4"]["amd64"][local.azure_key]
+}
 resource "azurerm_linux_virtual_machine" "controller_vm" {
   admin_username                  = var.controller_virtual_machine_admin_username
   admin_password                  = var.controller_virtual_machine_admin_password
@@ -124,16 +128,16 @@ resource "azurerm_linux_virtual_machine" "controller_vm" {
   }
 
   source_image_reference {
-    offer     = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["offer"]
-    publisher = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["publisher"]
-    sku       = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["sku"]
-    version   = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["version"]
+    offer     = local.image_data["offer"]
+    publisher = local.image_data["publisher"]
+    sku       = local.image_data["sku"]
+    version   = local.image_data["version"]
   }
 
   plan {
-    name      = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["sku"]
-    product   = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["offer"]
-    publisher = jsondecode(data.http.image_info.response_body)["g4"]["amd64"]["Azure ARM"]["publisher"]
+    name      = local.image_data["sku"]
+    product   = local.image_data["offer"]
+    publisher = local.image_data["publisher"]
   }
 
   // https://github.com/hashicorp/terraform/issues/24663
