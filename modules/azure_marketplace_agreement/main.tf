@@ -1,3 +1,9 @@
+locals {
+  azure_key = var.cloud_type == "china" ? "ARM CHINA" : "Azure ARM"
+  # Controller image need to support Azure China
+  controller_data = jsondecode(data.http.controller_image_info.response_body)["g4"]["amd64"][local.azure_key]
+}
+
 // accept license of Aviatrix Controller
 data "http" "controller_image_info" {
   url = format("https://cdn.%s.sre.aviatrix.com/image-details/arm_controller_image_details.json", var.environment)
@@ -10,9 +16,9 @@ data "http" "controller_image_info" {
 resource "azurerm_marketplace_agreement" "controller_mp_agreement" {
   count = var.accept_controller_subscription ? 1 : 0
 
-  publisher = jsondecode(data.http.controller_image_info.response_body)["g4"]["amd64"]["Azure ARM"]["publisher"]
-  offer     = jsondecode(data.http.controller_image_info.response_body)["g4"]["amd64"]["Azure ARM"]["offer"]
-  plan      = jsondecode(data.http.controller_image_info.response_body)["g4"]["amd64"]["Azure ARM"]["sku"]
+  publisher = local.controller_data["publisher"]
+  offer     = local.controller_data["offer"]
+  plan      = local.controller_data["sku"]
 }
 
 // accept license of Aviatrix Copilot
