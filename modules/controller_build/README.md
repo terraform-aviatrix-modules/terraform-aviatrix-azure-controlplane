@@ -22,6 +22,7 @@ module "controller_build" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_cloud_type"></a> [cloud\_type](#input\_cloud\_type) | Determines which cloud should we subscribe offer | `string` | `"commercial"` | no |
 | <a name="input_controller_name"></a> [controller\_name](#input\_controller\_name) | Customized Name for Aviatrix Controller | `string` | n/a | yes |
 | <a name="input_controller_subnet_cidr"></a> [controller\_subnet\_cidr](#input\_controller\_subnet\_cidr) | CIDR for controller subnet. | `string` | `"10.0.0.0/24"` | no |
 | <a name="input_controller_version"></a> [controller\_version](#input\_controller\_version) | Aviatrix Controller version | `string` | `"latest"` | no |
@@ -29,7 +30,6 @@ module "controller_build" {
 | <a name="input_controller_virtual_machine_admin_username"></a> [controller\_virtual\_machine\_admin\_username](#input\_controller\_virtual\_machine\_admin\_username) | Admin Username for the controller virtual machine. | `string` | `"aviatrix"` | no |
 | <a name="input_controller_virtual_machine_size"></a> [controller\_virtual\_machine\_size](#input\_controller\_virtual\_machine\_size) | Virtual Machine size for the controller. | `string` | `"Standard_A4_v2"` | no |
 | <a name="input_controller_vnet_cidr"></a> [controller\_vnet\_cidr](#input\_controller\_vnet\_cidr) | CIDR for controller VNET. | `string` | `"10.0.0.0/24"` | no |
-| <a name="input_copilot_ips"></a> [copilot\_ips](#input\_copilot\_ips) | The list of Copilot IP's, for security group management. | `list(string)` | `[]` | no |
 | <a name="input_create_storage_account"></a> [create\_storage\_account](#input\_create\_storage\_account) | Storage account used for the controller backup and terraform state | `bool` | `true` | no |
 | <a name="input_incoming_ssl_cidrs"></a> [incoming\_ssl\_cidrs](#input\_incoming\_ssl\_cidrs) | Incoming cidrs for security group used by controller | `list(string)` | n/a | yes |
 | <a name="input_location"></a> [location](#input\_location) | Resource Group Location for Aviatrix Controller | `string` | `"West US"` | no |

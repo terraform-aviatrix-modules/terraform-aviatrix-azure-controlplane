@@ -4,6 +4,11 @@
 ### Description
 This module deploys the Aviatrix control plane, or individual parts thereof.
 
+### Quick Start with CloudShell
+For users who want to deploy quickly without managing Terraform state or complex configurations, we provide a simplified CloudShell deployment script that wraps this module. This option is perfect for getting started quickly or for one-time deployments.
+
+👉 **[CloudShell Deployment Guide](./cloudshell/README.md)**
+
 ### Requirements
 This module assumes you have Azure CLI installed and are authenticated with sufficient privileges.
 
@@ -45,8 +50,9 @@ output "controlplane_data" {
 | <a name="input_account_email"></a> [account\_email](#input\_account\_email) | aviatrix controller access account email | `string` | `""` | no |
 | <a name="input_app_name"></a> [app\_name](#input\_app\_name) | Azure AD App Name for Aviatrix Controller Build Up | `string` | `"aviatrix_controller_app"` | no |
 | <a name="input_app_password_validity_length"></a> [app\_password\_validity\_length](#input\_app\_password\_validity\_length) | Number of hours the app secret will be valid from the apply time. Default is a month | `string` | `"730h"` | no |
-| <a name="input_aviatrix_rgs"></a> [aviatrix\_rgs](#input\_aviatrix\_rgs) | Only used when create\_custom\_role = true. Defines resource groups with the Aviatrix managed entities. Controller will have permissions to modify resources in these RGs | `map(list(string))` | `{}` | no |
+| <a name="input_aviatrix_rgs"></a> [aviatrix\_rgs](#input\_aviatrix\_rgs) | Only used when create\_custom\_role = true. Defines resorce groups with the Aviatrix managed entities. Controller will have permissions to modify resources in these RGs | `map(list(string))` | `{}` | no |
 | <a name="input_aviatrix_role_names"></a> [aviatrix\_role\_names](#input\_aviatrix\_role\_names) | Aviatrix role names for use by the controller | `map(string)` | <pre>{<br/>  "backup_name": "aviatrix-backup",<br/>  "read_only_name": "aviatrix-read-only",<br/>  "service_name": "aviatrix-service",<br/>  "transit_gw_name": "aviatrix-transit-gateways"<br/>}</pre> | no |
+| <a name="input_cloud_type"></a> [cloud\_type](#input\_cloud\_type) | Select a cloud type. Valid options are "commercial", "china". | `string` | `"commercial"` | no |
 | <a name="input_controller_admin_email"></a> [controller\_admin\_email](#input\_controller\_admin\_email) | aviatrix controller admin email address | `string` | n/a | yes |
 | <a name="input_controller_admin_password"></a> [controller\_admin\_password](#input\_controller\_admin\_password) | aviatrix controller admin password | `string` | n/a | yes |
 | <a name="input_controller_name"></a> [controller\_name](#input\_controller\_name) | Customized Name for Aviatrix Controller | `string` | `"Aviatrix-Controller"` | no |

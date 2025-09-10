@@ -11,7 +11,6 @@ module "azure_marketplace_agreement" {
 
   accept_controller_subscription = true #Default
   accept_copilot_subscription    = true #Default
-  cloud_type                     = "commercial" #Default
 }
 ```
 ## Inputs
@@ -20,7 +19,7 @@ module "azure_marketplace_agreement" {
 |------|-------------|------|---------|:--------:|
 | <a name="input_accept_controller_subscription"></a> [accept\_controller\_subscription](#input\_accept\_controller\_subscription) | Toggles the acceptance of the Controller subscription | `bool` | `true` | no |
 | <a name="input_accept_copilot_subscription"></a> [accept\_copilot\_subscription](#input\_accept\_copilot\_subscription) | Toggles the acceptance of the copilot subscription | `bool` | `true` | no |
-| <a name="input_cloud_type"></a> [cloud\_type](#input\_cloud\_type) | Toggles the Azure cloud type of the deployment | `string` | `commercial` | no |
+| <a name="input_cloud_type"></a> [cloud\_type](#input\_cloud\_type) | Determines which cloud should we subscribe offer | `string` | `"commercial"` | no |
 
 ## Outputs
 
