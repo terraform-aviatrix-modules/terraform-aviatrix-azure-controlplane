@@ -249,3 +249,13 @@ variable "create_storage_account" {
   default     = true
   description = "Storage account used for the controller backup and terraform state"
 }
+
+variable "cloud_type" {
+  description = "Select a cloud type. Valid options are \"commercial\", \"china\"."
+  type        = string
+  default     = "commercial"
+  validation {
+    condition     = contains(["commercial", "china"], var.cloud_type)
+    error_message = "The cloud_type must be either 'commercial' or 'china'."
+  }
+}

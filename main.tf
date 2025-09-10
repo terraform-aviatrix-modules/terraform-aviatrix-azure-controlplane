@@ -4,7 +4,7 @@ module "azure_marketplace_agreement" {
 
   accept_controller_subscription = var.module_config.accept_controller_subscription
   accept_copilot_subscription    = var.module_config.accept_copilot_subscription
-  cloud_type                     = var.module_config.cloud_type
+  cloud_type                     = var.cloud_type
   environment                    = var.environment #For internal use only
 }
 
@@ -15,7 +15,7 @@ module "controller_build" {
   // please do not use special characters such as `\/"[]:|<>+=;,?*@&~!#$%^()_{}'` in the controller_name
   controller_name                           = var.controller_name
   controller_version                        = var.controller_version
-  cloud_type                                = var.module_config.cloud_type
+  cloud_type                                = var.cloud_type
   location                                  = var.location
   controller_vnet_cidr                      = var.controlplane_vnet_cidr
   controller_subnet_cidr                    = var.controlplane_subnet_cidr
