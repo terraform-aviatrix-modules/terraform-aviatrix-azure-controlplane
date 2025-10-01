@@ -47,6 +47,7 @@ module "copilot_build" {
 | <a name="input_copilot_name"></a> [copilot\_name](#input\_copilot\_name) | Customized Name for Aviatrix Copilot | `string` | n/a | yes |
 | <a name="input_default_data_disk_name"></a> [default\_data\_disk\_name](#input\_default\_data\_disk\_name) | Name of default data disk. | `string` | `"default-data-disk"` | no |
 | <a name="input_default_data_disk_size"></a> [default\_data\_disk\_size](#input\_default\_data\_disk\_size) | Size of default data disk. If not set, no default data disk will be created. | `number` | `0` | no |
+| <a name="input_image_version"></a> [image\_version](#input\_image\_version) | Version of the Aviatrix Copilot image to use. Set to 'latest' to use the most recent version. | `string` | `"latest"` | no |
 | <a name="input_is_cluster"></a> [is\_cluster](#input\_is\_cluster) | Flag to indicate whether the copilot is for a cluster | `bool` | `false` | no |
 | <a name="input_location"></a> [location](#input\_location) | Resource Group Location for Aviatrix Copilot | `string` | `"West US"` | no |
 | <a name="input_os_disk_name"></a> [os\_disk\_name](#input\_os\_disk\_name) | OS disk name of the copilot virtual machine | `string` | `""` | no |

@@ -1,5 +1,8 @@
 # terraform-aviatrix-azure-controlplane - release notes
 
+## v1.1.4
+- Support for explicitly setting Copilot image version
+
 ## v1.1.3
 - Fix an issue with NSG's
 
