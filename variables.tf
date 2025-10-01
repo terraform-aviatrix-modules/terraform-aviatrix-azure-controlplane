@@ -129,6 +129,12 @@ variable "subnet_id" {
   default     = ""
 }
 
+variable "copilot_image_version" {
+  type        = string
+  description = "Version of the Aviatrix Copilot image to use. Set to 'latest' to use the most recent version."
+  default     = "latest"
+}
+
 variable "virtual_machine_admin_username" {
   default = "avx_admin"
 }

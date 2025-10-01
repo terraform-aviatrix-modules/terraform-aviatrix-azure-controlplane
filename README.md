@@ -10,7 +10,7 @@ This module assumes you have Azure CLI installed and are authenticated with suff
 ### Compatibility
 Module version | Terraform version
 :--- | :---
-v1.0.4 | >= 1.3.0
+v1.0.5 | >= 1.3.0
 
 ### Usage Example
 ```hcl
@@ -21,7 +21,7 @@ provider "azurerm" {
 
 module "control_plane" {
   source  = "terraform-aviatrix-modules/azure-controlplane/aviatrix"
-  version = "1.0.4"
+  version = "1.0.5"
 
   controller_name           = "my_controller"
   incoming_ssl_cidrs        = ["1.2.3.4"]
@@ -53,6 +53,7 @@ output "controlplane_data" {
 | <a name="input_controller_virtual_machine_size"></a> [controller\_virtual\_machine\_size](#input\_controller\_virtual\_machine\_size) | Virtual Machine size for the controller. | `string` | `"Standard_A4_v2"` | no |
 | <a name="input_controlplane_subnet_cidr"></a> [controlplane\_subnet\_cidr](#input\_controlplane\_subnet\_cidr) | CIDR for controlplane subnet. | `string` | `"10.0.0.0/24"` | no |
 | <a name="input_controlplane_vnet_cidr"></a> [controlplane\_vnet\_cidr](#input\_controlplane\_vnet\_cidr) | CIDR for controller VNET. | `string` | `"10.0.0.0/24"` | no |
+| <a name="input_copilot_image_version"></a> [copilot\_image\_version](#input\_copilot\_image\_version) | Version of the Aviatrix Copilot image to use. Set to 'latest' to use the most recent version. | `string` | `"latest"` | no |
 | <a name="input_copilot_name"></a> [copilot\_name](#input\_copilot\_name) | Customized Name for Aviatrix Copilot | `string` | `"Aviatrix-Copilot"` | no |
 | <a name="input_create_custom_role"></a> [create\_custom\_role](#input\_create\_custom\_role) | Enable creation of custom role in stead of using contributor permissions | `bool` | `false` | no |
 | <a name="input_customer_id"></a> [customer\_id](#input\_customer\_id) | aviatrix customer license id | `string` | n/a | yes |

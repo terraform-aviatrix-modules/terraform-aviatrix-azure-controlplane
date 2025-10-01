@@ -1,5 +1,9 @@
 # module name - release notes
 
+## v1.0.5
+- Add support for setting Copilot image version
+- Lifecycle ignore changes to Copilot image, to prevent Terraform drift issues.
+
 ## v1.0.4
 - Found and resolved another issue with terracurl on destroy, in the onboarding submodule.
 

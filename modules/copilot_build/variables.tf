@@ -149,10 +149,18 @@ variable "controller_private_ip" {
   description = "Controller private IP"
 }
 
+variable "image_version" {
+  type        = string
+  description = "Version of the Aviatrix Copilot image to use. Set to 'latest' to use the most recent version."
+  default     = "latest"
+  nullable    = false
+}
+
 locals {
   ssh_key             = var.add_ssh_key ? (var.use_existing_ssh_key == false ? tls_private_key.key_pair_material[0].public_key_openssh : (var.ssh_public_key_file_path != "" ? file(var.ssh_public_key_file_path) : var.ssh_public_key_file_content)) : ""
   controller_ip       = var.private_mode ? var.controller_private_ip : var.controller_public_ip
   validate_public_ips = (var.private_mode == false && var.controller_public_ip == "0.0.0.0") ? tobool("Please pass in valid controller_public_ip when private_mode is false.") : true
+  image_version       = var.image_version == "latest" ? jsondecode(data.http.image_info.response_body)["BYOL"]["Azure ARM"]["version"] : var.image_version
 
   custom_data = <<EOF
 #!/bin/bash

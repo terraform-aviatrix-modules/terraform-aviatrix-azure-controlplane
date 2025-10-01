@@ -104,13 +104,17 @@ resource "azurerm_linux_virtual_machine" "copilot_vm" {
     offer     = jsondecode(data.http.image_info.response_body)["BYOL"]["Azure ARM"]["offer"]
     publisher = jsondecode(data.http.image_info.response_body)["BYOL"]["Azure ARM"]["publisher"]
     sku       = jsondecode(data.http.image_info.response_body)["BYOL"]["Azure ARM"]["sku"]
-    version   = jsondecode(data.http.image_info.response_body)["BYOL"]["Azure ARM"]["version"]
+    version   = local.image_version
   }
 
   plan {
     name      = jsondecode(data.http.image_info.response_body)["BYOL"]["Azure ARM"]["sku"]
     product   = jsondecode(data.http.image_info.response_body)["BYOL"]["Azure ARM"]["offer"]
     publisher = jsondecode(data.http.image_info.response_body)["BYOL"]["Azure ARM"]["publisher"]
+  }
+
+  lifecycle {
+    ignore_changes = [source_image_reference, plan]
   }
 }
 
@@ -142,7 +146,7 @@ resource "azurerm_linux_virtual_machine" "copilot_vm_ssh" {
     offer     = jsondecode(data.http.image_info.response_body)["BYOL"]["Azure ARM"]["offer"]
     publisher = jsondecode(data.http.image_info.response_body)["BYOL"]["Azure ARM"]["publisher"]
     sku       = jsondecode(data.http.image_info.response_body)["BYOL"]["Azure ARM"]["sku"]
-    version   = jsondecode(data.http.image_info.response_body)["BYOL"]["Azure ARM"]["version"]
+    version   = local.image_version
   }
 
   plan {
@@ -154,6 +158,10 @@ resource "azurerm_linux_virtual_machine" "copilot_vm_ssh" {
   admin_ssh_key {
     username   = var.virtual_machine_admin_username
     public_key = local.ssh_key
+  }
+
+  lifecycle {
+    ignore_changes = [source_image_reference, plan]
   }
 }
 

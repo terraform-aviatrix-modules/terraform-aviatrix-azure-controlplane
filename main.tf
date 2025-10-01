@@ -64,6 +64,7 @@ module "copilot_build" {
   virtual_machine_admin_password = local.virtual_machine_admin_password
   default_data_disk_size         = "100"
   location                       = var.location
+  image_version                  = var.copilot_image_version
 
   allowed_cidrs = {
     "tcp_cidrs" = {
