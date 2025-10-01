@@ -66,6 +66,12 @@ variable "copilot_virtual_machine_size" {
   default     = "Standard_B4ms"
 }
 
+variable "copilot_image_version" {
+  type        = string
+  description = "Version of the Aviatrix Copilot image to use. Set to 'latest' to use the most recent version."
+  default     = "latest"
+}
+
 variable "controlplane_subnet_cidr" {
   type        = string
   description = "CIDR for controlplane subnet."
