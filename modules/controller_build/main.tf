@@ -9,6 +9,10 @@ resource "azurerm_resource_group" "controller_rg" {
   count    = var.use_existing_resource_group ? 0 : 1
   location = var.location
   name     = "${var.controller_name}-rg"
+  tags     = var.tags
+  lifecycle {
+    ignore_changes = [tags]
+  }
 }
 
 # 2. Create the Virtual Network and Subnet
@@ -19,6 +23,10 @@ resource "azurerm_virtual_network" "controller_vnet" {
   location            = var.location
   name                = "${var.controller_name}-vnet"
   resource_group_name = var.use_existing_resource_group ? var.resource_group_name : azurerm_resource_group.controller_rg[0].name
+  tags                = var.tags
+  lifecycle {
+    ignore_changes = [tags]
+  }
 }
 
 //  Create the Subnet
@@ -40,6 +48,10 @@ resource "azurerm_public_ip" "controller_public_ip" {
   name                = "${var.controller_name}-public-ip"
   sku                 = "Standard"
   resource_group_name = var.use_existing_resource_group ? var.resource_group_name : azurerm_resource_group.controller_rg[0].name
+  tags                = var.tags
+  lifecycle {
+    ignore_changes = [tags]
+  }
 
   depends_on = [azurerm_resource_group.controller_rg]
 }
@@ -55,6 +67,10 @@ resource "azurerm_network_security_group" "controller_nsg" {
   location            = var.location
   name                = "${var.controller_name}-security-group"
   resource_group_name = var.use_existing_resource_group ? var.resource_group_name : azurerm_resource_group.controller_rg[0].name
+  tags                = var.tags
+  lifecycle {
+    ignore_changes = [tags]
+  }
 
   depends_on = [azurerm_resource_group.controller_rg]
 }
@@ -80,6 +96,11 @@ resource "azurerm_network_interface" "controller_nic" {
   location            = var.location
   name                = "${var.controller_name}-network-interface-card"
   resource_group_name = var.use_existing_resource_group ? var.resource_group_name : azurerm_resource_group.controller_rg[0].name
+  tags                = var.tags
+  lifecycle {
+    ignore_changes = [tags]
+  }
+
   ip_configuration {
     name                          = "${var.controller_name}-nic"
     private_ip_address_allocation = "Dynamic"
@@ -114,6 +135,8 @@ resource "azurerm_linux_virtual_machine" "controller_vm" {
   network_interface_ids           = [azurerm_network_interface.controller_nic.id]
   resource_group_name             = var.use_existing_resource_group ? var.resource_group_name : azurerm_resource_group.controller_rg[0].name
   size                            = var.controller_virtual_machine_size
+  tags                            = var.tags
+
   custom_data = base64encode(templatefile("${path.module}/cloud-init.tftpl", {
     controller_version  = var.controller_version
     environment         = var.environment
@@ -144,7 +167,7 @@ resource "azurerm_linux_virtual_machine" "controller_vm" {
   depends_on = [azurerm_network_interface.controller_nic]
 
   lifecycle {
-    ignore_changes = [source_image_reference, plan]
+    ignore_changes = [source_image_reference, plan, tags]
   }
 }
 
