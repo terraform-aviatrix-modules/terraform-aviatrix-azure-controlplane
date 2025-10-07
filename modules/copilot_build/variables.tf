@@ -183,8 +183,8 @@ variable "environment" {
 
 variable "tags" {
   description = "Provide tags for resources created by the module"
-  type = map(string)
-  default = {}
+  type        = map(string)
+  default     = {}
 }
 
 locals {

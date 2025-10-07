@@ -145,8 +145,8 @@ resource "random_string" "storage_account_name_padding" {
 
 variable "tags" {
   description = "Provide tags for resources created by the module"
-  type = map(string)
-  default = {}
+  type        = map(string)
+  default     = {}
 }
 
 locals {
