@@ -265,3 +265,10 @@ variable "cloud_type" {
     error_message = "The cloud_type must be either 'commercial' or 'china'."
   }
 }
+
+
+variable "tags" {
+  description = "Provide tags for resources created by the module"
+  type        = map(string)
+  default     = {}
+}

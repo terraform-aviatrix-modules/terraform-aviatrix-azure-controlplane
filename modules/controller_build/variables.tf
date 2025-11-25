@@ -143,6 +143,12 @@ resource "random_string" "storage_account_name_padding" {
   special = false
 }
 
+variable "tags" {
+  description = "Provide tags for resources created by the module"
+  type        = map(string)
+  default     = {}
+}
+
 locals {
   default_storage_account_name = substr(format("%s%s", lower(replace(var.controller_name, "-", "")), random_string.storage_account_name_padding.result), 0, 24) #Storage accounts require global unique names.
   storage_account_name         = var.storage_account_name == "" ? local.default_storage_account_name : var.storage_account_name

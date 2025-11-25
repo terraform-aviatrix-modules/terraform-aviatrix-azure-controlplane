@@ -2,6 +2,10 @@ resource "azurerm_resource_group" "copilot_rg" {
   count    = var.use_existing_vnet ? 0 : 1
   location = var.location
   name     = "${var.copilot_name}-rg"
+  tags     = var.tags
+  lifecycle {
+    ignore_changes = [tags]
+  }
 }
 
 resource "azurerm_virtual_network" "copilot_vnet" {
@@ -10,6 +14,10 @@ resource "azurerm_virtual_network" "copilot_vnet" {
   location            = var.location
   name                = "${var.copilot_name}-vnet"
   resource_group_name = azurerm_resource_group.copilot_rg[0].name
+  tags                = var.tags
+  lifecycle {
+    ignore_changes = [tags]
+  }
 }
 
 resource "azurerm_subnet" "copilot_subnet" {
@@ -27,6 +35,10 @@ resource "azurerm_public_ip" "copilot_public_ip" {
   name                = "${var.copilot_name}-public-ip"
   sku                 = "Standard"
   resource_group_name = var.use_existing_vnet ? var.resource_group_name : azurerm_resource_group.copilot_rg[0].name
+  tags                = var.tags
+  lifecycle {
+    ignore_changes = [tags]
+  }
 }
 
 data "azurerm_public_ip" "copilot_public_ip" {
@@ -39,27 +51,52 @@ resource "azurerm_network_security_group" "copilot_nsg" {
   location            = var.location
   name                = "${var.copilot_name}-security-group"
   resource_group_name = var.use_existing_vnet ? var.resource_group_name : azurerm_resource_group.copilot_rg[0].name
-
-  dynamic "security_rule" {
-    for_each = var.allowed_cidrs
-    content {
-      access                     = "Allow"
-      direction                  = "Inbound"
-      name                       = security_rule.key
-      priority                   = security_rule.value["priority"]
-      protocol                   = security_rule.value["protocol"]
-      source_port_range          = "*"
-      destination_port_ranges    = security_rule.value["ports"]
-      source_address_prefixes    = security_rule.value["cidrs"]
-      destination_address_prefix = "*"
-    }
+  tags                = var.tags
+  lifecycle {
+    ignore_changes = [tags]
   }
+
+  # dynamic "security_rule" {
+  #   for_each = var.allowed_cidrs
+  #   content {
+  #     access                     = "Allow"
+  #     direction                  = "Inbound"
+  #     name                       = security_rule.key
+  #     priority                   = security_rule.value["priority"]
+  #     protocol                   = security_rule.value["protocol"]
+  #     source_port_range          = "*"
+  #     destination_port_ranges    = security_rule.value["ports"]
+  #     source_address_prefixes    = security_rule.value["cidrs"]
+  #     destination_address_prefix = "*"
+  #   }
+  # }
 }
+
+# Create NSG rules outside of NSG resource
+resource "azurerm_network_security_rule" "copilot_nsg_rules" {
+  for_each                    = var.allowed_cidrs
+  access                      = "Allow"
+  direction                   = "Inbound"
+  name                        = each.key
+  priority                    = each.value.priority
+  protocol                    = each.value.protocol
+  source_port_range           = "*"
+  destination_port_ranges     = each.value.ports
+  source_address_prefixes     = each.value.cidrs
+  destination_address_prefix  = "*"
+  resource_group_name         = var.use_existing_vnet ? var.resource_group_name : azurerm_resource_group.copilot_rg[0].name
+  network_security_group_name = azurerm_network_security_group.copilot_nsg.name
+}
+
 
 resource "azurerm_network_interface" "copilot_nic" {
   location            = var.location
   name                = "${var.copilot_name}-network-interface-card"
   resource_group_name = var.use_existing_vnet ? var.resource_group_name : azurerm_resource_group.copilot_rg[0].name
+  tags                = var.tags
+  lifecycle {
+    ignore_changes = [tags]
+  }
 
   ip_configuration {
     name                          = "${var.copilot_name}-nic"
@@ -99,6 +136,7 @@ resource "azurerm_linux_virtual_machine" "copilot_vm" {
   resource_group_name             = var.use_existing_vnet == false ? azurerm_resource_group.copilot_rg[0].name : var.resource_group_name
   size                            = var.virtual_machine_size
   custom_data                     = base64encode(local.custom_data)
+  tags                            = var.tags
 
   os_disk {
     name                 = var.os_disk_name
@@ -121,7 +159,7 @@ resource "azurerm_linux_virtual_machine" "copilot_vm" {
   }
 
   lifecycle {
-    ignore_changes = [source_image_reference, plan]
+    ignore_changes = [source_image_reference, plan, tags]
   }
 }
 
@@ -141,6 +179,7 @@ resource "azurerm_linux_virtual_machine" "copilot_vm_ssh" {
   resource_group_name   = var.use_existing_vnet ? var.resource_group_name : azurerm_resource_group.copilot_rg[0].name
   size                  = var.virtual_machine_size
   custom_data           = base64encode(local.custom_data)
+  tags                  = var.tags
 
   os_disk {
     name                 = var.os_disk_name
@@ -168,7 +207,7 @@ resource "azurerm_linux_virtual_machine" "copilot_vm_ssh" {
   }
 
   lifecycle {
-    ignore_changes = [source_image_reference, plan]
+    ignore_changes = [source_image_reference, plan, tags]
   }
 }
 
@@ -187,6 +226,10 @@ resource "azurerm_managed_disk" "default" {
   storage_account_type = "Standard_LRS"
   create_option        = "Empty"
   disk_size_gb         = var.default_data_disk_size
+  tags                 = var.tags
+  lifecycle {
+    ignore_changes = [tags]
+  }
 }
 
 resource "azurerm_virtual_machine_data_disk_attachment" "default" {

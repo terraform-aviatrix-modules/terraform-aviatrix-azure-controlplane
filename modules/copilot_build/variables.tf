@@ -181,6 +181,12 @@ variable "environment" {
   }
 }
 
+variable "tags" {
+  description = "Provide tags for resources created by the module"
+  type        = map(string)
+  default     = {}
+}
+
 locals {
   ssh_key             = var.add_ssh_key ? (var.use_existing_ssh_key == false ? tls_private_key.key_pair_material[0].public_key_openssh : (var.ssh_public_key_file_path != "" ? file(var.ssh_public_key_file_path) : var.ssh_public_key_file_content)) : ""
   controller_ip       = var.private_mode ? var.controller_private_ip : var.controller_public_ip

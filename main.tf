@@ -33,7 +33,7 @@ module "controller_build" {
   environment                               = var.environment         #For internal use only
   registry_auth_token                       = var.registry_auth_token #For internal use only
   create_storage_account                    = var.create_storage_account
-
+  tags                                      = var.tags
   depends_on = [
     module.azure_marketplace_agreement
   ]
@@ -79,6 +79,7 @@ module "copilot_build" {
   image_version                  = var.copilot_image_version
   location                       = var.location
   environment                    = var.environment #For internal use only
+  tags                           = var.tags
 
   allowed_cidrs = {
     "tcp_cidrs_https" = {
