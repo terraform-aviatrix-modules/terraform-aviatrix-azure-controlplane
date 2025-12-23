@@ -137,11 +137,7 @@ resource "azurerm_linux_virtual_machine" "controller_vm" {
   size                            = var.controller_virtual_machine_size
   tags                            = var.tags
 
-  custom_data = base64encode(templatefile("${path.module}/cloud-init.tftpl", {
-    controller_version  = var.controller_version
-    environment         = var.environment
-    registry_auth_token = var.registry_auth_token
-  }))
+  custom_data = local.cloud_init
 
   //disk
   os_disk {

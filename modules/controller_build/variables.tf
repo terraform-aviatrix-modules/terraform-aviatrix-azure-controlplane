@@ -152,4 +152,17 @@ variable "tags" {
 locals {
   default_storage_account_name = substr(format("%s%s", lower(replace(var.controller_name, "-", "")), random_string.storage_account_name_padding.result), 0, 24) #Storage accounts require global unique names.
   storage_account_name         = var.storage_account_name == "" ? local.default_storage_account_name : var.storage_account_name
+
+  cloud_init_prod = base64encode(templatefile("${path.module}/cloud-init-prod.tftpl", {
+    controller_version = var.controller_version
+    environment        = var.environment
+  }))
+
+  cloud_init_staging = base64encode(templatefile("${path.module}/cloud-init-staging.tftpl", {
+    controller_version  = var.controller_version
+    environment         = var.environment
+    registry_auth_token = var.registry_auth_token
+  }))
+
+  cloud_init = var.environment == "staging" ? local.cloud_init_staging : local.cloud_init_prod
 }

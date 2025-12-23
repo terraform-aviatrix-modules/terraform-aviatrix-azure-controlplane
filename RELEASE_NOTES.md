@@ -2,6 +2,7 @@
 
 ## v1.1.4
 - Support for explicitly setting Copilot image version
+- Resolved an issue where empty optional user_data values were preventing the controller from fully initializing with the latest g4 image (released 2025-12-22).
 
 ## v1.1.3
 - Fix an issue with NSG's
