@@ -102,11 +102,7 @@ resource "azurerm_linux_virtual_machine" "controller_vm" {
   network_interface_ids           = [azurerm_network_interface.controller_nic.id]
   resource_group_name             = var.use_existing_vnet ? var.resource_group_name : azurerm_resource_group.controller_rg[0].name
   size                            = var.controller_virtual_machine_size
-  custom_data = base64encode(templatefile("${path.module}/cloud-init.tftpl", {
-    controller_version  = var.controller_version
-    environment         = var.environment
-    registry_auth_token = var.registry_auth_token
-  }))
+  custom_data                     = local.cloud_init
 
   //disk
   os_disk {

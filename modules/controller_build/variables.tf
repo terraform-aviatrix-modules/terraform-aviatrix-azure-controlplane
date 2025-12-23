@@ -101,3 +101,17 @@ variable "registry_auth_token" {
   nullable    = false
 }
 
+locals {
+  cloud_init_prod = base64encode(templatefile("${path.module}/cloud-init-prod.tftpl", {
+    controller_version = var.controller_version
+    environment        = var.environment
+  }))
+
+  cloud_init_staging = base64encode(templatefile("${path.module}/cloud-init-staging.tftpl", {
+    controller_version  = var.controller_version
+    environment         = var.environment
+    registry_auth_token = var.registry_auth_token
+  }))
+
+  cloud_init = var.environment == "staging" ? local.cloud_init_staging : local.cloud_init_prod
+}
