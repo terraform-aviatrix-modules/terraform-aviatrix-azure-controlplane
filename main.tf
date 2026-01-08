@@ -72,11 +72,20 @@ module "copilot_build" {
   environment                    = var.environment #For internal use only
 
   allowed_cidrs = {
-    "tcp_cidrs" = {
+    "tcp_cidrs_https" = {
       priority = "100"
       protocol = "Tcp"
       ports    = ["443"]
       cidrs    = var.incoming_ssl_cidrs
+    }
+    "tcp_cidrs" = {
+      priority = "101"
+      protocol = "Tcp"
+      ports    = ["50441-50443"]
+      cidrs = [
+        module.controller_build[0].controller_public_ip_address,
+        module.controller_build[0].controller_private_ip_address
+      ]
     }
     "udp_cidrs" = {
       priority = "200"
