@@ -40,6 +40,8 @@ resource "azurerm_public_ip" "controller_public_ip" {
   resource_group_name = var.use_existing_vnet ? var.resource_group_name : azurerm_resource_group.controller_rg[0].name
 
   depends_on = [azurerm_resource_group.controller_rg]
+
+  sku = "Standard"
 }
 
 // 4. Create the Security Group
