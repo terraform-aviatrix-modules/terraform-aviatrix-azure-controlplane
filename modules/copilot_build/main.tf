@@ -26,6 +26,8 @@ resource "azurerm_public_ip" "copilot_public_ip" {
   location            = var.location
   name                = "${var.copilot_name}-public-ip"
   resource_group_name = var.use_existing_vnet ? var.resource_group_name : azurerm_resource_group.copilot_rg[0].name
+
+  sku = "Standard"
 }
 
 resource "azurerm_network_security_group" "copilot_nsg" {
