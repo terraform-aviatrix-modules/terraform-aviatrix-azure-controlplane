@@ -167,7 +167,7 @@ $ProgressPreference = "SilentlyContinue"
 
 # Global variables
 $ModuleSource = "terraform-aviatrix-modules/azure-controlplane/aviatrix"
-$ModuleVersion = "1.1.5"
+$ModuleVersion = "1.1.4"
 $TerraformDir = "./aviatrix-deployment"
 $AvailableLocations = @(
     "East US", "East US 2", "West US", "West US 2", "West US 3", "Central US", "North Central US", "South Central US",
