@@ -15,7 +15,7 @@ This module assumes you have Azure CLI installed and are authenticated with suff
 ### Compatibility
 Module version | Terraform version
 :--- | :---
-v1.1.4 | >= 1.3.0
+v1.1.5 | >= 1.3.0
 
 ### Usage Example
 ```hcl
@@ -78,6 +78,7 @@ output "controlplane_data" {
 | <a name="input_subnet_id"></a> [subnet\_id](#input\_subnet\_id) | Subnet ID, only required when use\_existing\_vnet is true | `string` | `""` | no |
 | <a name="input_subnet_name"></a> [subnet\_name](#input\_subnet\_name) | subnet name, only required when use\_existing\_vnet is true | `string` | `""` | no |
 | <a name="input_subscription_ids"></a> [subscription\_ids](#input\_subscription\_ids) | Subscriptions with the Aviatrix gateways. Aviatrix role will be created in the first one. Controller will have read-only access if aviatrix\_rgs is not empty. | `list(string)` | `[]` | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | Provide tags for resources created by the module | `map(string)` | `{}` | no |
 | <a name="input_use_existing_controller_public_ip"></a> [use\_existing\_controller\_public\_ip](#input\_use\_existing\_controller\_public\_ip) | Flag to indicate whether to use an existing public ip | `bool` | `false` | no |
 | <a name="input_use_existing_copilot_public_ip"></a> [use\_existing\_copilot\_public\_ip](#input\_use\_existing\_copilot\_public\_ip) | Flag to indicate whether to use an existing public ip | `bool` | `false` | no |
 | <a name="input_use_existing_resource_group"></a> [use\_existing\_resource\_group](#input\_use\_existing\_resource\_group) | Flag to indicate whether to use an existing resource group | `bool` | `false` | no |

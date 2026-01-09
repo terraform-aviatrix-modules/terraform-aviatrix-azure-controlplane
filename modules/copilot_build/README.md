@@ -59,6 +59,7 @@ module "copilot_build" {
 | <a name="input_ssh_public_key_file_path"></a> [ssh\_public\_key\_file\_path](#input\_ssh\_public\_key\_file\_path) | File path to the SSH public key | `string` | `""` | no |
 | <a name="input_subnet_cidr"></a> [subnet\_cidr](#input\_subnet\_cidr) | CIDR for copilot subnet | `string` | `"10.0.1.0/24"` | no |
 | <a name="input_subnet_id"></a> [subnet\_id](#input\_subnet\_id) | Subnet ID, only required when use\_existing\_vnet is true | `string` | `""` | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | Provide tags for resources created by the module | `map(string)` | `{}` | no |
 | <a name="input_use_existing_public_ip"></a> [use\_existing\_public\_ip](#input\_use\_existing\_public\_ip) | Flag to indicate whether to use an existing public ip | `bool` | `false` | no |
 | <a name="input_use_existing_ssh_key"></a> [use\_existing\_ssh\_key](#input\_use\_existing\_ssh\_key) | Flag to indicate whether to use an existing SSH key | `bool` | `false` | no |
 | <a name="input_use_existing_vnet"></a> [use\_existing\_vnet](#input\_use\_existing\_vnet) | Flag to indicate whether to use an existing VNET | `bool` | `false` | no |
