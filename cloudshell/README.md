@@ -96,7 +96,7 @@ When cloudshell commands are assembled from launch.aviatrix.com the following co
 
 ```powershell
 # Download the deployment script
-irm https://raw.githubusercontent.com/terraform-aviatrix-modules/terraform-aviatrix-azure-controlplane/refs/heads/main/ps-cloudshell-launcher/deploy-aviatrix-controlplane.ps1 -OutFile deploy-aviatrix-controlplane.ps1
+irm https://raw.githubusercontent.com/terraform-aviatrix-modules/terraform-aviatrix-azure-controlplane/refs/heads/main/cloudshell/deploy-aviatrix-controlplane.ps1 -OutFile deploy-aviatrix-controlplane.ps1
 
 # Execute the deployment with your configuration
 ./deploy-aviatrix-controlplane.ps1 `
