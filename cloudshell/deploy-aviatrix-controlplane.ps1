@@ -1133,6 +1133,9 @@ function Invoke-TerraformDeployment {
             }
             Write-Host "  ├─ Network security groups (access from " -NoNewline -ForegroundColor White
             Write-Host "  $($Config.UserPublicIP)" -NoNewline -ForegroundColor Cyan
+                        if ($Config.AdditionalManagementIPs -and @($Config.AdditionalManagementIPs).Count -gt 0) {
+                            Write-Host ", $(@($Config.AdditionalManagementIPs) -join ', ')" -NoNewline -ForegroundColor Cyan
+                        }
             Write-Host "  )" -ForegroundColor White
             Write-Host "  └─ Azure marketplace agreements" -ForegroundColor White
             Write-Host ""
