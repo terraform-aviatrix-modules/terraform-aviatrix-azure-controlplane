@@ -1141,8 +1141,6 @@ function Invoke-TerraformDeployment {
                 Write-Host "(none)" -ForegroundColor Gray
             }
             Write-Host "  ├─ Azure marketplace agreements" -ForegroundColor White
-            Write-Host "  │" -ForegroundColor Yellow
-            Write-Host "  │  Marketplace Agreement Status:" -ForegroundColor White
             Write-Host "  │  ├─ Controller: " -NoNewline -ForegroundColor Gray
             if ($Config.MarketplaceStatus.ControllerSubscribed) {
                 Write-Host "Already accepted ✓" -ForegroundColor Green
@@ -1157,7 +1155,6 @@ function Invoke-TerraformDeployment {
                     Write-Host "Will be accepted during deployment" -ForegroundColor Yellow
                 }
             }
-            Write-Host "  │" -ForegroundColor Yellow
             Write-Host "  ╰─" -ForegroundColor Yellow
             Write-Host ""
             
