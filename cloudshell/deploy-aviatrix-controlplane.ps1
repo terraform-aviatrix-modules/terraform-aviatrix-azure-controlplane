@@ -1132,17 +1132,33 @@ function Invoke-TerraformDeployment {
                 Write-Host "  ├─ Aviatrix CoPilot VM for analytics" -ForegroundColor White
             }
             Write-Host "  ├─ Network security groups (access to controller): " -ForegroundColor White
-            Write-Host "  | Cloudshell IP (consider removing from the NSG after deployment): "  -ForegroundColor White -NoNewline
-            Write-Host "$($Config.UserPublicIP)/32) "  -ForegroundColor Cyan
-            Write-Host "  | Additional management IPs: " -NoNewline -ForegroundColor White              
-                        if ($Config.AdditionalManagementIPs -and @($Config.AdditionalManagementIPs).Count -gt 0) {
-                            foreach ($ip in $Config.AdditionalManagementIPs) {
-                                Write-Host "$($Config.AdditionalManagementIPs -join ', ')" -ForegroundColor Cyan
-                            }
-                        }
-
-            Write-Host "  )" -ForegroundColor White
-            Write-Host "  └─ Azure marketplace agreements" -ForegroundColor White
+            Write-Host "  │  ├─ Cloudshell IP (consider removing from the NSG after deployment): " -NoNewline -ForegroundColor White
+            Write-Host "$($Config.UserPublicIP)/32" -ForegroundColor Cyan
+            Write-Host "  │  └─ Additional management IPs: " -NoNewline -ForegroundColor White
+            if ($Config.AdditionalManagementIPs -and @($Config.AdditionalManagementIPs).Count -gt 0) {
+                Write-Host "$($Config.AdditionalManagementIPs -join ', ')" -ForegroundColor Cyan
+            } else {
+                Write-Host "(none)" -ForegroundColor Gray
+            }
+            Write-Host "  ├─ Azure marketplace agreements" -ForegroundColor White
+            Write-Host "  │" -ForegroundColor Yellow
+            Write-Host "  │  Marketplace Agreement Status:" -ForegroundColor White
+            Write-Host "  │  ├─ Controller: " -NoNewline -ForegroundColor Gray
+            if ($Config.MarketplaceStatus.ControllerSubscribed) {
+                Write-Host "Already accepted ✓" -ForegroundColor Green
+            } else {
+                Write-Host "Will be accepted during deployment" -ForegroundColor Yellow
+            }
+            if ($Config.IncludeCopilot) {
+                Write-Host "  │  └─ CoPilot: " -NoNewline -ForegroundColor Gray
+                if ($Config.MarketplaceStatus.CopilotSubscribed) {
+                    Write-Host "Already accepted ✓" -ForegroundColor Green
+                } else {
+                    Write-Host "Will be accepted during deployment" -ForegroundColor Yellow
+                }
+            }
+            Write-Host "  │" -ForegroundColor Yellow
+            Write-Host "  ╰─" -ForegroundColor Yellow
             Write-Host ""
             
             Write-Host "  ╭─ Important Notes" -ForegroundColor Magenta
