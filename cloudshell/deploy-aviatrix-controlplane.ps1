@@ -1131,11 +1131,16 @@ function Invoke-TerraformDeployment {
             if ($Config.IncludeCopilot) {
                 Write-Host "  ├─ Aviatrix CoPilot VM for analytics" -ForegroundColor White
             }
-            Write-Host "  ├─ Network security groups (access from " -NoNewline -ForegroundColor White
-            Write-Host "  $($Config.UserPublicIP)" -NoNewline -ForegroundColor Cyan
+            Write-Host "  ├─ Network security groups (access to controller): " -ForegroundColor White
+            Write-Host "  | Cloudshell IP (consider removing from the NSG after deployment): "  -ForegroundColor White -NoNewline
+            Write-Host "$($Config.UserPublicIP)/32) "  -ForegroundColor Cyan
+            Write-Host "  | Additional management IPs: " -NoNewline -ForegroundColor White              
                         if ($Config.AdditionalManagementIPs -and @($Config.AdditionalManagementIPs).Count -gt 0) {
-                            Write-Host ", $(@($Config.AdditionalManagementIPs) -join ', ')" -NoNewline -ForegroundColor Cyan
+                            foreach ($ip in $Config.AdditionalManagementIPs) {
+                                Write-Host "$($Config.AdditionalManagementIPs -join ', ')" -ForegroundColor Cyan
+                            }
                         }
+
             Write-Host "  )" -ForegroundColor White
             Write-Host "  └─ Azure marketplace agreements" -ForegroundColor White
             Write-Host ""
