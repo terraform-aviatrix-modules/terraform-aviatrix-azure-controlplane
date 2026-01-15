@@ -1,5 +1,8 @@
 # terraform-aviatrix-azure-controlplane - release notes
 
+## v1.1.6
+- Add a summary output without sensitive data.
+
 ## v1.1.5
 - Bump Azure provider to >=4.5.0.
 - Prevent marketplace subscription creation if it already exists.

@@ -15,7 +15,7 @@ This module assumes you have Azure CLI installed and are authenticated with suff
 ### Compatibility
 Module version | Terraform version
 :--- | :---
-v1.1.5 | >= 1.3.0
+v1.1.6 | >= 1.3.0
 
 ### Usage Example
 ```hcl
@@ -26,7 +26,7 @@ provider "azurerm" {
 
 module "control_plane" {
   source  = "terraform-aviatrix-modules/azure-controlplane/aviatrix"
-  version = "1.1.4"
+  version = "1.1.6"
 
   controller_name           = "my_controller"
   incoming_ssl_cidrs        = ["1.2.3.4"]
@@ -105,5 +105,6 @@ output "controlplane_data" {
 | <a name="output_copilot_public_ip"></a> [copilot\_public\_ip](#output\_copilot\_public\_ip) | n/a |
 | <a name="output_directory_id"></a> [directory\_id](#output\_directory\_id) | n/a |
 | <a name="output_storage_account_name"></a> [storage\_account\_name](#output\_storage\_account\_name) | n/a |
+| <a name="output_summary"></a> [summary](#output\_summary) | n/a |
 | <a name="output_terraform_container_name"></a> [terraform\_container\_name](#output\_terraform\_container\_name) | n/a |
 <!-- END_TF_DOCS -->
