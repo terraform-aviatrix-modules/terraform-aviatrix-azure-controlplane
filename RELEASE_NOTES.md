@@ -2,6 +2,7 @@
 
 ## v1.1.5
 - Bump Azure provider to >=4.5.0.
+- Prevent marketplace subscription creation if it already exists.
 
 ## v1.1.4
 - Support for explicitly setting Copilot image version
