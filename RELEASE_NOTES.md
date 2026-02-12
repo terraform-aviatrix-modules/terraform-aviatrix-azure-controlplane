@@ -1,5 +1,8 @@
 # terraform-aviatrix-azure-controlplane - release notes
 
+## v1.1.7
+- Add support for service tags
+
 ## v1.1.6
 - Add a summary output without sensitive data.
 

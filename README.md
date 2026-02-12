@@ -15,7 +15,7 @@ This module assumes you have Azure CLI installed and are authenticated with suff
 ### Compatibility
 Module version | Terraform version
 :--- | :---
-v1.1.6 | >= 1.3.0
+v1.1.7 | >= 1.3.0
 
 ### Usage Example
 ```hcl
@@ -26,7 +26,7 @@ provider "azurerm" {
 
 module "control_plane" {
   source  = "terraform-aviatrix-modules/azure-controlplane/aviatrix"
-  version = "1.1.6"
+  version = "1.1.7"
 
   controller_name           = "my_controller"
   incoming_ssl_cidrs        = ["1.2.3.4"]
@@ -71,6 +71,7 @@ output "controlplane_data" {
 | <a name="input_create_custom_role"></a> [create\_custom\_role](#input\_create\_custom\_role) | Enable creation of custom role in stead of using contributor permissions | `bool` | `false` | no |
 | <a name="input_create_storage_account"></a> [create\_storage\_account](#input\_create\_storage\_account) | Storage account used for the controller backup and terraform state | `bool` | `true` | no |
 | <a name="input_customer_id"></a> [customer\_id](#input\_customer\_id) | aviatrix customer license id | `string` | n/a | yes |
+| <a name="input_incoming_service_tags"></a> [incoming\_service\_tags](#input\_incoming\_service\_tags) | Incoming service tags for security group used by controller | `list(string)` | `[]` | no |
 | <a name="input_incoming_ssl_cidrs"></a> [incoming\_ssl\_cidrs](#input\_incoming\_ssl\_cidrs) | Incoming cidrs for security group used by controller | `list(string)` | n/a | yes |
 | <a name="input_location"></a> [location](#input\_location) | Resource Group Location for Aviatrix Controller | `string` | `"West US"` | no |
 | <a name="input_module_config"></a> [module\_config](#input\_module\_config) | n/a | `map` | <pre>{<br/>  "accept_controller_subscription": true,<br/>  "accept_copilot_subscription": true,<br/>  "account_onboarding": true,<br/>  "app_registration": true,<br/>  "controller_deployment": true,<br/>  "controller_initialization": true,<br/>  "copilot_deployment": true,<br/>  "copilot_initialization": true<br/>}</pre> | no |
