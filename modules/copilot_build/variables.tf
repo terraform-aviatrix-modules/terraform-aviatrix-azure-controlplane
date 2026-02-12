@@ -101,6 +101,13 @@ variable "allowed_cidrs" {
   }))
 }
 
+variable "incoming_service_tags" {
+  type        = list(string)
+  description = "Incoming service tags for security group used by copilot"
+  default     = []
+  nullable    = false
+}
+
 variable "os_disk_name" {
   type        = string
   default     = ""

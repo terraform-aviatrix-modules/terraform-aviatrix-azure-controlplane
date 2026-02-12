@@ -88,6 +88,22 @@ resource "azurerm_network_security_rule" "copilot_nsg_rules" {
   network_security_group_name = azurerm_network_security_group.copilot_nsg.name
 }
 
+resource "azurerm_network_security_rule" "controller_nsg_rule_https_servicetags" {
+  count = length(var.incoming_service_tags)
+
+  access                      = "Allow"
+  direction                   = "Inbound"
+  name                        = format("https-service-tags-%s", var.incoming_service_tags[count.index])
+  priority                    = 201 + count.index
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  destination_port_range      = "443"
+  source_address_prefix       = var.incoming_service_tags[count.index]
+  destination_address_prefix  = "*"
+  description                 = "https-for-vm-management"
+  resource_group_name         = var.use_existing_vnet ? var.resource_group_name : azurerm_resource_group.copilot_rg[0].name
+  network_security_group_name = azurerm_network_security_group.copilot_nsg.name
+}
 
 resource "azurerm_network_interface" "copilot_nic" {
   location            = var.location

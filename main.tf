@@ -23,6 +23,7 @@ module "controller_build" {
   controller_virtual_machine_admin_password = var.controller_virtual_machine_admin_password
   controller_virtual_machine_size           = var.controller_virtual_machine_size
   incoming_ssl_cidrs                        = local.controller_allowed_cidrs
+  incoming_service_tags                     = var.incoming_service_tags
   use_existing_public_ip                    = var.use_existing_controller_public_ip
   public_ip_name                            = var.controller_public_ip_name
   use_existing_vnet                         = var.use_existing_vnet
@@ -81,6 +82,7 @@ module "copilot_build" {
   environment                    = var.environment #For internal use only
   tags                           = var.tags
 
+  incoming_service_tags = var.incoming_service_tags
   allowed_cidrs = {
     "tcp_cidrs_https" = {
       priority = "100"

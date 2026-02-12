@@ -90,6 +90,23 @@ resource "azurerm_network_security_rule" "controller_nsg_rule_https" {
   network_security_group_name = azurerm_network_security_group.controller_nsg.name
 }
 
+resource "azurerm_network_security_rule" "controller_nsg_rule_https_servicetags" {
+  count = length(var.incoming_service_tags)
+
+  access                      = "Allow"
+  direction                   = "Inbound"
+  name                        = format("https-service-tags-%s", var.incoming_service_tags[count.index])
+  priority                    = 201 + count.index
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  destination_port_range      = "443"
+  source_address_prefix       = var.incoming_service_tags[count.index]
+  destination_address_prefix  = "*"
+  description                 = "https-for-vm-management"
+  resource_group_name         = var.use_existing_resource_group ? var.resource_group_name : azurerm_resource_group.controller_rg[0].name
+  network_security_group_name = azurerm_network_security_group.controller_nsg.name
+}
+
 # 5. Create the Virtual Network Interface Card
 //  associate the public IP address with a VM by assigning it to a nic
 resource "azurerm_network_interface" "controller_nic" {

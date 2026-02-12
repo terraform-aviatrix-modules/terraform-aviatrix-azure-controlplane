@@ -92,6 +92,13 @@ variable "incoming_ssl_cidrs" {
   description = "Incoming cidrs for security group used by controller"
 }
 
+variable "incoming_service_tags" {
+  type        = list(string)
+  description = "Incoming service tags for security group used by controller"
+  default     = []
+  nullable    = false
+}
+
 variable "create_storage_account" {
   type        = bool
   default     = true
