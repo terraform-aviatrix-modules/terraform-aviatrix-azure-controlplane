@@ -1,5 +1,8 @@
 # terraform-aviatrix-azure-controlplane - release notes
 
+## v1.1.8
+- Accept "0.0.0.0/0" in the `incoming_ssl_cidrs` variable.
+
 ## v1.1.7
 - Add support for service tags
 
