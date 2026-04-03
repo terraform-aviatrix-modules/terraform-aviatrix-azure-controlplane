@@ -15,7 +15,7 @@ This module assumes you have Azure CLI installed and are authenticated with suff
 ### Compatibility
 Module version | Terraform version
 :--- | :---
-v1.1.7 | >= 1.3.0
+v1.1.8 | >= 1.3.0
 
 ### Usage Example
 ```hcl
