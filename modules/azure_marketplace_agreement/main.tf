@@ -1,8 +1,11 @@
 locals {
   azure_key = var.cloud_type == "china" ? "ARM CHINA" : "Azure ARM"
-  # Controller image need to support Azure China
-  controller_data = jsondecode(data.http.controller_image_info.response_body)["g4"]["amd64"][local.azure_key]
-  copilot_data    = jsondecode(data.http.copilot_image_info.response_body)["BYOL"][local.azure_key]
+
+
+  controller_major = try(tonumber(split(".", var.controller_version)[0]), 999) #Default to 999 for non-numeric versions (latest), which will resolve to g5.
+  image_family     = local.controller_major < 10 ? "g4" : "g5"
+  controller_data  = jsondecode(data.http.controller_image_info.response_body)[local.image_family]["amd64"][local.azure_key]
+  copilot_data     = jsondecode(data.http.copilot_image_info.response_body)["BYOL"][local.azure_key]
 }
 
 # Fetch controller image information

@@ -32,3 +32,9 @@ variable "environment" {
     error_message = "The environment must be either 'prod' or 'staging'."
   }
 }
+
+variable "controller_version" {
+  type        = string
+  description = "Aviatrix Controller version"
+  default     = "latest"
+}

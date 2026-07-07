@@ -58,6 +58,14 @@ output "controller_vm_id" {
   value = var.module_config.controller_deployment ? module.controller_build[0].controller_vm_id : null
 }
 
+output "controller_image_family" {
+  value = var.module_config.controller_deployment ? module.controller_build[0].image_family : null
+}
+
+output "controller_image_data" {
+  value = var.module_config.controller_deployment ? module.controller_build[0].image_data : null
+}
+
 output "summary" {
   value = {
     controller_public_ip     = var.module_config.controller_deployment ? module.controller_build[0].controller_public_ip_address : null
@@ -73,5 +81,7 @@ output "summary" {
     controller_rg_name       = var.module_config.controller_deployment ? module.controller_build[0].controller_rg_name : null
     controller_name          = var.module_config.controller_deployment ? module.controller_build[0].controller_name : null
     controller_vm_id         = var.module_config.controller_deployment ? module.controller_build[0].controller_vm_id : null
+    controller_image_family  = var.module_config.controller_deployment ? module.controller_build[0].image_family : null
+    controller_image_data    = var.module_config.controller_deployment ? module.controller_build[0].image_data : null
   }
 }

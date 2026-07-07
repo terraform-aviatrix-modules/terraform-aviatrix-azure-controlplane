@@ -140,8 +140,11 @@ resource "azurerm_network_interface_security_group_association" "controller_nic_
 
 # 7. Create the virtual machine
 locals {
-  azure_key  = var.cloud_type == "china" ? "ARM CHINA" : "Azure ARM"
-  image_data = jsondecode(data.http.image_info.response_body)["g4"]["amd64"][local.azure_key]
+  azure_key = var.cloud_type == "china" ? "ARM CHINA" : "Azure ARM"
+
+  controller_major = try(tonumber(split(".", var.controller_version)[0]), 999) #Default to 999 for non-numeric versions (latest), which will resolve to g5.
+  image_family     = local.controller_major < 10 ? "g4" : "g5"
+  image_data       = jsondecode(data.http.image_info.response_body)[local.image_family]["amd64"][local.azure_key]
 }
 resource "azurerm_linux_virtual_machine" "controller_vm" {
   admin_username                  = var.controller_virtual_machine_admin_username
@@ -211,7 +214,7 @@ resource "azurerm_storage_container" "controller_backup" {
   count = var.create_storage_account ? 1 : 0
 
   name                  = "aviatrix-controller-backup"
-  storage_account_name  = azurerm_storage_account.controller[0].name
+  storage_account_id    = azurerm_storage_account.controller[0].id
   container_access_type = "private"
 }
 
@@ -219,6 +222,6 @@ resource "azurerm_storage_container" "terraform_state" {
   count = var.create_storage_account ? 1 : 0
 
   name                  = "aviatrix-terraform-state"
-  storage_account_name  = azurerm_storage_account.controller[0].name
+  storage_account_id    = azurerm_storage_account.controller[0].id
   container_access_type = "private"
 }
