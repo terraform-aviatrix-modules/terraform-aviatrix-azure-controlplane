@@ -49,6 +49,9 @@
     
 .PARAMETER TestMode
     Run in test mode - validate inputs and generate Terraform files without executing
+
+.PARAMETER DebugPermissionsCheck
+    Show detailed role-detection output during Azure AD permissions checks
     
 .EXAMPLE
     # Interactive deployment with prompts
@@ -158,6 +161,11 @@ param(
     
     [Parameter(Mandatory = $false)]
     [switch]$TestMode
+
+    ,
+
+    [Parameter(Mandatory = $false)]
+    [switch]$DebugPermissionsCheck
 )
 
 # Set strict mode and error preferences
@@ -439,8 +447,78 @@ function Test-Prerequisites {
                 }
             }
             
-            # Test if we can create app registrations by checking current user's directory role
-            $userRoles = az rest --method GET --uri "https://graph.microsoft.com/v1.0/me/memberOf" --query "value[?odataType=='#microsoft.graph.directoryRole'].displayName" -o tsv 2>$null
+            # Test if we can create app registrations by checking current user's directory roles.
+            # Use transitive membership so role assignments inherited through nested groups are included.
+            $userRoles = @()
+            $membershipQueryUri = "https://graph.microsoft.com/v1.0/me/transitiveMemberOf?$select=displayName"
+            $usedTransitiveMembership = $true
+
+            while ($membershipQueryUri) {
+                $membershipPageJson = az rest --method GET --uri $membershipQueryUri -o json 2>$null
+                if ($LASTEXITCODE -ne 0 -or -not $membershipPageJson) {
+                    $userRoles = @()
+                    break
+                }
+
+                $membershipPage = $membershipPageJson | ConvertFrom-Json
+                foreach ($memberObject in $membershipPage.value) {
+                    $odataType = $memberObject.'@odata.type'
+                    if (-not $odataType) {
+                        $odataType = $memberObject.odataType
+                    }
+
+                    if ($odataType -eq '#microsoft.graph.directoryRole' -and $memberObject.displayName) {
+                        $userRoles += $memberObject.displayName
+                    }
+                }
+
+                $membershipQueryUri = $membershipPage.'@odata.nextLink'
+            }
+
+            if (-not $userRoles) {
+                # Fallback to direct memberships if transitive query is unavailable in this environment.
+                $usedTransitiveMembership = $false
+                $membershipQueryUri = "https://graph.microsoft.com/v1.0/me/memberOf?$select=displayName"
+
+                while ($membershipQueryUri) {
+                    $membershipPageJson = az rest --method GET --uri $membershipQueryUri -o json 2>$null
+                    if ($LASTEXITCODE -ne 0 -or -not $membershipPageJson) {
+                        $userRoles = @()
+                        break
+                    }
+
+                    $membershipPage = $membershipPageJson | ConvertFrom-Json
+                    foreach ($memberObject in $membershipPage.value) {
+                        $odataType = $memberObject.'@odata.type'
+                        if (-not $odataType) {
+                            $odataType = $memberObject.odataType
+                        }
+
+                        if ($odataType -eq '#microsoft.graph.directoryRole' -and $memberObject.displayName) {
+                            $userRoles += $memberObject.displayName
+                        }
+                    }
+
+                    $membershipQueryUri = $membershipPage.'@odata.nextLink'
+                }
+            }
+
+            if ($userRoles) {
+                $userRoles = $userRoles | Select-Object -Unique
+                if (-not $usedTransitiveMembership) {
+                    Write-Warning "  Using direct role membership check; nested role memberships may be incomplete"
+                }
+
+                if ($DebugPermissionsCheck) {
+                    $membershipMode = if ($usedTransitiveMembership) { "transitive" } else { "direct" }
+                    Write-Info "  Debug: Membership query mode: $membershipMode"
+                    Write-Info "  Debug: Detected directory roles: $($userRoles -join ', ')"
+                }
+            } elseif ($DebugPermissionsCheck) {
+                $membershipMode = if ($usedTransitiveMembership) { "transitive" } else { "direct" }
+                Write-Info "  Debug: Membership query mode: $membershipMode"
+                Write-Info "  Debug: Detected directory roles: none"
+            }
             $hasAppRegPermission = $false
             
             if ($LASTEXITCODE -eq 0 -and $userRoles) {
