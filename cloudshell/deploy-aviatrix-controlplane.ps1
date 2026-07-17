@@ -450,7 +450,7 @@ function Test-Prerequisites {
             # Test if we can create app registrations by checking current user's directory roles.
             # Use transitive membership so role assignments inherited through nested groups are included.
             $userRoles = @()
-            $membershipQueryUri = "https://graph.microsoft.com/v1.0/me/transitiveMemberOf?$select=displayName"
+            $membershipQueryUri = 'https://graph.microsoft.com/v1.0/me/transitiveMemberOf?$select=displayName'
             $usedTransitiveMembership = $true
 
             while ($membershipQueryUri) {
@@ -461,7 +461,12 @@ function Test-Prerequisites {
                 }
 
                 $membershipPage = $membershipPageJson | ConvertFrom-Json
-                foreach ($memberObject in $membershipPage.value) {
+                $membershipValues = @()
+                if ($membershipPage -and ($membershipPage.PSObject.Properties.Name -contains "value") -and $membershipPage.value) {
+                    $membershipValues = $membershipPage.value
+                }
+
+                foreach ($memberObject in $membershipValues) {
                     $odataType = $memberObject.'@odata.type'
                     if (-not $odataType) {
                         $odataType = $memberObject.odataType
@@ -472,13 +477,17 @@ function Test-Prerequisites {
                     }
                 }
 
-                $membershipQueryUri = $membershipPage.'@odata.nextLink'
+                if ($membershipPage -and ($membershipPage.PSObject.Properties.Name -contains '@odata.nextLink') -and $membershipPage.'@odata.nextLink') {
+                    $membershipQueryUri = $membershipPage.'@odata.nextLink'
+                } else {
+                    $membershipQueryUri = $null
+                }
             }
 
             if (-not $userRoles) {
                 # Fallback to direct memberships if transitive query is unavailable in this environment.
                 $usedTransitiveMembership = $false
-                $membershipQueryUri = "https://graph.microsoft.com/v1.0/me/memberOf?$select=displayName"
+                $membershipQueryUri = 'https://graph.microsoft.com/v1.0/me/memberOf?$select=displayName'
 
                 while ($membershipQueryUri) {
                     $membershipPageJson = az rest --method GET --uri $membershipQueryUri -o json 2>$null
@@ -488,7 +497,12 @@ function Test-Prerequisites {
                     }
 
                     $membershipPage = $membershipPageJson | ConvertFrom-Json
-                    foreach ($memberObject in $membershipPage.value) {
+                    $membershipValues = @()
+                    if ($membershipPage -and ($membershipPage.PSObject.Properties.Name -contains "value") -and $membershipPage.value) {
+                        $membershipValues = $membershipPage.value
+                    }
+
+                    foreach ($memberObject in $membershipValues) {
                         $odataType = $memberObject.'@odata.type'
                         if (-not $odataType) {
                             $odataType = $memberObject.odataType
@@ -499,7 +513,11 @@ function Test-Prerequisites {
                         }
                     }
 
-                    $membershipQueryUri = $membershipPage.'@odata.nextLink'
+                    if ($membershipPage -and ($membershipPage.PSObject.Properties.Name -contains '@odata.nextLink') -and $membershipPage.'@odata.nextLink') {
+                        $membershipQueryUri = $membershipPage.'@odata.nextLink'
+                    } else {
+                        $membershipQueryUri = $null
+                    }
                 }
             }
 
