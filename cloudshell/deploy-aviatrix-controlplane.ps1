@@ -52,6 +52,9 @@
 
 .PARAMETER DebugPermissionsCheck
     Show detailed role-detection output during Azure AD permissions checks
+
+.PARAMETER AllowInsufficientAzureADPermissions
+    Continue deployment even when Azure AD app registration permission checks fail
     
 .EXAMPLE
     # Interactive deployment with prompts
@@ -68,6 +71,10 @@
 .EXAMPLE
     # Deploy with additional management IP addresses
     ./deploy-aviatrix-controlplane.ps1 -DeploymentName "my-avx-ctrl" -AdditionalManagementIPs "192.168.1.100,10.0.0.0/24"
+
+.EXAMPLE
+    # Continue even if Azure AD permission precheck cannot be satisfied
+    ./deploy-aviatrix-controlplane.ps1 -AllowInsufficientAzureADPermissions
     
 .EXAMPLE
     # One-liner download and execute (replace URL with your GitHub raw URL)
@@ -160,12 +167,13 @@ param(
     [string]$TerraformAction = "apply",
     
     [Parameter(Mandatory = $false)]
-    [switch]$TestMode
-
-    ,
+    [switch]$TestMode,
 
     [Parameter(Mandatory = $false)]
-    [switch]$DebugPermissionsCheck
+    [switch]$DebugPermissionsCheck,
+
+    [Parameter(Mandatory = $false)]
+    [switch]$AllowInsufficientAzureADPermissions
 )
 
 # Set strict mode and error preferences
@@ -410,7 +418,10 @@ function Get-UserInput {
 }
 
 function Test-Prerequisites {
-    param([bool]$IsDestroyOperation = $false)
+    param(
+        [bool]$IsDestroyOperation = $false,
+        [bool]$AllowInsufficientAzureADPermissions = $false
+    )
     Write-Step "Checking prerequisites..."
     
     # Check if running in Azure Cloud Shell (optional for local testing)
@@ -590,21 +601,27 @@ function Test-Prerequisites {
                 Write-Host "    The deployment will proceed, but may fail if you lack app registration permissions" -ForegroundColor Gray
                 Write-Host "    If it fails, ask your Entra ID admin to confirm app registration rights" -ForegroundColor Gray
             } else {
-                Write-Error "  Insufficient Azure AD permissions for app registration"
-                Write-Host ""
-                Write-Host "  This deployment requires permissions to create Azure AD applications and service principals." -ForegroundColor Yellow
-                Write-Host "  You may need to:" -ForegroundColor Yellow
-                Write-Host "    1. Run 'az login' again to refresh your authentication token" -ForegroundColor Gray
-                Write-Host "    2. Ensure you have one of these roles in Azure AD:" -ForegroundColor Gray
-                Write-Host "       • Global Administrator" -ForegroundColor Gray
-                Write-Host "       • Application Administrator" -ForegroundColor Gray
-                Write-Host "       • Application Developer" -ForegroundColor Gray
-                Write-Host "       • Cloud Application Administrator" -ForegroundColor Gray
-                Write-Host "    3. Or have your tenant configured to allow users to register applications" -ForegroundColor Gray
-                Write-Host ""
-                Write-Host "  Please resolve the permissions issue and run the script again." -ForegroundColor Yellow
-                Write-Host "  If you continue to experience issues, contact your Azure AD administrator." -ForegroundColor Gray
-                throw "Azure AD permissions required"
+                if ($AllowInsufficientAzureADPermissions) {
+                    Write-Warning "  Insufficient Azure AD permissions for app registration (override enabled)"
+                    Write-Host "    Continuing because -AllowInsufficientAzureADPermissions was specified" -ForegroundColor Gray
+                    Write-Host "    Deployment may fail later when creating app registrations" -ForegroundColor Gray
+                } else {
+                    Write-Error "  Insufficient Azure AD permissions for app registration"
+                    Write-Host ""
+                    Write-Host "  This deployment requires permissions to create Azure AD applications and service principals." -ForegroundColor Yellow
+                    Write-Host "  You may need to:" -ForegroundColor Yellow
+                    Write-Host "    1. Run 'az login' again to refresh your authentication token" -ForegroundColor Gray
+                    Write-Host "    2. Ensure you have one of these roles in Azure AD:" -ForegroundColor Gray
+                    Write-Host "       • Global Administrator" -ForegroundColor Gray
+                    Write-Host "       • Application Administrator" -ForegroundColor Gray
+                    Write-Host "       • Application Developer" -ForegroundColor Gray
+                    Write-Host "       • Cloud Application Administrator" -ForegroundColor Gray
+                    Write-Host "    3. Or have your tenant configured to allow users to register applications" -ForegroundColor Gray
+                    Write-Host ""
+                    Write-Host "  Please resolve the permissions issue and run the script again." -ForegroundColor Yellow
+                    Write-Host "  If you continue to experience issues, contact your Azure AD administrator." -ForegroundColor Gray
+                    throw "Azure AD permissions required"
+                }
             }
             
         } catch {
@@ -1508,7 +1525,7 @@ try {
     Write-Host ""
     
     # Check prerequisites
-    Test-Prerequisites -IsDestroyOperation ($TerraformAction -eq "destroy")
+    Test-Prerequisites -IsDestroyOperation ($TerraformAction -eq "destroy") -AllowInsufficientAzureADPermissions $AllowInsufficientAzureADPermissions
     
     # Handle destroy operations differently - skip configuration gathering
     if ($TerraformAction -eq "destroy") {
