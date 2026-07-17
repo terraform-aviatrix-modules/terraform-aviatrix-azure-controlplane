@@ -452,6 +452,7 @@ function Test-Prerequisites {
             $userRoles = @()
             $membershipQueryUri = 'https://graph.microsoft.com/v1.0/me/transitiveMemberOf?$select=displayName'
             $usedTransitiveMembership = $true
+            $transitiveQuerySucceeded = $false
 
             while ($membershipQueryUri) {
                 $membershipPageJson = az rest --method GET --uri $membershipQueryUri -o json 2>$null
@@ -459,6 +460,8 @@ function Test-Prerequisites {
                     $userRoles = @()
                     break
                 }
+
+                $transitiveQuerySucceeded = $true
 
                 $membershipPage = $membershipPageJson | ConvertFrom-Json
                 $membershipValues = @()
@@ -484,7 +487,7 @@ function Test-Prerequisites {
                 }
             }
 
-            if (-not $userRoles) {
+            if (-not $transitiveQuerySucceeded) {
                 # Fallback to direct memberships if transitive query is unavailable in this environment.
                 $usedTransitiveMembership = $false
                 $membershipQueryUri = 'https://graph.microsoft.com/v1.0/me/memberOf?$select=displayName'
@@ -538,15 +541,18 @@ function Test-Prerequisites {
                 Write-Info "  Debug: Detected directory roles: none"
             }
             $hasAppRegPermission = $false
+            $permissionCheckInconclusive = $false
+            $hasUnknownDirectoryRoles = $false
             
-            if ($LASTEXITCODE -eq 0 -and $userRoles) {
-                # Check for roles that can create app registrations
-                $appRegRoles = @("Global Administrator", "Application Administrator", "Application Developer", "Cloud Application Administrator")
-                foreach ($role in $appRegRoles) {
-                    if ($userRoles -contains $role) {
+            # Check for roles that can create app registrations
+            $appRegRoles = @("Global Administrator", "Application Administrator", "Application Developer", "Cloud Application Administrator")
+            if ($userRoles) {
+                foreach ($userRole in $userRoles) {
+                    if ($appRegRoles -contains $userRole) {
                         $hasAppRegPermission = $true
                         break
                     }
+                    $hasUnknownDirectoryRoles = $true
                 }
             }
             
@@ -556,11 +562,33 @@ function Test-Prerequisites {
                 $tenantSettings = az rest --method GET --uri "https://graph.microsoft.com/v1.0/policies/authorizationPolicy" --query "defaultUserRolePermissions.allowedToCreateApps" -o tsv 2>$null
                 if ($LASTEXITCODE -eq 0 -and $tenantSettings -eq "true") {
                     $hasAppRegPermission = $true
+                } elseif ($LASTEXITCODE -ne 0 -or -not $tenantSettings) {
+                    $permissionCheckInconclusive = $true
+                }
+
+                if ($DebugPermissionsCheck) {
+                    if ($LASTEXITCODE -eq 0 -and $tenantSettings) {
+                        Write-Info "  Debug: Tenant defaultUserRolePermissions.allowedToCreateApps = $tenantSettings"
+                    } else {
+                        Write-Warning "  Debug: Could not read tenant defaultUserRolePermissions.allowedToCreateApps"
+                    }
+                }
+            }
+
+            # Unknown/custom directory roles may still grant app registration permissions.
+            if (-not $hasAppRegPermission -and $hasUnknownDirectoryRoles) {
+                $permissionCheckInconclusive = $true
+                if ($DebugPermissionsCheck) {
+                    Write-Warning "  Debug: Unrecognized directory roles detected; cannot conclusively determine app registration permission"
                 }
             }
             
             if ($hasAppRegPermission) {
                 Write-Success "  Azure AD app registration permissions verified"
+            } elseif ($permissionCheckInconclusive) {
+                Write-Warning "  Could not conclusively verify Azure AD app registration permissions"
+                Write-Host "    The deployment will proceed, but may fail if you lack app registration permissions" -ForegroundColor Gray
+                Write-Host "    If it fails, ask your Entra ID admin to confirm app registration rights" -ForegroundColor Gray
             } else {
                 Write-Error "  Insufficient Azure AD permissions for app registration"
                 Write-Host ""
@@ -1463,6 +1491,7 @@ function Show-PostDeploymentInfo {
 }
 
 # Main execution
+$config = $null
 try {
     Write-Banner "Aviatrix Control Plane Deployment Wizard" "Cyan"
     
