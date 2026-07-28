@@ -49,6 +49,12 @@
     
 .PARAMETER TestMode
     Run in test mode - validate inputs and generate Terraform files without executing
+
+.PARAMETER DebugPermissionsCheck
+    Show detailed role-detection output during Azure AD permissions checks
+
+.PARAMETER AllowInsufficientAzureADPermissions
+    Continue deployment even when Azure AD app registration permission checks fail
     
 .EXAMPLE
     # Interactive deployment with prompts
@@ -65,6 +71,10 @@
 .EXAMPLE
     # Deploy with additional management IP addresses
     ./deploy-aviatrix-controlplane.ps1 -DeploymentName "my-avx-ctrl" -AdditionalManagementIPs "192.168.1.100,10.0.0.0/24"
+
+.EXAMPLE
+    # Continue even if Azure AD permission precheck cannot be satisfied
+    ./deploy-aviatrix-controlplane.ps1 -AllowInsufficientAzureADPermissions
     
 .EXAMPLE
     # One-liner download and execute (replace URL with your GitHub raw URL)
@@ -157,7 +167,13 @@ param(
     [string]$TerraformAction = "apply",
     
     [Parameter(Mandatory = $false)]
-    [switch]$TestMode
+    [switch]$TestMode,
+
+    [Parameter(Mandatory = $false)]
+    [switch]$DebugPermissionsCheck,
+
+    [Parameter(Mandatory = $false)]
+    [switch]$AllowInsufficientAzureADPermissions
 )
 
 # Set strict mode and error preferences
@@ -402,7 +418,10 @@ function Get-UserInput {
 }
 
 function Test-Prerequisites {
-    param([bool]$IsDestroyOperation = $false)
+    param(
+        [bool]$IsDestroyOperation = $false,
+        [bool]$AllowInsufficientAzureADPermissions = $false
+    )
     Write-Step "Checking prerequisites..."
     
     # Check if running in Azure Cloud Shell (optional for local testing)
@@ -439,18 +458,112 @@ function Test-Prerequisites {
                 }
             }
             
-            # Test if we can create app registrations by checking current user's directory role
-            $userRoles = az rest --method GET --uri "https://graph.microsoft.com/v1.0/me/memberOf" --query "value[?odataType=='#microsoft.graph.directoryRole'].displayName" -o tsv 2>$null
+            # Test if we can create app registrations by checking current user's directory roles.
+            # Use transitive membership so role assignments inherited through nested groups are included.
+            $userRoles = @()
+            $membershipQueryUri = 'https://graph.microsoft.com/v1.0/me/transitiveMemberOf?$select=displayName'
+            $usedTransitiveMembership = $true
+            $transitiveQuerySucceeded = $false
+
+            while ($membershipQueryUri) {
+                $membershipPageJson = az rest --method GET --uri $membershipQueryUri -o json 2>$null
+                if ($LASTEXITCODE -ne 0 -or -not $membershipPageJson) {
+                    $userRoles = @()
+                    break
+                }
+
+                $transitiveQuerySucceeded = $true
+
+                $membershipPage = $membershipPageJson | ConvertFrom-Json
+                $membershipValues = @()
+                if ($membershipPage -and ($membershipPage.PSObject.Properties.Name -contains "value") -and $membershipPage.value) {
+                    $membershipValues = $membershipPage.value
+                }
+
+                foreach ($memberObject in $membershipValues) {
+                    $odataType = $memberObject.'@odata.type'
+                    if (-not $odataType) {
+                        $odataType = $memberObject.odataType
+                    }
+
+                    if ($odataType -eq '#microsoft.graph.directoryRole' -and $memberObject.displayName) {
+                        $userRoles += $memberObject.displayName
+                    }
+                }
+
+                if ($membershipPage -and ($membershipPage.PSObject.Properties.Name -contains '@odata.nextLink') -and $membershipPage.'@odata.nextLink') {
+                    $membershipQueryUri = $membershipPage.'@odata.nextLink'
+                } else {
+                    $membershipQueryUri = $null
+                }
+            }
+
+            if (-not $transitiveQuerySucceeded) {
+                # Fallback to direct memberships if transitive query is unavailable in this environment.
+                $usedTransitiveMembership = $false
+                $membershipQueryUri = 'https://graph.microsoft.com/v1.0/me/memberOf?$select=displayName'
+
+                while ($membershipQueryUri) {
+                    $membershipPageJson = az rest --method GET --uri $membershipQueryUri -o json 2>$null
+                    if ($LASTEXITCODE -ne 0 -or -not $membershipPageJson) {
+                        $userRoles = @()
+                        break
+                    }
+
+                    $membershipPage = $membershipPageJson | ConvertFrom-Json
+                    $membershipValues = @()
+                    if ($membershipPage -and ($membershipPage.PSObject.Properties.Name -contains "value") -and $membershipPage.value) {
+                        $membershipValues = $membershipPage.value
+                    }
+
+                    foreach ($memberObject in $membershipValues) {
+                        $odataType = $memberObject.'@odata.type'
+                        if (-not $odataType) {
+                            $odataType = $memberObject.odataType
+                        }
+
+                        if ($odataType -eq '#microsoft.graph.directoryRole' -and $memberObject.displayName) {
+                            $userRoles += $memberObject.displayName
+                        }
+                    }
+
+                    if ($membershipPage -and ($membershipPage.PSObject.Properties.Name -contains '@odata.nextLink') -and $membershipPage.'@odata.nextLink') {
+                        $membershipQueryUri = $membershipPage.'@odata.nextLink'
+                    } else {
+                        $membershipQueryUri = $null
+                    }
+                }
+            }
+
+            if ($userRoles) {
+                $userRoles = $userRoles | Select-Object -Unique
+                if (-not $usedTransitiveMembership) {
+                    Write-Warning "  Using direct role membership check; nested role memberships may be incomplete"
+                }
+
+                if ($DebugPermissionsCheck) {
+                    $membershipMode = if ($usedTransitiveMembership) { "transitive" } else { "direct" }
+                    Write-Info "  Debug: Membership query mode: $membershipMode"
+                    Write-Info "  Debug: Detected directory roles: $($userRoles -join ', ')"
+                }
+            } elseif ($DebugPermissionsCheck) {
+                $membershipMode = if ($usedTransitiveMembership) { "transitive" } else { "direct" }
+                Write-Info "  Debug: Membership query mode: $membershipMode"
+                Write-Info "  Debug: Detected directory roles: none"
+            }
             $hasAppRegPermission = $false
+            $permissionCheckInconclusive = $false
+            $hasUnknownDirectoryRoles = $false
             
-            if ($LASTEXITCODE -eq 0 -and $userRoles) {
-                # Check for roles that can create app registrations
-                $appRegRoles = @("Global Administrator", "Application Administrator", "Application Developer", "Cloud Application Administrator")
-                foreach ($role in $appRegRoles) {
-                    if ($userRoles -contains $role) {
+            # Check for roles that can create app registrations
+            $appRegRoles = @("Global Administrator", "Application Administrator", "Application Developer", "Cloud Application Administrator")
+            if ($userRoles) {
+                foreach ($userRole in $userRoles) {
+                    if ($appRegRoles -contains $userRole) {
                         $hasAppRegPermission = $true
                         break
                     }
+                    $hasUnknownDirectoryRoles = $true
                 }
             }
             
@@ -460,27 +573,55 @@ function Test-Prerequisites {
                 $tenantSettings = az rest --method GET --uri "https://graph.microsoft.com/v1.0/policies/authorizationPolicy" --query "defaultUserRolePermissions.allowedToCreateApps" -o tsv 2>$null
                 if ($LASTEXITCODE -eq 0 -and $tenantSettings -eq "true") {
                     $hasAppRegPermission = $true
+                } elseif ($LASTEXITCODE -ne 0 -or -not $tenantSettings) {
+                    $permissionCheckInconclusive = $true
+                }
+
+                if ($DebugPermissionsCheck) {
+                    if ($LASTEXITCODE -eq 0 -and $tenantSettings) {
+                        Write-Info "  Debug: Tenant defaultUserRolePermissions.allowedToCreateApps = $tenantSettings"
+                    } else {
+                        Write-Warning "  Debug: Could not read tenant defaultUserRolePermissions.allowedToCreateApps"
+                    }
+                }
+            }
+
+            # Unknown/custom directory roles may still grant app registration permissions.
+            if (-not $hasAppRegPermission -and $hasUnknownDirectoryRoles) {
+                $permissionCheckInconclusive = $true
+                if ($DebugPermissionsCheck) {
+                    Write-Warning "  Debug: Unrecognized directory roles detected; cannot conclusively determine app registration permission"
                 }
             }
             
             if ($hasAppRegPermission) {
                 Write-Success "  Azure AD app registration permissions verified"
+            } elseif ($permissionCheckInconclusive) {
+                Write-Warning "  Could not conclusively verify Azure AD app registration permissions"
+                Write-Host "    The deployment will proceed, but may fail if you lack app registration permissions" -ForegroundColor Gray
+                Write-Host "    If it fails, ask your Entra ID admin to confirm app registration rights" -ForegroundColor Gray
             } else {
-                Write-Error "  Insufficient Azure AD permissions for app registration"
-                Write-Host ""
-                Write-Host "  This deployment requires permissions to create Azure AD applications and service principals." -ForegroundColor Yellow
-                Write-Host "  You may need to:" -ForegroundColor Yellow
-                Write-Host "    1. Run 'az login' again to refresh your authentication token" -ForegroundColor Gray
-                Write-Host "    2. Ensure you have one of these roles in Azure AD:" -ForegroundColor Gray
-                Write-Host "       • Global Administrator" -ForegroundColor Gray
-                Write-Host "       • Application Administrator" -ForegroundColor Gray
-                Write-Host "       • Application Developer" -ForegroundColor Gray
-                Write-Host "       • Cloud Application Administrator" -ForegroundColor Gray
-                Write-Host "    3. Or have your tenant configured to allow users to register applications" -ForegroundColor Gray
-                Write-Host ""
-                Write-Host "  Please resolve the permissions issue and run the script again." -ForegroundColor Yellow
-                Write-Host "  If you continue to experience issues, contact your Azure AD administrator." -ForegroundColor Gray
-                throw "Azure AD permissions required"
+                if ($AllowInsufficientAzureADPermissions) {
+                    Write-Warning "  Insufficient Azure AD permissions for app registration (override enabled)"
+                    Write-Host "    Continuing because -AllowInsufficientAzureADPermissions was specified" -ForegroundColor Gray
+                    Write-Host "    Deployment may fail later when creating app registrations" -ForegroundColor Gray
+                } else {
+                    Write-Error "  Insufficient Azure AD permissions for app registration"
+                    Write-Host ""
+                    Write-Host "  This deployment requires permissions to create Azure AD applications and service principals." -ForegroundColor Yellow
+                    Write-Host "  You may need to:" -ForegroundColor Yellow
+                    Write-Host "    1. Run 'az login' again to refresh your authentication token" -ForegroundColor Gray
+                    Write-Host "    2. Ensure you have one of these roles in Azure AD:" -ForegroundColor Gray
+                    Write-Host "       • Global Administrator" -ForegroundColor Gray
+                    Write-Host "       • Application Administrator" -ForegroundColor Gray
+                    Write-Host "       • Application Developer" -ForegroundColor Gray
+                    Write-Host "       • Cloud Application Administrator" -ForegroundColor Gray
+                    Write-Host "    3. Or have your tenant configured to allow users to register applications" -ForegroundColor Gray
+                    Write-Host ""
+                    Write-Host "  Please resolve the permissions issue and run the script again." -ForegroundColor Yellow
+                    Write-Host "  If you continue to experience issues, contact your Azure AD administrator." -ForegroundColor Gray
+                    throw "Azure AD permissions required"
+                }
             }
             
         } catch {
@@ -1367,6 +1508,7 @@ function Show-PostDeploymentInfo {
 }
 
 # Main execution
+$config = $null
 try {
     Write-Banner "Aviatrix Control Plane Deployment Wizard" "Cyan"
     
@@ -1383,7 +1525,7 @@ try {
     Write-Host ""
     
     # Check prerequisites
-    Test-Prerequisites -IsDestroyOperation ($TerraformAction -eq "destroy")
+    Test-Prerequisites -IsDestroyOperation ($TerraformAction -eq "destroy") -AllowInsufficientAzureADPermissions $AllowInsufficientAzureADPermissions
     
     # Handle destroy operations differently - skip configuration gathering
     if ($TerraformAction -eq "destroy") {

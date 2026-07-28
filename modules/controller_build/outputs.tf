@@ -53,3 +53,13 @@ output "backup_container_name" {
 output "terraform_container_name" {
   value = var.create_storage_account ? azurerm_storage_container.terraform_state[0].name : null
 }
+
+output "image_family" {
+  value       = local.image_family
+  description = "Image family of the Aviatrix controller AMI"
+}
+
+output "image_data" {
+  value       = local.image_data
+  description = "Image data used by the Aviatrix controller"
+}

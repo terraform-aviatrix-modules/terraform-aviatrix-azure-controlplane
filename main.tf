@@ -6,6 +6,7 @@ module "azure_marketplace_agreement" {
   accept_copilot_subscription    = var.module_config.accept_copilot_subscription
   cloud_type                     = var.cloud_type
   environment                    = var.environment #For internal use only
+  controller_version             = var.controller_version
 }
 
 module "controller_build" {
