@@ -15,7 +15,7 @@ This module assumes you have Azure CLI installed and are authenticated with suff
 ### Compatibility
 Module version | Terraform version
 :--- | :---
-v1.1.8 | >= 1.3.0
+v1.2.0 | >= 1.3.0
 
 ### Usage Example
 ```hcl
@@ -95,6 +95,8 @@ output "controlplane_data" {
 | <a name="output_application_key"></a> [application\_key](#output\_application\_key) | n/a |
 | <a name="output_backup_container_name"></a> [backup\_container\_name](#output\_backup\_container\_name) | n/a |
 | <a name="output_client_id"></a> [client\_id](#output\_client\_id) | n/a |
+| <a name="output_controller_image_data"></a> [controller\_image\_data](#output\_controller\_image\_data) | n/a |
+| <a name="output_controller_image_family"></a> [controller\_image\_family](#output\_controller\_image\_family) | n/a |
 | <a name="output_controller_name"></a> [controller\_name](#output\_controller\_name) | n/a |
 | <a name="output_controller_private_ip"></a> [controller\_private\_ip](#output\_controller\_private\_ip) | n/a |
 | <a name="output_controller_public_ip"></a> [controller\_public\_ip](#output\_controller\_public\_ip) | n/a |

@@ -59,6 +59,8 @@ module "controller_build" {
 | <a name="output_controller_vm_id"></a> [controller\_vm\_id](#output\_controller\_vm\_id) | n/a |
 | <a name="output_controller_vnet_id"></a> [controller\_vnet\_id](#output\_controller\_vnet\_id) | n/a |
 | <a name="output_controller_vnet_name"></a> [controller\_vnet\_name](#output\_controller\_vnet\_name) | n/a |
+| <a name="output_image_data"></a> [image\_data](#output\_image\_data) | Image data used by the Aviatrix controller |
+| <a name="output_image_family"></a> [image\_family](#output\_image\_family) | Image family of the Aviatrix controller AMI |
 | <a name="output_location"></a> [location](#output\_location) | n/a |
 | <a name="output_storage_account_name"></a> [storage\_account\_name](#output\_storage\_account\_name) | n/a |
 | <a name="output_terraform_container_name"></a> [terraform\_container\_name](#output\_terraform\_container\_name) | n/a |

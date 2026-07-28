@@ -1,5 +1,13 @@
 # terraform-aviatrix-azure-controlplane - release notes
 
+## v1.2.0
+- Add support for g5 controller images, with image family selection based on `controller_version`.
+- Expose controller image metadata via new outputs (`controller_image_family` and `controller_image_data`) and include them in the `summary` output.
+- Update controller storage container resources to use `storage_account_id` for provider compatibility.
+- Improve Cloud Shell prerequisite checks to detect Azure AD directory roles through transitive group memberships (with paging and fallback).
+- Add `-DebugPermissionsCheck` to print detailed Azure AD permission check diagnostics in Cloud Shell.
+- Add `-AllowInsufficientAzureADPermissions` to allow continuing Cloud Shell deployments when Azure AD app registration prechecks fail.
+
 ## v1.1.8
 - Accept "0.0.0.0/0" in the `incoming_ssl_cidrs` variable.
 
