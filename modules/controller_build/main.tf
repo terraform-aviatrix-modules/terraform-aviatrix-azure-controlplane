@@ -145,6 +145,22 @@ locals {
   controller_major = try(tonumber(split(".", var.controller_version)[0]), 999) #Default to 999 for non-numeric versions (latest), which will resolve to g5.
   image_family     = local.controller_major < 10 ? "g4" : "g5"
   image_data       = jsondecode(data.http.image_info.response_body)[local.image_family]["amd64"][local.azure_key]
+
+  #Controller 8.0 and above require an OS disk delivering at least 500 IOPS, which means a
+  #premium disk of at least 128G (P10). Smaller or non-premium disks degrade the controller.
+  #Earlier versions keep the original Standard_LRS default at the source image size.
+  controller_requires_premium_os_disk = local.controller_major >= 8
+
+  os_disk_storage_account_type = coalesce(
+    var.controller_os_disk_storage_account_type,
+    local.controller_requires_premium_os_disk ? "Premium_LRS" : "Standard_LRS"
+  )
+  #Not coalesce(): null is the meaningful "use the source image size" value here.
+  os_disk_size_gb = (var.controller_os_disk_size_gb != null
+    ? var.controller_os_disk_size_gb
+    : (local.controller_requires_premium_os_disk ? 128 : null)
+  )
+  os_disk_is_premium = local.os_disk_storage_account_type == "Premium_LRS"
 }
 resource "azurerm_linux_virtual_machine" "controller_vm" {
   admin_username                  = var.controller_virtual_machine_admin_username
@@ -163,7 +179,8 @@ resource "azurerm_linux_virtual_machine" "controller_vm" {
   os_disk {
     name                 = "aviatrix-os-disk"
     caching              = "ReadWrite"
-    storage_account_type = "Standard_LRS"
+    storage_account_type = local.os_disk_storage_account_type
+    disk_size_gb         = local.os_disk_size_gb
   }
 
   source_image_reference {
@@ -184,6 +201,17 @@ resource "azurerm_linux_virtual_machine" "controller_vm" {
 
   lifecycle {
     ignore_changes = [source_image_reference, plan, tags]
+
+    #Controller 8.0 and above require an OS disk delivering at least 500 IOPS.
+    precondition {
+      condition     = local.controller_requires_premium_os_disk ? local.os_disk_is_premium : true
+      error_message = "Controller version ${var.controller_version} requires a premium OS disk to meet the 500 IOPS minimum. Set controller_os_disk_storage_account_type to Premium_LRS."
+    }
+
+    precondition {
+      condition     = local.controller_requires_premium_os_disk ? coalesce(local.os_disk_size_gb, 0) >= 128 : true
+      error_message = "Controller version ${var.controller_version} requires an OS disk of at least 128G (P10) to meet the 500 IOPS minimum. Set controller_os_disk_size_gb to 128 or higher, or 512 (P20) / 1024 (P30) for more IOPS at larger scale."
+    }
   }
 }
 

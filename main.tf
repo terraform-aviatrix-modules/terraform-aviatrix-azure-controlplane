@@ -23,6 +23,8 @@ module "controller_build" {
   controller_virtual_machine_admin_username = var.controller_virtual_machine_admin_username
   controller_virtual_machine_admin_password = var.controller_virtual_machine_admin_password
   controller_virtual_machine_size           = var.controller_virtual_machine_size
+  controller_os_disk_storage_account_type   = var.controller_os_disk_storage_account_type
+  controller_os_disk_size_gb                = var.controller_os_disk_size_gb
   incoming_ssl_cidrs                        = local.controller_allowed_cidrs
   incoming_service_tags                     = var.incoming_service_tags
   use_existing_public_ip                    = var.use_existing_controller_public_ip

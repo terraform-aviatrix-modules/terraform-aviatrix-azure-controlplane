@@ -87,6 +87,28 @@ variable "controller_virtual_machine_size" {
   default     = "Standard_A4_v2"
 }
 
+variable "controller_os_disk_storage_account_type" {
+  type        = string
+  description = "Storage account type for the controller OS disk. Defaults to Premium_LRS for controller 8.0 and above, which require a premium disk to meet the 500 IOPS minimum, and Standard_LRS for earlier versions."
+  default     = null
+
+  validation {
+    condition     = contains(["Standard_LRS", "Premium_LRS"], coalesce(var.controller_os_disk_storage_account_type, "Standard_LRS"))
+    error_message = "The controller_os_disk_storage_account_type must be either Standard_LRS or Premium_LRS."
+  }
+}
+
+variable "controller_os_disk_size_gb" {
+  type        = number
+  description = "Size of the controller OS disk in GB. Defaults to 128 (P10, 500 IOPS) for controller 8.0 and above, which require that minimum, and to the source image size for earlier versions. At larger scale use 512 (P20, 2300 IOPS) or 1024 (P30, 5000 IOPS) for more IOPS. Azure bills a premium disk at the next tier up, so sizes between tiers provide no extra IOPS."
+  default     = null
+
+  validation {
+    condition     = coalesce(var.controller_os_disk_size_gb, 30) >= 30 && coalesce(var.controller_os_disk_size_gb, 30) <= 4095
+    error_message = "The controller_os_disk_size_gb must be between 30 and 4095."
+  }
+}
+
 variable "incoming_ssl_cidrs" {
   type        = list(string)
   description = "Incoming cidrs for security group used by controller"
