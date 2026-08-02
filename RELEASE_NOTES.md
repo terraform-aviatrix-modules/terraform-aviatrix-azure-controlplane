@@ -1,10 +1,9 @@
 # terraform-aviatrix-azure-controlplane - release notes
 
-## Unreleased
+## v1.2.1
 - Allow the controller OS disk to be configured through the new `controller_os_disk_storage_account_type` and `controller_os_disk_size_gb` variables.
-- Default the controller OS disk to `Premium_LRS` at 128G (P10) for controller 8.0 and above, to satisfy their 500 IOPS minimum. Use 512 (P20) or 1024 (P30) for more IOPS at larger scale.
-- Enforce a premium OS disk of at least 128G for controller 8.0 and above through resource preconditions.
-- Controllers below 8.0 keep the previous `Standard_LRS` default at the source image size, so existing deployments see no disk change.
+- Controller 8.0 and above require an OS disk delivering at least 500 IOPS, which means `Premium_LRS` at 128G (P10) or larger. Set both variables when deploying those versions; use 512 (P20) or 1024 (P30) for more IOPS at larger scale.
+- Defaults are unchanged (`Standard_LRS` at the source image size), so existing deployments see no disk change. Note that Azure does not allow the OS disk storage account type to change in place, so switching to `Premium_LRS` replaces the controller virtual machine.
 
 ## v1.2.0
 - Add support for g5 controller images, with image family selection based on `controller_version`.
