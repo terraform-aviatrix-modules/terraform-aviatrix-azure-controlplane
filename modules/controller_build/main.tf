@@ -163,7 +163,8 @@ resource "azurerm_linux_virtual_machine" "controller_vm" {
   os_disk {
     name                 = "aviatrix-os-disk"
     caching              = "ReadWrite"
-    storage_account_type = "Standard_LRS"
+    storage_account_type = var.controller_os_disk_storage_account_type
+    disk_size_gb         = var.controller_os_disk_size_gb
   }
 
   source_image_reference {
