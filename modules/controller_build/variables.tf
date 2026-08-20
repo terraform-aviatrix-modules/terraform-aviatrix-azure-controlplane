@@ -159,6 +159,13 @@ variable "registry_auth_token" {
   nullable    = false
 }
 
+# terraform-docs-ignore
+variable "additional_bootstrap_args" {
+  type     = map(any)
+  default  = {}
+  nullable = false
+}
+
 variable "storage_account_name" {
   description = "Azure storage account name."
   type        = string
@@ -184,14 +191,16 @@ locals {
   storage_account_name         = var.storage_account_name == "" ? local.default_storage_account_name : var.storage_account_name
 
   cloud_init_prod = base64encode(templatefile("${path.module}/cloud-init-prod.tftpl", {
-    controller_version = var.controller_version
-    environment        = var.environment
+    controller_version        = var.controller_version
+    environment               = var.environment
+    additional_bootstrap_args = length(var.additional_bootstrap_args) > 0 ? indent(4, yamlencode(var.additional_bootstrap_args)) : ""
   }))
 
   cloud_init_staging = base64encode(templatefile("${path.module}/cloud-init-staging.tftpl", {
-    controller_version  = var.controller_version
-    environment         = var.environment
-    registry_auth_token = var.registry_auth_token
+    controller_version        = var.controller_version
+    environment               = var.environment
+    registry_auth_token       = var.registry_auth_token
+    additional_bootstrap_args = length(var.additional_bootstrap_args) > 0 ? indent(4, yamlencode(var.additional_bootstrap_args)) : ""
   }))
 
   cloud_init = var.environment == "staging" ? local.cloud_init_staging : local.cloud_init_prod

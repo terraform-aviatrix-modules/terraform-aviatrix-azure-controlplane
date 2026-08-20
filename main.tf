@@ -36,6 +36,7 @@ module "controller_build" {
   subnet_id                                 = var.subnet_id
   environment                               = var.environment         #For internal use only
   registry_auth_token                       = var.registry_auth_token #For internal use only
+  additional_bootstrap_args                 = var.additional_bootstrap_args
   create_storage_account                    = var.create_storage_account
   tags                                      = var.tags
   depends_on = [
