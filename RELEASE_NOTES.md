@@ -1,5 +1,8 @@
 # terraform-aviatrix-azure-controlplane - release notes
 
+## v1.1.9
+- Update controller storage container resources to use `storage_account_id` instead of the deprecated `storage_account_name` argument, for compatibility with AzureRM provider v4.
+
 ## v1.1.8
 - Accept "0.0.0.0/0" in the `incoming_ssl_cidrs` variable.
 

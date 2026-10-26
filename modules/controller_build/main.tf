@@ -211,7 +211,7 @@ resource "azurerm_storage_container" "controller_backup" {
   count = var.create_storage_account ? 1 : 0
 
   name                  = "aviatrix-controller-backup"
-  storage_account_name  = azurerm_storage_account.controller[0].name
+  storage_account_id    = azurerm_storage_account.controller[0].id
   container_access_type = "private"
 }
 
@@ -219,6 +219,6 @@ resource "azurerm_storage_container" "terraform_state" {
   count = var.create_storage_account ? 1 : 0
 
   name                  = "aviatrix-terraform-state"
-  storage_account_name  = azurerm_storage_account.controller[0].name
+  storage_account_id    = azurerm_storage_account.controller[0].id
   container_access_type = "private"
 }
