@@ -256,6 +256,12 @@ variable "registry_auth_token" {
   nullable    = false
 }
 
+# terraform-docs-ignore
+variable "additional_bootstrap_args" {
+  description = "Additional bootstrap arguments. For internal use only."
+  type        = map(any)
+  default     = {}
+}
 
 variable "subscription_ids" {
   type        = list(string)

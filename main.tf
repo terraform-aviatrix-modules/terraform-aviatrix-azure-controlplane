@@ -35,8 +35,9 @@ module "controller_build" {
   vnet_name                                 = var.vnet_name
   subnet_id                                 = var.subnet_id
   environment                               = var.environment         #For internal use only
-  registry_auth_token                       = var.registry_auth_token #For internal use only
-  create_storage_account                    = var.create_storage_account
+  registry_auth_token                       = var.registry_auth_token       #For internal use only
+  additional_bootstrap_args                 = var.additional_bootstrap_args #For internal use only
+  create_storage_account                   = var.create_storage_account
   tags                                      = var.tags
   depends_on = [
     module.azure_marketplace_agreement
