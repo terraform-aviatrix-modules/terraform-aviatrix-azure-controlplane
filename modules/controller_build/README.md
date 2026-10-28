@@ -21,7 +21,7 @@ module "controller_build" {
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_cloud_type"></a> [cloud\_type](#input\_cloud\_type) | Determines which cloud should we subscribe offer | `string` | `"commercial"` | no |
 | <a name="input_controller_name"></a> [controller\_name](#input\_controller\_name) | Customized Name for Aviatrix Controller | `string` | n/a | yes |
 | <a name="input_controller_os_disk_size_gb"></a> [controller\_os\_disk\_size\_gb](#input\_controller\_os\_disk\_size\_gb) | Size of the controller OS disk in GB. Minimum 100. Growing it restarts the controller. | `number` | `128` | no |
@@ -49,7 +49,7 @@ module "controller_build" {
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_backup_container_name"></a> [backup\_container\_name](#output\_backup\_container\_name) | n/a |
 | <a name="output_controller_name"></a> [controller\_name](#output\_controller\_name) | n/a |
 | <a name="output_controller_nsg"></a> [controller\_nsg](#output\_controller\_nsg) | n/a |

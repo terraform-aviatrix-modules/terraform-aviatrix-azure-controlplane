@@ -38,7 +38,7 @@ module "copilot_build" {
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_add_ssh_key"></a> [add\_ssh\_key](#input\_add\_ssh\_key) | Flag to indicate whether to add an SSH key | `bool` | `false` | no |
 | <a name="input_additional_disks"></a> [additional\_disks](#input\_additional\_disks) | n/a | <pre>map(object({<br/>    managed_disk_id = string,<br/>    lun             = string,<br/>  }))</pre> | `{}` | no |
 | <a name="input_allowed_cidrs"></a> [allowed\_cidrs](#input\_allowed\_cidrs) | n/a | <pre>map(object({<br/>    priority = string,<br/>    protocol = string,<br/>    ports    = set(string),<br/>    cidrs    = set(string),<br/>  }))</pre> | n/a | yes |
@@ -72,7 +72,7 @@ module "copilot_build" {
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_network_security_group_name"></a> [network\_security\_group\_name](#output\_network\_security\_group\_name) | n/a |
 | <a name="output_private_ip"></a> [private\_ip](#output\_private\_ip) | n/a |
 | <a name="output_public_ip"></a> [public\_ip](#output\_public\_ip) | n/a |

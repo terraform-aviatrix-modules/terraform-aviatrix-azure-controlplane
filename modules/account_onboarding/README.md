@@ -23,7 +23,7 @@ module "account_onboarding" {
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_access_account_name"></a> [access\_account\_name](#input\_access\_account\_name) | Access account name | `string` | `"Azure"` | no |
 | <a name="input_account_email"></a> [account\_email](#input\_account\_email) | Account email address | `string` | n/a | yes |
 | <a name="input_arm_application_key"></a> [arm\_application\_key](#input\_arm\_application\_key) | Azure application key | `string` | n/a | yes |

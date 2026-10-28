@@ -14,7 +14,7 @@ module "app_registration" {
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_app_name"></a> [app\_name](#input\_app\_name) | Azure AD App Name for Aviatrix Controller Build Up | `string` | `"aviatrix_controller_app"` | no |
 | <a name="input_app_password_validity_length"></a> [app\_password\_validity\_length](#input\_app\_password\_validity\_length) | Number of hours from the apply time. Will be converted to the ISO 8601 extended date and time format automatically | `string` | `"730h"` | no |
 | <a name="input_aviatrix_rgs"></a> [aviatrix\_rgs](#input\_aviatrix\_rgs) | Resorce groups with the Aviatrix managed entities. Controller permissions to modify resources in these RGs | `map(list(string))` | `{}` | no |
@@ -27,7 +27,7 @@ module "app_registration" {
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_application_key"></a> [application\_key](#output\_application\_key) | n/a |
 | <a name="output_client_id"></a> [client\_id](#output\_client\_id) | n/a |
 | <a name="output_directory_id"></a> [directory\_id](#output\_directory\_id) | n/a |
