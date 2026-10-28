@@ -118,6 +118,7 @@ irm https://raw.githubusercontent.com/terraform-aviatrix-modules/terraform-aviat
 | `AdminEmail` | No* | Controller admin email | `"admin@company.com"` |
 | `AdminPassword` | No* | Secure admin password | `"MySecure123!"` |
 | `CustomerID` | No* | Aviatrix license ID | `"aviatrix-abc-123456"` |
+| `ControllerVersion` | No | Controller version (default: `latest`) | `"8.1"` |
 | `IncludeCopilot` | No | Deploy CoPilot analytics | `$true` or `$false` |
 | `IncomingMgmtCIDRs` | No | Your public IP/CIDR (auto-detected) | `"203.0.113.1"` |
 | `AdditionalManagementIPs` | No | Additional IPs for controller access | `"192.168.1.100,10.0.0.0/24"` |

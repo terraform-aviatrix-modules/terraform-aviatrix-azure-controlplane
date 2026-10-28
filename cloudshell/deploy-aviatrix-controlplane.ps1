@@ -31,6 +31,10 @@
 .PARAMETER CustomerID
     Aviatrix customer license ID (format: aviatrix-abc-123456)
     
+.PARAMETER ControllerVersion
+    Aviatrix Controller version to deploy, e.g. "8.1" or "10.1" (default: latest).
+    Versions below 10 use the g4 image; 10 and later (and latest) use g5.
+
 .PARAMETER IncludeCopilot
     Deploy optional CoPilot for advanced analytics (default: false)
     
@@ -64,6 +68,10 @@
     # Automated deployment with parameters
     ./deploy-aviatrix-controlplane.ps1 -DeploymentName "my-avx-ctrl" -Location "East US" -AdminEmail "admin@company.com" -AdminPassword "MySecure123!" -CustomerID "aviatrix-abc-123456"
     
+.EXAMPLE
+    # Deploy a specific controller version
+    ./deploy-aviatrix-controlplane.ps1 -DeploymentName "my-avx-ctrl" -ControllerVersion "8.1"
+
 .EXAMPLE
     # Deploy with CoPilot included
     ./deploy-aviatrix-controlplane.ps1 -DeploymentName "my-avx-ctrl" -IncludeCopilot $true
@@ -129,6 +137,10 @@ param(
     [string]$CustomerID,
     
     [Parameter(Mandatory = $false)]
+    [ValidatePattern('^(latest|\d+(\.\d+){0,3})$')]
+    [string]$ControllerVersion = "latest",
+
+    [Parameter(Mandatory = $false)]
     [System.Nullable[bool]]$IncludeCopilot,
     
     [Parameter(Mandatory = $false)]
@@ -183,7 +195,7 @@ $ProgressPreference = "SilentlyContinue"
 
 # Global variables
 $ModuleSource = "terraform-aviatrix-modules/azure-controlplane/aviatrix"
-$ModuleVersion = "1.1.4"
+$ModuleVersion = "1.2.1"
 $TerraformDir = "./aviatrix-deployment"
 $AvailableLocations = @(
     "East US", "East US 2", "West US", "West US 2", "West US 3", "Central US", "North Central US", "South Central US",
@@ -658,10 +670,22 @@ function Test-Prerequisites {
     }
 }
 
+# Mirrors the module's image selection: major version below 10 uses g4; 10 and later, or a non-numeric version such as "latest", use g5.
+function Get-ControllerImageFamily {
+    param([string]$ControllerVersion)
+
+    $major = 0
+    if (-not [int]::TryParse(($ControllerVersion -split '\.')[0], [ref]$major)) { $major = 999 }
+    if ($major -lt 10) { return "g4" } else { return "g5" }
+}
+
 function Test-MarketplaceSubscriptions {
     param(
-        [bool]$IncludeCopilot = $false
+        [bool]$IncludeCopilot = $false,
+        [string]$ControllerVersion = "latest"
     )
+
+    $controllerPlan = "aviatrix-controller-$(Get-ControllerImageFamily -ControllerVersion $ControllerVersion)"
     
     Write-Step "Checking Azure Marketplace subscriptions for Aviatrix products..."
     
@@ -674,7 +698,7 @@ function Test-MarketplaceSubscriptions {
         CopilotOfferId = "aviatrix-copilot"
         PublisherId = "aviatrix-systems"
         # Plan IDs (verified from Terraform deployment):
-        # Controller: "aviatrix-controller-g4"
+        # Controller: "aviatrix-controller-g4" or "aviatrix-controller-g5", depending on ControllerVersion
         # CoPilot: "avx-cplt-byol-02"
     }
     
@@ -690,7 +714,7 @@ function Test-MarketplaceSubscriptions {
         # Check Aviatrix Controller marketplace subscription
         Write-Host "  │  ├─ Checking Aviatrix Controller marketplace agreement..." -ForegroundColor Gray
         try {
-            $controllerAgreement = az vm image terms show --publisher $($subscriptionStatus.PublisherId) --offer $($subscriptionStatus.ControllerOfferId) --plan "aviatrix-controller-g4" 2>$null | ConvertFrom-Json
+            $controllerAgreement = az vm image terms show --publisher $($subscriptionStatus.PublisherId) --offer $($subscriptionStatus.ControllerOfferId) --plan $controllerPlan 2>$null | ConvertFrom-Json
             if ($controllerAgreement -and $controllerAgreement.accepted -eq $true) {
                 $subscriptionStatus.ControllerSubscribed = $true
                 Write-Success "Aviatrix Controller marketplace agreement already accepted"
@@ -1087,6 +1111,7 @@ function Get-DeploymentParameters {
         AdminPassword = $AdminPassword
         CustomerID = $CustomerID
         IncludeCopilot = $IncludeCopilot
+        ControllerVersion = $ControllerVersion
         UserPublicIP = $script:UserPublicIP
         AdditionalManagementIPs = $script:AdditionalManagementIPs
     }
@@ -1120,20 +1145,25 @@ function New-TerraformConfiguration {
         "false" 
     }
     
+    # azurerm 4.x requires an explicit subscription ID
+    $subscriptionId = az account show --query "id" -o tsv 2>$null
+    if (-not $subscriptionId) { throw "Could not get subscription ID" }
+
     # Create main.tf
     $mainTf = @"
 terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 3.0"
+      version = ">= 4.5.0"
     }
   }
 }
 
 provider "azurerm" {
   features {}
-  skip_provider_registration = true
+  subscription_id                 = "$subscriptionId"
+  resource_provider_registrations = "none"
 }
 
 module "aviatrix_controlplane" {
@@ -1142,6 +1172,7 @@ module "aviatrix_controlplane" {
 
   # Basic Configuration
   controller_name           = "$($Config.DeploymentName)-controller"
+  controller_version        = "$($Config.ControllerVersion)"
   location                  = "$($Config.Location)"
   customer_id              = "$($Config.CustomerID)"
   controller_admin_email    = "$($Config.AdminEmail)"
@@ -1604,7 +1635,7 @@ try {
     $config = Get-DeploymentParameters
     
     # Check marketplace subscriptions with the actual CoPilot setting
-    $marketplaceStatus = Test-MarketplaceSubscriptions -IncludeCopilot $config.IncludeCopilot
+    $marketplaceStatus = Test-MarketplaceSubscriptions -IncludeCopilot $config.IncludeCopilot -ControllerVersion $config.ControllerVersion
     
     # Add marketplace status to config for terraform generation
     $config | Add-Member -MemberType NoteProperty -Name "MarketplaceStatus" -Value $marketplaceStatus
@@ -1631,6 +1662,10 @@ try {
         Write-Host "  Customer License ID: " -NoNewline -ForegroundColor White
         Write-Host "  $($config.CustomerID)" -ForegroundColor Yellow
         
+        Write-Host "  ├─ " -NoNewline -ForegroundColor Cyan
+        Write-Host "  Controller Version: " -NoNewline -ForegroundColor White
+        Write-Host "  $($config.ControllerVersion) ($(Get-ControllerImageFamily -ControllerVersion $config.ControllerVersion) image)" -ForegroundColor Yellow
+
         Write-Host "  ├─ " -NoNewline -ForegroundColor Cyan
         Write-Host "  Include CoPilot: " -NoNewline -ForegroundColor White
         if ($config.IncludeCopilot) {

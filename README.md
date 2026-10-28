@@ -15,7 +15,7 @@ This module assumes you have Azure CLI installed and are authenticated with suff
 ### Compatibility
 Module version | Terraform version
 :--- | :---
-v1.2.0 | >= 1.3.0
+v1.2.1 | >= 1.3.0
 
 ### Usage Example
 ```hcl
@@ -26,7 +26,7 @@ provider "azurerm" {
 
 module "control_plane" {
   source  = "terraform-aviatrix-modules/azure-controlplane/aviatrix"
-  version = "1.1.8"
+  version = "1.2.1"
 
   controller_name           = "my_controller"
   incoming_ssl_cidrs        = ["1.2.3.4"]
@@ -45,7 +45,7 @@ output "controlplane_data" {
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_access_account_name"></a> [access\_account\_name](#input\_access\_account\_name) | aviatrix controller access account name | `string` | `""` | no |
 | <a name="input_account_email"></a> [account\_email](#input\_account\_email) | aviatrix controller access account email | `string` | `""` | no |
 | <a name="input_app_name"></a> [app\_name](#input\_app\_name) | Azure AD App Name for Aviatrix Controller Build Up | `string` | `"aviatrix_controller_app"` | no |
@@ -56,7 +56,7 @@ output "controlplane_data" {
 | <a name="input_controller_admin_email"></a> [controller\_admin\_email](#input\_controller\_admin\_email) | aviatrix controller admin email address | `string` | n/a | yes |
 | <a name="input_controller_admin_password"></a> [controller\_admin\_password](#input\_controller\_admin\_password) | aviatrix controller admin password | `string` | n/a | yes |
 | <a name="input_controller_name"></a> [controller\_name](#input\_controller\_name) | Customized Name for Aviatrix Controller | `string` | `"Aviatrix-Controller"` | no |
-| <a name="input_controller_os_disk_size_gb"></a> [controller\_os\_disk\_size\_gb](#input\_controller\_os\_disk\_size\_gb) | Size of the controller OS disk in GB. Leave unset to inherit the size of the source image. Controller 8.0 and above require at least 128 (P10, 500 IOPS); use 512 (P20, 2300 IOPS) or 1024 (P30, 5000 IOPS) for more IOPS at larger scale. Azure bills a premium disk at the next tier up, so sizes between tiers provide no extra IOPS. Azure cannot shrink an OS disk, and growing one restarts the controller. | `number` | `null` | no |
+| <a name="input_controller_os_disk_size_gb"></a> [controller\_os\_disk\_size\_gb](#input\_controller\_os\_disk\_size\_gb) | Size of the controller OS disk in GB. Minimum 100. If null, the submodule default (128) is used. | `number` | `null` | no |
 | <a name="input_controller_os_disk_storage_account_type"></a> [controller\_os\_disk\_storage\_account\_type](#input\_controller\_os\_disk\_storage\_account\_type) | Storage account type for the controller OS disk. Controller 8.0 and above require a premium disk to meet their 500 IOPS minimum, so set this to Premium\_LRS for those versions. Changing this on an existing deployment replaces the controller virtual machine. | `string` | `null` | no |
 | <a name="input_controller_public_ip_name"></a> [controller\_public\_ip\_name](#input\_controller\_public\_ip\_name) | Public IP name, only required when use\_existing\_controller\_public\_ip is true | `string` | `""` | no |
 | <a name="input_controller_version"></a> [controller\_version](#input\_controller\_version) | Aviatrix Controller version | `string` | `"latest"` | no |
@@ -93,7 +93,7 @@ output "controlplane_data" {
 ## Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_application_key"></a> [application\_key](#output\_application\_key) | n/a |
 | <a name="output_backup_container_name"></a> [backup\_container\_name](#output\_backup\_container\_name) | n/a |
 | <a name="output_client_id"></a> [client\_id](#output\_client\_id) | n/a |

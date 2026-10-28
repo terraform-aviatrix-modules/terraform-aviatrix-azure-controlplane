@@ -3,7 +3,8 @@
 ## v1.2.1
 - Allow the controller OS disk to be configured through the new `controller_os_disk_storage_account_type` and `controller_os_disk_size_gb` variables.
 - Controller 8.0 and above require an OS disk delivering at least 500 IOPS, which means `Premium_LRS` at 128G (P10) or larger. Set both variables when deploying those versions; use 512 (P20) or 1024 (P30) for more IOPS at larger scale.
-- Defaults are unchanged (`Standard_LRS` at the source image size), so existing deployments see no disk change. Note that Azure does not allow the OS disk storage account type to change in place, so switching to `Premium_LRS` replaces the controller virtual machine.
+- Controller OS disk now defaults to 128G (was the image size) and must be at least 100G. Existing deployments using the default grow in place, which restarts the controller.
+- Cloud Shell script now deploys module v1.2.1 with azurerm 4.x, and adds `-ControllerVersion` (default `latest`) with a matching g4/g5 marketplace agreement check.
 
 ## v1.2.0
 - Add support for g5 controller images, with image family selection based on `controller_version`.

@@ -110,7 +110,7 @@ variable "controller_os_disk_storage_account_type" {
 
 variable "controller_os_disk_size_gb" {
   type        = number
-  description = "Size of the controller OS disk in GB. Leave unset to inherit the size of the source image. Controller 8.0 and above require at least 128 (P10, 500 IOPS); use 512 (P20, 2300 IOPS) or 1024 (P30, 5000 IOPS) for more IOPS at larger scale. Azure bills a premium disk at the next tier up, so sizes between tiers provide no extra IOPS. Azure cannot shrink an OS disk, and growing one restarts the controller."
+  description = "Size of the controller OS disk in GB. Minimum 100. If null, the submodule default (128) is used."
   default     = null
 }
 
